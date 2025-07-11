@@ -3,621 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git Form Builder</title>
+    <title>Filialbesuch Dokumentation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+            -webkit-text-size-adjust: 100%;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            background: linear-gradient(45deg, #2c3e50, #34495e);
             color: white;
-            padding: 30px;
+            padding: 25px 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
-        .mode-switcher {
-            background: #f8f9fa;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .mode-btn {
-            padding: 12px 30px;
-            border: 2px solid #007bff;
-            background: white;
-            color: #007bff;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-
-        .mode-btn.active {
-            background: #007bff;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
-        }
-
-        .mode-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            line-height: 1.4;
         }
 
         .content {
-            padding: 30px;
-            min-height: 500px;
+            padding: 20px;
         }
 
-        .form-designer {
-            display: none;
-        }
-
-        .form-designer.active {
-            display: block;
-        }
-
-        .designer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .form-title-input {
-            flex: 1;
-            padding: 15px;
-            font-size: 1.5em;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            margin-right: 20px;
-        }
-
-        .add-question-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .add-question-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
-        }
-
-        .question-item {
+        .visit-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 20px;
             background: #f8f9fa;
-            border: 2px solid #dee2e6;
             border-radius: 15px;
-            padding: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+            appearance: none;
+            -webkit-appearance: none;
+            min-height: 54px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: scale(1.02);
+        }
+
+        .input-group select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            padding-right: 50px;
+        }
+
+        .entry-item {
+            background: #fff;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 20px;
+            position: relative;
             transition: all 0.3s ease;
         }
 
-        .question-item:hover {
-            border-color: #007bff;
-            box-shadow: 0 5px 15px rgba(0,123,255,0.1);
+        .entry-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
 
-        .question-header {
+        .entry-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .question-type-select {
-            padding: 8px 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            background: white;
+        .entry-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
         }
 
-        .delete-question-btn {
-            background: #dc3545;
+        .delete-btn {
+            background: #e74c3c;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 12px 16px;
+            border-radius: 10px;
             cursor: pointer;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .delete-question-btn:hover {
-            background: #c82333;
+        .delete-btn:hover,
+        .delete-btn:active {
+            background: #c0392b;
+            transform: scale(0.98);
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 140px;
+            padding: 18px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .text-area:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+
+        .image-upload {
+            border: 3px dashed #bdc3c7;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .image-upload:hover,
+        .image-upload:active {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+
+        .image-upload.drag-over {
+            border-color: #667eea;
+            background: #e8f2ff;
             transform: scale(1.05);
         }
 
-        .question-text-input {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.1em;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            resize: vertical;
+        .image-upload p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
         }
 
-        .options-container {
-            margin-top: 15px;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            gap: 10px;
-        }
-
-        .option-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-        }
-
-        .add-option-btn, .remove-option-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .add-option-btn {
-            background: #28a745;
-            color: white;
-        }
-
-        .remove-option-btn {
-            background: #dc3545;
-            color: white;
-        }
-
-        .file-upload-section {
-            background: #e3f2fd;
-            border: 2px dashed #2196f3;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            text-align: center;
-        }
-
-        .file-upload-btn {
-            background: #2196f3;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .file-upload-btn:hover {
-            background: #1976d2;
-            transform: translateY(-1px);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-status {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .file-status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .file-status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .dropdown-preview {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-        }
-
-        .dropdown-preview select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .image-capture-section {
-            background: #f0f8ff;
-            border: 2px dashed #4CAF50;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .image-capture-toggle {
-            margin: 10px 0;
-        }
-
-        .image-capture-toggle input[type="checkbox"] {
-            transform: scale(1.2);
-            margin-right: 8px;
-        }
-
-        .image-upload-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-
-        .image-btn {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .image-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
-        }
-
-        .camera-input, .file-image-input {
-            display: none;
-        }
-
-        .image-preview-container {
-            margin: 15px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
+        .image-upload small {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin: 0;
         }
 
         .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-item {
             position: relative;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            aspect-ratio: 1;
         }
 
-        .image-preview img {
-            width: 150px;
-            height: 150px;
+        .image-item img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            display: block;
+            border-radius: 12px;
         }
 
-        .image-preview .remove-image {
+        .image-remove {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #dc3545;
+            top: 8px;
+            right: 8px;
+            background: #e74c3c;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .form-viewer {
-            display: none;
-        }
-
-        .form-viewer.active {
-            display: block;
-        }
-
-        .form-title {
-            font-size: 2em;
-            margin-bottom: 30px;
-            color: #333;
-            text-align: center;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .answer-question {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .answer-question h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .answer-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .answer-input:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
-        }
-
-        .radio-group, .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .radio-option, .checkbox-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .radio-option:hover, .checkbox-option:hover {
-            background-color: #f8f9fa;
-        }
-
-        .rating-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .star-rating {
-            display: flex;
-            gap: 5px;
-            font-size: 2em;
-            user-select: none;
-        }
-
-        .star {
-            color: #ddd;
-            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
         }
 
-        .star:hover,
-        .star.active {
-            color: #ffd700;
+        .image-remove:hover,
+        .image-remove:active {
+            background: #c0392b;
             transform: scale(1.1);
         }
 
-        .star:hover ~ .star {
-            color: #ddd;
-        }
-
-        .rating-labels {
+        .add-entry-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
-            justify-content: space-between;
-            width: 280px;
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .rating-preview {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .rating-preview .star-rating {
+            align-items: center;
             justify-content: center;
-            margin: 10px 0;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 30px;
+            min-height: 60px;
         }
 
-        .rating-value {
-            margin-left: 15px;
-            font-weight: bold;
-            color: #007bff;
-            font-size: 1.2em;
+        .add-entry-btn:hover,
+        .add-entry-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
         }
 
-        .submit-section {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #e9ecef;
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: center;
         }
 
-        .submit-btn {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-            color: white;
+        .btn {
+            padding: 18px 30px;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border-radius: 50px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,123,255,0.3);
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
         }
 
-        .export-section {
-            background: #f8f9fa;
+        .btn-secondary {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn:hover,
+        .btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: #f0f4ff;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
             padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
             text-align: center;
+            display: none;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        .export-btn {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .input-group input,
+            .input-group select,
+            .text-area {
+                font-size: 16px; /* Verhindert Zoom beim Fokus */
+            }
         }
 
-        .export-btn:hover {
-            background: #138496;
-            transform: translateY(-2px);
-        }
-
-        .export-pdf-btn {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .export-pdf-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
-        }
-
-        .save-section {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .save-btn {
-            background: #ffc107;
-            color: #856404;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .save-btn:hover {
-            background: #e0a800;
-            transform: translateY(-2px);
-        }
-
-        .instructions {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #0c5460;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
+        /* Tablet Landscape */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .visit-info {
+                grid-template-columns: 1fr 1fr;
             }
             
-            .header {
+            .actions {
+                flex-direction: row;
+            }
+            
+            .container {
+                max-width: 90%;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1025px) {
+            body {
                 padding: 20px;
             }
             
-            .header h1 {
-                font-size: 1.8em;
+            .container {
+                max-width: 900px;
+            }
+            
+            .visit-info {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .actions {
+                flex-direction: row;
             }
             
             .content {
-                padding: 20px;
+                padding: 30px;
             }
             
-            .mode-switcher {
-                flex-direction: column;
-                gap: 10px;
+            .header {
+                padding: 30px;
             }
             
-            .designer-header {
-                flex-direction: column;
-                gap: 15px;
+            .header h1 {
+                font-size: 2.2rem;
             }
             
-            .form-title-input {
-                margin-right: 0;
-                margin-bottom: 15px;
+            .header p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Ultra-wide screens */
+        @media (min-width: 1400px) {
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: #1a1a1a;
+                color: #ffffff;
+            }
+            
+            .visit-info {
+                background: #2d2d2d;
+            }
+            
+            .entry-item {
+                background: #2d2d2d;
+                border-color: #404040;
+            }
+            
+            .input-group input,
+            .input-group select,
+            .text-area {
+                background: #2d2d2d;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            .image-upload {
+                background: #2d2d2d;
+                border-color: #404040;
             }
         }
     </style>
@@ -625,1190 +474,887 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Git Form Builder</h1>
-            <p>Erstellen Sie professionelle Formulare direkt in Ihrem Git Repository</p>
+            <h1>📋 Filialbesuch Dokumentation</h1>
+            <p>Erfassen Sie Ihre Beobachtungen und Notizen strukturiert</p>
         </div>
-
-        <div class="mode-switcher">
-            <button class="mode-btn active" onclick="switchMode('design')">📝 Entwurfsmodus</button>
-            <button class="mode-btn" onclick="switchMode('answer')">📋 Antwortmodus</button>
-        </div>
-
+        
         <div class="content">
-            <!-- Design Mode -->
-            <div class="form-designer active" id="designMode">
-                <div class="instructions">
-                    <strong>Hinweis:</strong> Nach dem Erstellen Ihres Formulars können Sie es mit dem "Formular speichern" Button speichern. 
-                    Die Formulardefinition wird direkt in diese HTML-Datei eingebettet. Committen Sie die Datei anschließend in Ihr Git Repository.
-                    <br><br>
-                    <strong>🔽 Dropdown-Menüs:</strong> Bei Dropdown-Fragen können Sie Optionen aus Textdateien (.txt oder .csv) laden. 
-                    Erstellen Sie eine Datei mit einer Option pro Zeile. Kommentare mit # am Zeilenanfang werden ignoriert.
+            <div class="visit-info">
+                <div class="input-group">
+                    <label for="visitDate">📅 Besuchsdatum:</label>
+                    <input type="date" id="visitDate">
                 </div>
-                
-                <div class="designer-header">
-                    <input type="text" class="form-title-input" id="formTitle" placeholder="Formulartitel eingeben..." value="Mein Formular">
-                    <button class="add-question-btn" onclick="addQuestion()">➕ Frage hinzufügen</button>
+                <div class="input-group">
+                    <label for="branchName">🏪 Filialname:</label>
+                    <select id="branchName">
+                        <option value="">Filiale auswählen...</option>
+                        <option value="Ahrensburg / Hamburger Str. 4-8 /(0727)">Ahrensburg / Hamburger Str. 4-8 /(0727)</option>
+                        <option value="Ahrensburg / Rathausplatz 15 /(0174)">Ahrensburg / Rathausplatz 15 /(0174)</option>
+                        <option value="Alsterdorf / Alsterdorfer Str. 206 /(0792)">Alsterdorf / Alsterdorfer Str. 206 /(0792)</option>
+                        <option value="Altona-Altstadt / Holstenstraße 111 /(0193)">Altona-Altstadt / Holstenstraße 111 /(0193)</option>
+                        <option value="Altona-Altstadt / Neue Große Bergstraße 18 /(0214)">Altona-Altstadt / Neue Große Bergstraße 18 /(0214)</option>
+                        <option value="Altstadt / Bergstrasse 16 /(0101)">Altstadt / Bergstrasse 16 /(0101)</option>
+                        <option value="Ammersbek / Hamburger Straße 101 /(0276)">Ammersbek / Hamburger Straße 101 /(0276)</option>
+                        <option value="Apensen / Beckdorfer Straße 18 /(0190)">Apensen / Beckdorfer Straße 18 /(0190)</option>
+                        <option value="Bad Oldesloe / Lübecker Straße 23-25 /(0230)">Bad Oldesloe / Lübecker Straße 23-25 /(0230)</option>
+                        <option value="Bad Segeberg / Ziegelstrasse 105-107 /(0138)">Bad Segeberg / Ziegelstrasse 105-107 /(0138)</option>
+                        <option value="Bahrenfeld / Gasstraße 6b /(0261)">Bahrenfeld / Gasstraße 6b /(0261)</option>
+                        <option value="Bahrenfeld / Osdorfer Weg 106 /(0148)">Bahrenfeld / Osdorfer Weg 106 /(0148)</option>
+                        <option value="Barendorf / Im Stadtkamp 1 /(0256)">Barendorf / Im Stadtkamp 1 /(0256)</option>
+                        <option value="Bargteheide / Rathausstraße 13-15 /(0717)">Bargteheide / Rathausstraße 13-15 /(0717)</option>
+                        <option value="Barmbek-Nord / Alter Güterbahnhof 2 /(0241)">Barmbek-Nord / Alter Güterbahnhof 2 /(0241)</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Str. 107-109 /(0301)">Barmbek-Nord / Fuhlsbüttler Str. 107-109 /(0301)</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 164 /(0181)">Barmbek-Nord / Fuhlsbüttler Straße 164 /(0181)</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 401 /(0164)">Barmbek-Nord / Fuhlsbüttler Straße 401 /(0164)</option>
+                        <option value="Barmbek-Süd / Hamburger Str. 47-49 /(0764)">Barmbek-Süd / Hamburger Str. 47-49 /(0764)</option>
+                        <option value="Barmbek-Süd / Mozartstraße 16 /(0168)">Barmbek-Süd / Mozartstraße 16 /(0168)</option>
+                        <option value="Barsbüttel / Am Akku 9 /(0234)">Barsbüttel / Am Akku 9 /(0234)</option>
+                        <option value="Bergedorf / Bergedorfer Str. 133 /(0407)">Bergedorf / Bergedorfer Str. 133 /(0407)</option>
+                        <option value="Bergedorf / Friedrich-Frank-Bogen 166 /(0250)">Bergedorf / Friedrich-Frank-Bogen 166 /(0250)</option>
+                        <option value="Bergedorf / Kupferhof 7 /(0757)">Bergedorf / Kupferhof 7 /(0757)</option>
+                        <option value="Bergstedt / Wohldorfer Damm 1- 1a /(0253)">Bergstedt / Wohldorfer Damm 1- 1a /(0253)</option>
+                        <option value="Berlin / Bundesalle 86/89 /0555">Berlin / Bundesalle 86/89 /0555</option>
+                        <option value="Berlin / Frankfurter Allee 35-37 /0552">Berlin / Frankfurter Allee 35-37 /0552</option>
+                        <option value="Berlin / Friedenstraße 90 /0556">Berlin / Friedenstraße 90 /0556</option>
+                        <option value="Berlin / Friedrichstraße 149 /0554">Berlin / Friedrichstraße 149 /0554</option>
+                        <option value="Berlin / Güntzelstraße 48 /0553">Berlin / Güntzelstraße 48 /0553</option>
+                        <option value="Berlin / Martin Luther Straße 48 /0560">Berlin / Martin Luther Straße 48 /0560</option>
+                        <option value="Berlin / Rankestraße 33-34 /0557">Berlin / Rankestraße 33-34 /0557</option>
+                        <option value="Berlin / Revaler Straße 33 /0561">Berlin / Revaler Straße 33 /0561</option>
+                        <option value="Berlin / Schönhauser Allee 12 /0551">Berlin / Schönhauser Allee 12 /0551</option>
+                        <option value="Berlin / Schönhauser Allee 120 /0550">Berlin / Schönhauser Allee 120 /0550</option>
+                        <option value="Berlin / Wilmersdorfer Straße 60 /0558">Berlin / Wilmersdorfer Straße 60 /0558</option>
+                        <option value="Billstedt / Billstedter Platz 2 /(0183)">Billstedt / Billstedter Platz 2 /(0183)</option>
+                        <option value="Blankenese / Propst-Paulsen-Str. 2 /(0208)">Blankenese / Propst-Paulsen-Str. 2 /(0208)</option>
+                        <option value="Blankenese / Sülldorfer Kirchenweg 1-3 /(0761)">Blankenese / Sülldorfer Kirchenweg 1-3 /(0761)</option>
+                        <option value="Börnsen / Hermann-Wöhlke-Weg 2 /(0191)">Börnsen / Hermann-Wöhlke-Weg 2 /(0191)</option>
+                        <option value="Bramfeld / Bramfelder Chaussee 230 /(0165)">Bramfeld / Bramfelder Chaussee 230 /(0165)</option>
+                        <option value="Bramfeld / Pezolddamm 147 /(0213)">Bramfeld / Pezolddamm 147 /(0213)</option>
+                        <option value="Büchen / Schlickweg 2 /(0287)">Büchen / Schlickweg 2 /(0287)</option>
+                        <option value="Buchholz / Breite Str. 5 /(0707)">Buchholz / Breite Str. 5 /(0707)</option>
+                        <option value="Buchholz / Soltauer Straße 93 /(0196)">Buchholz / Soltauer Straße 93 /(0196)</option>
+                        <option value="Buxtehude / Stader Straße 2 /(0788)">Buxtehude / Stader Straße 2 /(0788)</option>
+                        <option value="Buxtehude / Zwischen den Brücken 1 /(0748)">Buxtehude / Zwischen den Brücken 1 /(0748)</option>
+                        <option value="Dollern / Am Buschteich 26 /(0255)">Dollern / Am Buschteich 26 /(0255)</option>
+                        <option value="Duvenstedt / Poppenbüttler Chaussee 36 /(0155)">Duvenstedt / Poppenbüttler Chaussee 36 /(0155)</option>
+                        <option value="Eidelstedt / Eidelstedter Platz 1 /(0731)">Eidelstedt / Eidelstedter Platz 1 /(0731)</option>
+                        <option value="Eilbek / Conventstraße 8-10 /(0262)">Eilbek / Conventstraße 8-10 /(0262)</option>
+                        <option value="Eilbek / Landwehr 34 /(0713)">Eilbek / Landwehr 34 /(0713)</option>
+                        <option value="Eimsbüttel / Eimsbütteler Chaussee 85 /(0216)">Eimsbüttel / Eimsbütteler Chaussee 85 /(0216)</option>
+                        <option value="Eimsbüttel / Müggenkampstraße 4 /(0775)">Eimsbüttel / Müggenkampstraße 4 /(0775)</option>
+                        <option value="Eimsbüttel / Osterstr. 1 /(0122)">Eimsbüttel / Osterstr. 1 /(0122)</option>
+                        <option value="Eimsbüttel / Osterstr. 95 /(0203)">Eimsbüttel / Osterstr. 95 /(0203)</option>
+                        <option value="Eppendorf / Eppendorfer Baum 39 /(0602)">Eppendorf / Eppendorfer Baum 39 /(0602)</option>
+                        <option value="Eppendorf / Eppendorfer Landstr. 67 /(0711)">Eppendorf / Eppendorfer Landstr. 67 /(0711)</option>
+                        <option value="Eppendorf / Eppendorfer Landstrasse 77 /(0145)">Eppendorf / Eppendorfer Landstrasse 77 /(0145)</option>
+                        <option value="Eppendorf / Martinistraße 64 /(0200)">Eppendorf / Martinistraße 64 /(0200)</option>
+                        <option value="Farmsen-Berne / Berner Heerweg 173-175 /(0603)">Farmsen-Berne / Berner Heerweg 173-175 /(0603)</option>
+                        <option value="Finkenwerder / Steendiek 43 /(0708)">Finkenwerder / Steendiek 43 /(0708)</option>
+                        <option value="Fuhlsbüttel / Erdkampsweg 47-49 /(0755)">Fuhlsbüttel / Erdkampsweg 47-49 /(0755)</option>
+                        <option value="Geesthacht / Norderstraße 16 /(0270)">Geesthacht / Norderstraße 16 /(0270)</option>
+                        <option value="Glinde / Markt 3 /(0410)">Glinde / Markt 3 /(0410)</option>
+                        <option value="Groß Borstel / Borsteler Chaussee 111-113 /(0747)">Groß Borstel / Borsteler Chaussee 111-113 /(0747)</option>
+                        <option value="Gross Flottbek / Waitzstrasse 29 /(0140)">Gross Flottbek / Waitzstrasse 29 /(0140)</option>
+                        <option value="Grosshansdorf / Eilbergweg 11 /(0218)">Grosshansdorf / Eilbergweg 11 /(0218)</option>
+                        <option value="HafenCity / Überseeboulevard 7 /(0281)">HafenCity / Überseeboulevard 7 /(0281)</option>
+                        <option value="Halstenbek / Seestrasse 250 /(0147)">Halstenbek / Seestrasse 250 /(0147)</option>
+                        <option value="Hamm / Hammer Landstraße 84 /(0279)">Hamm / Hammer Landstraße 84 /(0279)</option>
+                        <option value="Hamm-Mitte / Droopweg 25 /(0152)">Hamm-Mitte / Droopweg 25 /(0152)</option>
+                        <option value="Hamm-Nord / Hammer Steindamm 72-74 /(0192)">Hamm-Nord / Hammer Steindamm 72-74 /(0192)</option>
+                        <option value="Hammerbrook / Sonninstraße 1-5 /(0278)">Hammerbrook / Sonninstraße 1-5 /(0278)</option>
+                        <option value="Hanstedt / Winsener Straße 1-3 /(0264)">Hanstedt / Winsener Straße 1-3 /(0264)</option>
+                        <option value="Harburg / Hannoversche Straße 86 /(0273)">Harburg / Hannoversche Straße 86 /(0273)</option>
+                        <option value="Harburg / Lüneburger Str. 39 /(0737)">Harburg / Lüneburger Str. 39 /(0737)</option>
+                        <option value="Harburg / Sand 10 /(0501)">Harburg / Sand 10 /(0501)</option>
+                        <option value="Harsefeld / Buxtehuder Str. 11 /(0735)">Harsefeld / Buxtehuder Str. 11 /(0735)</option>
+                        <option value="Harvestehude / Grindelberg 7 /(0151)">Harvestehude / Grindelberg 7 /(0151)</option>
+                        <option value="Heimfeld / Heimfelder Str. 46 /(0766)">Heimfeld / Heimfelder Str. 46 /(0766)</option>
+                        <option value="Heimfeld / Stader Straße 136 /(0231)">Heimfeld / Stader Straße 136 /(0231)</option>
+                        <option value="Henstedt-Ulzburg / Dammstücken 29-33 /(0274)">Henstedt-Ulzburg / Dammstücken 29-33 /(0274)</option>
+                        <option value="Hittfeld / Kirchstrasse 26 /(0172)">Hittfeld / Kirchstrasse 26 /(0172)</option>
+                        <option value="Hoheluft-Ost / Eppendorfer Baum 42 /(0804)">Hoheluft-Ost / Eppendorfer Baum 42 /(0804)</option>
+                        <option value="Hoheluft-Ost / Hoheluftchaussee 52 /(0212)">Hoheluft-Ost / Hoheluftchaussee 52 /(0212)</option>
+                        <option value="Horn / Graßmannweg 6-13 /(0219)">Horn / Graßmannweg 6-13 /(0219)</option>
+                        <option value="Horn / Rennbahnstr. 30-38 /(0723)">Horn / Rennbahnstr. 30-38 /(0723)</option>
+                        <option value="Hummelsbüttel / Hummelsbüttler Hauptstr. 62 /(0127)">Hummelsbüttel / Hummelsbüttler Hauptstr. 62 /(0127)</option>
+                        <option value="Jesteburg / Brückenstraße 11 /(0217)">Jesteburg / Brückenstraße 11 /(0217)</option>
+                        <option value="Kaltenkirchen / Am Bahnhof 2-12 /(0763)">Kaltenkirchen / Am Bahnhof 2-12 /(0763)</option>
+                        <option value="Keitum / Keitumer Landstraße 10a-c /(0801)">Keitum / Keitumer Landstraße 10a-c /(0801)</option>
+                        <option value="Langenhorn / Krohnstieg 41-43 /(0269)">Langenhorn / Krohnstieg 41-43 /(0269)</option>
+                        <option value="Langenhorn / Langenhorner Chaussee 666 /(0238)">Langenhorn / Langenhorner Chaussee 666 /(0238)</option>
+                        <option value="Lohbrügge / Am Beckerkamp 17 /(0291)">Lohbrügge / Am Beckerkamp 17 /(0291)</option>
+                        <option value="Lohbrügge / Heidhorst 4 /(0226)">Lohbrügge / Heidhorst 4 /(0226)</option>
+                        <option value="Lokstedt / Vogt-Wells-Straße 6 /(0229)">Lokstedt / Vogt-Wells-Straße 6 /(0229)</option>
+                        <option value="Lübeck / Heiligen-Geist-Kamp 4 /(0235)">Lübeck / Heiligen-Geist-Kamp 4 /(0235)</option>
+                        <option value="Lübeck / Mühlenstraße 22-24 /(0286)">Lübeck / Mühlenstraße 22-24 /(0286)</option>
+                        <option value="Lüneburg / Am Sande 50 /(0738)">Lüneburg / Am Sande 50 /(0738)</option>
+                        <option value="Lüneburg / Bei der Keulahütte 1 /(0793)">Lüneburg / Bei der Keulahütte 1 /(0793)</option>
+                        <option value="Lüneburg / Feldstrasse 1 /(0128)">Lüneburg / Feldstrasse 1 /(0128)</option>
+                        <option value="Lurup / Elbgaustrasse 128 /(0153)">Lurup / Elbgaustrasse 128 /(0153)</option>
+                        <option value="Lurup / Luruper Hauptstraße 272a /(0194)">Lurup / Luruper Hauptstraße 272a /(0194)</option>
+                        <option value="Marienthal / Rennbahnstrasse 135 /(0136)">Marienthal / Rennbahnstrasse 135 /(0136)</option>
+                        <option value="Marmstorf / Ernst-Bergeest-Weg 57 a /(0705)">Marmstorf / Ernst-Bergeest-Weg 57 a /(0705)</option>
+                        <option value="Maschen / Schulstraße 38 /(0237)">Maschen / Schulstraße 38 /(0237)</option>
+                        <option value="Meckelfeld / Am Saal 20 /(0123)">Meckelfeld / Am Saal 20 /(0123)</option>
+                        <option value="Mölln / Grambeker Weg 91-93 /(0124)">Mölln / Grambeker Weg 91-93 /(0124)</option>
+                        <option value="Mundsburg Center / Hamburger Straße 1-15 /(0179)">Mundsburg Center / Hamburger Straße 1-15 /(0179)</option>
+                        <option value="Nahe / Segeberger Strasse 30 /(0173)">Nahe / Segeberger Strasse 30 /(0173)</option>
+                        <option value="Neu Wulmstorf / Wulmstorfer Wiesen 2a /(0185)">Neu Wulmstorf / Wulmstorfer Wiesen 2a /(0185)</option>
+                        <option value="Neuengamme / Heinrich-Stubbe-Weg 13-15 /(0254)">Neuengamme / Heinrich-Stubbe-Weg 13-15 /(0254)</option>
+                        <option value="Neugraben-Fischbek / Lütt Enn 3 /(0505)">Neugraben-Fischbek / Lütt Enn 3 /(0505)</option>
+                        <option value="Neustadt / Dammtorstr. 33-35 /(0784)">Neustadt / Dammtorstr. 33-35 /(0784)</option>
+                        <option value="Neustadt / Wexstr. 25 /(0760)">Neustadt / Wexstr. 25 /(0760)</option>
+                        <option value="Neuwiedenthal / Rehrstieg 28 /(0225)">Neuwiedenthal / Rehrstieg 28 /(0225)</option>
+                        <option value="Niedermarschacht / Elbuferstrasse 116 /(0159)">Niedermarschacht / Elbuferstrasse 116 /(0159)</option>
+                        <option value="Niendorf / Paul-Sorge-Str. 8 /(0730)">Niendorf / Paul-Sorge-Str. 8 /(0730)</option>
+                        <option value="Niendorf / Wagrier Weg 2-8 /(0149)">Niendorf / Wagrier Weg 2-8 /(0149)</option>
+                        <option value="Nienstedten / Nienstedtener Straße 2e /(0215)">Nienstedten / Nienstedtener Straße 2e /(0215)</option>
+                        <option value="Norderstedt / Berliner Allee 42 /(0753)">Norderstedt / Berliner Allee 42 /(0753)</option>
+                        <option value="Norderstedt / Rathausallee 31a/33a /(0252)">Norderstedt / Rathausallee 31a/33a /(0252)</option>
+                        <option value="Norderstedt / Schmuggelstieg 6 /(0309)">Norderstedt / Schmuggelstieg 6 /(0309)</option>
+                        <option value="Norderstedt / Ulzburger Strasse 360 /(0150)">Norderstedt / Ulzburger Strasse 360 /(0150)</option>
+                        <option value="Osdorf / Osdorfer Landstrasse 131-135 /(0129)">Osdorf / Osdorfer Landstrasse 131-135 /(0129)</option>
+                        <option value="Osdorf / Rugenbarg 18 /(0239)">Osdorf / Rugenbarg 18 /(0239)</option>
+                        <option value="Oststeinbek / Möllner Landstrasse 30 /(0144)">Oststeinbek / Möllner Landstrasse 30 /(0144)</option>
+                        <option value="Othmarschen / Jürgen-Töpfer-Straße 18 /(0224)">Othmarschen / Jürgen-Töpfer-Straße 18 /(0224)</option>
+                        <option value="Ottensen / Bahrenfelder Straße 134 /(0266)">Ottensen / Bahrenfelder Straße 134 /(0266)</option>
+                        <option value="Ottensen / Ottenser Hauptstraße 10 /(0187)">Ottensen / Ottenser Hauptstraße 10 /(0187)</option>
+                        <option value="Pinneberg / Richard-Köhn-Str. 1 /(0796)">Pinneberg / Richard-Köhn-Str. 1 /(0796)</option>
+                        <option value="Poppenbüttel / Heegbarg 31 /(0762)">Poppenbüttel / Heegbarg 31 /(0762)</option>
+                        <option value="Poppenbüttel / Moorhof 7a /(0781)">Poppenbüttel / Moorhof 7a /(0781)</option>
+                        <option value="Poppenbüttel / Poppenbütteler Bogen 98 /(0289)">Poppenbüttel / Poppenbütteler Bogen 98 /(0289)</option>
+                        <option value="Quickborn / Bahnhofstraße 104 /(0746)">Quickborn / Bahnhofstraße 104 /(0746)</option>
+                        <option value="Rahlstedt / Bargteheider Straße 20-22 /(0220)">Rahlstedt / Bargteheider Straße 20-22 /(0220)</option>
+                        <option value="Rahlstedt / Meiendorfer Strasse 89 /(0135)">Rahlstedt / Meiendorfer Strasse 89 /(0135)</option>
+                        <option value="Rahlstedt / Rahlstedter Bahnhofstrasse 17 /(0176)">Rahlstedt / Rahlstedter Bahnhofstrasse 17 /(0176)</option>
+                        <option value="Rahlstedt / Scharbeutzer Straße 102a-c /(0236)">Rahlstedt / Scharbeutzer Straße 102a-c /(0236)</option>
+                        <option value="Rahlstedt / Schweriner Strasse 8-12 /(0141)">Rahlstedt / Schweriner Strasse 8-12 /(0141)</option>
+                        <option value="Reinbek / Am Ladenzentrum 7 /(0126)">Reinbek / Am Ladenzentrum 7 /(0126)</option>
+                        <option value="Reinbek / Sachsenwaldstr. 20 /(0791)">Reinbek / Sachsenwaldstr. 20 /(0791)</option>
+                        <option value="Rellingen / Hauptstrasse 105 /(0133)">Rellingen / Hauptstrasse 105 /(0133)</option>
+                        <option value="Rissen / Wedeler Landstraße 56 /(0242)">Rissen / Wedeler Landstraße 56 /(0242)</option>
+                        <option value="Rothenburgsort / Lindleystraße 2 /(0782)">Rothenburgsort / Lindleystraße 2 /(0782)</option>
+                        <option value="Rotherbaum / Grindelallee 110-114 /(0201)">Rotherbaum / Grindelallee 110-114 /(0201)</option>
+                        <option value="Rotherbaum / Milchstraße 1 /(0785)">Rotherbaum / Milchstraße 1 /(0785)</option>
+                        <option value="Rotherbaum / Mittelweg 126 /(0805)">Rotherbaum / Mittelweg 126 /(0805)</option>
+                        <option value="Sasel / Saseler Markt 14a /(0228)">Sasel / Saseler Markt 14a /(0228)</option>
+                        <option value="Schenefeld / Industriestraße 1 /(0188)">Schenefeld / Industriestraße 1 /(0188)</option>
+                        <option value="Schnelsen / Frohmestraße 48 /(0198)">Schnelsen / Frohmestraße 48 /(0198)</option>
+                        <option value="Schwarzenbek / Compestrasse 1 /(0146)">Schwarzenbek / Compestrasse 1 /(0146)</option>
+                        <option value="St. Georg / Schmilinskystraße 15 /(0802)">St. Georg / Schmilinskystraße 15 /(0802)</option>
+                        <option value="St. Pauli / Clemens-Schultz-Strasse 38 /(0104)">St. Pauli / Clemens-Schultz-Strasse 38 /(0104)</option>
+                        <option value="St. Pauli / Neuer Kamp 31 /(0233)">St. Pauli / Neuer Kamp 31 /(0233)</option>
+                        <option value="St. Pauli / Talstraße 36 /(0774)">St. Pauli / Talstraße 36 /(0774)</option>
+                        <option value="St.Georg / Lange Reihe 104-106 /(0175)">St.Georg / Lange Reihe 104-106 /(0175)</option>
+                        <option value="St.Georg / Lange Reihe 18-20 /(0178)">St.Georg / Lange Reihe 18-20 /(0178)</option>
+                        <option value="St.Georg / Steindamm 55 /(0282)">St.Georg / Steindamm 55 /(0282)</option>
+                        <option value="Stade / Steile Straße 1 /(0248)">Stade / Steile Straße 1 /(0248)</option>
+                        <option value="Steilshoop / Steilshooper Str. 281 /(0773)">Steilshoop / Steilshooper Str. 281 /(0773)</option>
+                        <option value="Stelle / Harburger Straße 25 c /(0772)">Stelle / Harburger Straße 25 c /(0772)</option>
+                        <option value="Stellingen / Kieler Str. 561-573 /(0745)">Stellingen / Kieler Str. 561-573 /(0745)</option>
+                        <option value="Stellingen / Langenfelder Damm 62 /(0767)">Stellingen / Langenfelder Damm 62 /(0767)</option>
+                        <option value="Sternschanze / Schanzenstraße 55 /(0768)">Sternschanze / Schanzenstraße 55 /(0768)</option>
+                        <option value="Sternschanze / Schulterblatt 135 /(0268)">Sternschanze / Schulterblatt 135 /(0268)</option>
+                        <option value="Sternschanze / Schulterblatt 45 /(0105)">Sternschanze / Schulterblatt 45 /(0105)</option>
+                        <option value="Tangstedt / Eichholzkoppel 1 /(0267)">Tangstedt / Eichholzkoppel 1 /(0267)</option>
+                        <option value="Timmendorfer STrand / Strandallee 81 /(0290)">Timmendorfer STrand / Strandallee 81 /(0290)</option>
+                        <option value="Tonndorf / Ahrensburger Strasse 150-152 /(0131)">Tonndorf / Ahrensburger Strasse 150-152 /(0131)</option>
+                        <option value="Tornesch / Ohlenhoff 4 /(0184)">Tornesch / Ohlenhoff 4 /(0184)</option>
+                        <option value="Tostedt / Unter den Linden 5 /(0758)">Tostedt / Unter den Linden 5 /(0758)</option>
+                        <option value="Tostedt / Zinnhütte 12 /(0280)">Tostedt / Zinnhütte 12 /(0280)</option>
+                        <option value="Trittau / Poststraße 27-29 /(0245)">Trittau / Poststraße 27-29 /(0245)</option>
+                        <option value="Uhlenhorst / Hofweg 46-48 /(0180)">Uhlenhorst / Hofweg 46-48 /(0180)</option>
+                        <option value="Volksdorf / Claus-Ferck-Straße 8 /(0186)">Volksdorf / Claus-Ferck-Straße 8 /(0186)</option>
+                        <option value="Volksdorf / Weiße Rose 8 /(0795)">Volksdorf / Weiße Rose 8 /(0795)</option>
+                        <option value="Wandsbek / Friedrich-Ebert-Damm 79-85 /(0221)">Wandsbek / Friedrich-Ebert-Damm 79-85 /(0221)</option>
+                        <option value="Wandsbek / Wandsbeker Marktstraße 103-107 /(0272)">Wandsbek / Wandsbeker Marktstraße 103-107 /(0272)</option>
+                        <option value="Wandsbek / Wandsbeker Marktstraße 2 /(0288)">Wandsbek / Wandsbeker Marktstraße 2 /(0288)</option>
+                        <option value="Wedel / Am Marienhof 1, 3 /(0263)">Wedel / Am Marienhof 1, 3 /(0263)</option>
+                        <option value="Wedel / Bahnhofstraße 31 /(0776)">Wedel / Bahnhofstraße 31 /(0776)</option>
+                        <option value="Wedel / Rissener Straße 125 /(0257)">Wedel / Rissener Straße 125 /(0257)</option>
+                        <option value="Wellingsbüttel / Wellingsbüttler Weg 125 /(0177)">Wellingsbüttel / Wellingsbüttler Weg 125 /(0177)</option>
+                        <option value="Wenningstedt/Sylt / Osterweg 2 /(0771)">Wenningstedt/Sylt / Osterweg 2 /(0771)</option>
+                        <option value="Wentorf / Berliner Landstraße 4-6 /(0249)">Wentorf / Berliner Landstraße 4-6 /(0249)</option>
+                        <option value="Wilhelmsburg / Vogelhüttendeich 48 /(0756)">Wilhelmsburg / Vogelhüttendeich 48 /(0756)</option>
+                        <option value="Wilhelmsburg / Wilhelm-Strauß-Weg 2b /(0736)">Wilhelmsburg / Wilhelm-Strauß-Weg 2b /(0736)</option>
+                        <option value="Winsen / Löhnfeld 10 /(0740)">Winsen / Löhnfeld 10 /(0740)</option>
+                        <option value="Winsen / Rathausstraße 33 /(0197)">Winsen / Rathausstraße 33 /(0197)</option>
+                        <option value="Winterhude / Gertigstraße 24 /(0275)">Winterhude / Gertigstraße 24 /(0275)</option>
+                        <option value="Winterhude / Hudtwalckerstr. 19-21 /(0304)">Winterhude / Hudtwalckerstr. 19-21 /(0304)</option>
+                        <option value="Winterhude / Jarrestr. 47 /(0749)">Winterhude / Jarrestr. 47 /(0749)</option>
+                        <option value="Winterhude / Mühlenkamp 43 /(0305)">Winterhude / Mühlenkamp 43 /(0305)</option>
+                    </select>
                 </div>
-
-                <div id="questionsContainer">
-                    <!-- Questions will be added here dynamically -->
+                <div class="input-group">
+                    <label for="visitorName">👤 Besucher:</label>
+                    <input type="text" id="visitorName" placeholder="Ihr Name (wird für Session gespeichert)">
                 </div>
-
-                <div class="save-section">
-                    <h3>💾 Formular speichern</h3>
-                    <p>Speichert die Formulardefinition direkt in diese HTML-Datei</p>
-                    <button class="save-btn" onclick="saveForm()">Formular speichern</button>
+                <div class="input-group">
+                    <label for="visitTime">⏰ Uhrzeit:</label>
+                    <input type="time" id="visitTime">
                 </div>
             </div>
 
-            <!-- Answer Mode -->
-            <div class="form-viewer" id="answerMode">
-                <div id="formDisplay">
-                    <div class="form-title">Noch kein Formular erstellt</div>
-                    <p style="text-align: center; color: #666;">Wechseln Sie zum Entwurfsmodus, um ein Formular zu erstellen.</p>
+            <div id="entriesContainer">
+                <div class="entry-item" data-entry="1">
+                    <div class="entry-header">
+                        <span class="entry-number">Punkt 1</span>
+                        <button class="delete-btn hidden" onclick="deleteEntry(this)" aria-label="Punkt 1 löschen">🗑️ Löschen</button>
+                    </div>
+                    
+                    <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt 1"></textarea>
+                    
+                    <div class="image-upload" onclick="document.getElementById('imageInput-1').click()" role="button" tabindex="0" aria-label="Bilder für ersten Punkt hinzufügen">
+                        <p>📷 Tippen Sie hier um Bilder hinzuzufügen</p>
+                        <small>Unterstützte Formate: JPG, PNG, GIF</small>
+                        <input type="file" id="imageInput-1" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, 1)" aria-label="Bilddateien auswählen">
+                    </div>
+                    
+                    <div class="image-preview" id="imagePreview-1" aria-live="polite"></div>
                 </div>
+            </div>
 
-                <div class="export-section" id="exportSection" style="display: none;">
-                    <h3>📄 Survey abschließen</h3>
-                    <p>Ihre Antworten werden als PDF-Report generiert und die Survey wird zurückgesetzt</p>
-                    <button class="export-pdf-btn" onclick="completeSurvey()">📄 Survey abschließen & PDF generieren</button>
-                </div>
+            <button class="add-entry-btn" onclick="addEntry()" aria-label="Neuen Dokumentationspunkt hinzufügen">
+                ➕ Weiteren Punkt hinzufügen
+            </button>
+
+            <div class="loading" id="loading">
+                📄 PDF wird erstellt...
+            </div>
+
+            <div class="success-message" id="successMessage">
+                ✅ PDF erfolgreich erstellt und heruntergeladen!
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generatePDF()" aria-label="PDF-Bericht erstellen und herunterladen">
+                    📄 PDF erstellen
+                </button>
+                <button class="btn btn-secondary" onclick="resetForm()" aria-label="Alle Eingaben zurücksetzen">
+                    🔄 Zurücksetzen
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Form Data Storage (will be updated dynamically) -->
-    <script id="formData" type="application/json">
-    {
-        "title": "",
-        "questions": [],
-        "responses": []
-    }
-    </script>
-
     <script>
-        let currentMode = 'design';
-        let formData = {
-            title: "",
-            questions: [],
-            responses: []
-        };
-        let questionCounter = 0;
-        let imageCounter = 0;
+        let entryCounter = 1;
+        let imageData = {};
+        let savedVisitorName = '';
+        let userLocation = null;
+        let isLocationDetected = false;
 
-        // Load existing form data on page load
-        window.addEventListener('load', function() {
-            loadFormData();
-            renderDesignMode();
-            renderAnswerMode();
+        // Datum auf heute setzen
+        document.getElementById('visitDate').valueAsDate = new Date();
+        
+        // Aktuelle Zeit setzen
+        const now = new Date();
+        document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
+
+        // Standort-basierte Filialvorschläge
+        const filialLocations = {
+            'Hamburg': {
+                lat: 53.5511,
+                lng: 9.9937,
+                keywords: ['Ahrensburg', 'Alsterdorf', 'Altona', 'Altstadt', 'Ammersbek', 'Bahrenfeld', 'Bargteheide', 'Barmbek', 'Barsbüttel', 'Bergedorf', 'Bergstedt', 'Billstedt', 'Blankenese', 'Börnsen', 'Bramfeld', 'Duvenstedt', 'Eidelstedt', 'Eilbek', 'Eimsbüttel', 'Eppendorf', 'Farmsen', 'Finkenwerder', 'Fuhlsbüttel', 'Glinde', 'Groß Borstel', 'Gross Flottbek', 'Grosshansdorf', 'HafenCity', 'Halstenbek', 'Hamm', 'Hammerbrook', 'Harburg', 'Harvestehude', 'Heimfeld', 'Hittfeld', 'Hoheluft', 'Horn', 'Hummelsbüttel', 'Langenhorn', 'Lohbrügge', 'Lokstedt', 'Lurup', 'Marienthal', 'Marmstorf', 'Maschen', 'Meckelfeld', 'Mundsburg', 'Neu Wulmstorf', 'Neuengamme', 'Neugraben', 'Neustadt', 'Neuwiedenthal', 'Niedermarschacht', 'Niendorf', 'Nienstedten', 'Norderstedt', 'Osdorf', 'Oststeinbek', 'Othmarschen', 'Ottensen', 'Pinneberg', 'Poppenbüttel', 'Quickborn', 'Rahlstedt', 'Reinbek', 'Rellingen', 'Rissen', 'Rothenburgsort', 'Rotherbaum', 'Sasel', 'Schenefeld', 'Schnelsen', 'St. Georg', 'St. Pauli', 'Steilshoop', 'Stelle', 'Stellingen', 'Sternschanze', 'Tangstedt', 'Tonndorf', 'Tornesch', 'Trittau', 'Uhlenhorst', 'Volksdorf', 'Wandsbek', 'Wedel', 'Wellingsbüttel', 'Wentorf', 'Wilhelmsburg', 'Winterhude']
+            },
+            'Berlin': {
+                lat: 52.5200,
+                lng: 13.4050,
+                keywords: ['Berlin']
+            },
+            'Lübeck': {
+                lat: 53.8648,
+                lng: 10.6865,
+                keywords: ['Lübeck', 'Bad Oldesloe', 'Bad Segeberg', 'Büchen', 'Mölln', 'Schwarzenbek']
+            },
+            'Lüneburg': {
+                lat: 53.2493,
+                lng: 10.4070,
+                keywords: ['Lüneburg', 'Buchholz', 'Hanstedt', 'Jesteburg', 'Tostedt', 'Winsen']
+            },
+            'Buxtehude': {
+                lat: 53.4774,
+                lng: 9.6951,
+                keywords: ['Buxtehude', 'Apensen', 'Dollern', 'Harsefeld', 'Stade']
+            },
+            'Sylt': {
+                lat: 54.9079,
+                lng: 8.3147,
+                keywords: ['Wenningstedt', 'Sylt', 'Keitum']
+            },
+            'Timmendorfer Strand': {
+                lat: 54.0079,
+                lng: 10.7717,
+                keywords: ['Timmendorfer STrand']
+            },
+            'Geesthacht': {
+                lat: 53.4308,
+                lng: 10.3695,
+                keywords: ['Geesthacht']
+            },
+            'Kaltenkirchen': {
+                lat: 53.8386,
+                lng: 9.9717,
+                keywords: ['Kaltenkirchen', 'Henstedt-Ulzburg', 'Nahe']
+            }
+        };
+
+        // Geolocation initialisieren
+        function initGeolocation() {
+            if (navigator.geolocation) {
+                // Subtile Standort-Anfrage
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        sortFilialsByLocation();
+                        isLocationDetected = true;
+                        
+                        // Dezenter Hinweis
+                        showLocationHint('📍 Filialen nach Nähe sortiert');
+                    },
+                    function(error) {
+                        // Fehler stillschweigend ignorieren - kein störender Alert
+                        console.log('Standort nicht verfügbar:', error.message);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 5000,
+                        maximumAge: 300000 // 5 Minuten Cache
+                    }
+                );
+            }
+        }
+
+        // Distanz zwischen zwei Koordinaten berechnen (Haversine Formel)
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Erdradius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Nächste Region finden
+        function findNearestRegion() {
+            if (!userLocation) return null;
+            
+            let nearestRegion = null;
+            let minDistance = Infinity;
+            
+            for (const [region, data] of Object.entries(filialLocations)) {
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    data.lat, data.lng
+                );
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestRegion = region;
+                }
+            }
+            
+            return nearestRegion;
+        }
+
+        // Filialen nach Standort sortieren
+        function sortFilialsByLocation() {
+            const select = document.getElementById('branchName');
+            const options = Array.from(select.options).slice(1); // Erste Option ("Filiale auswählen") ausschließen
+            
+            const nearestRegion = findNearestRegion();
+            if (!nearestRegion) return;
+            
+            const regionKeywords = filialLocations[nearestRegion].keywords;
+            
+            // Sortiere Optionen: Nahe Filialen zuerst
+            options.sort((a, b) => {
+                const aIsNear = regionKeywords.some(keyword => 
+                    a.value.toLowerCase().includes(keyword.toLowerCase())
+                );
+                const bIsNear = regionKeywords.some(keyword => 
+                    b.value.toLowerCase().includes(keyword.toLowerCase())
+                );
+                
+                if (aIsNear && !bIsNear) return -1;
+                if (!aIsNear && bIsNear) return 1;
+                return 0; // Ursprüngliche Reihenfolge beibehalten
+            });
+            
+            // Dropdown neu aufbauen
+            select.innerHTML = '<option value="">📍 Filiale auswählen...</option>';
+            
+            // Gruppierung mit Trennlinie
+            let nearOptionsAdded = false;
+            options.forEach(option => {
+                const isNear = regionKeywords.some(keyword => 
+                    option.value.toLowerCase().includes(keyword.toLowerCase())
+                );
+                
+                if (isNear && !nearOptionsAdded) {
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = `──── 📍 Nahe ${nearestRegion} ────`;
+                    select.appendChild(separator);
+                    nearOptionsAdded = true;
+                } else if (!isNear && nearOptionsAdded) {
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = '──── 🏢 Weitere Filialen ────';
+                    select.appendChild(separator);
+                    nearOptionsAdded = false; // Reset für weitere Gruppierungen
+                }
+                
+                select.appendChild(option);
+            });
+        }
+
+        // Dezenter Standort-Hinweis
+        function showLocationHint(message) {
+            const label = document.querySelector('label[for="branchName"]');
+            const originalText = label.textContent;
+            
+            label.style.color = '#27ae60';
+            label.textContent = `🏪 ${message}`;
+            
+            setTimeout(() => {
+                label.style.color = '';
+                label.textContent = originalText;
+            }, 3000);
+        }
+
+        // Namen aus vorherigen Eingaben wiederverwenden
+        document.getElementById('visitorName').addEventListener('blur', function() {
+            savedVisitorName = this.value;
         });
 
-        function loadFormData() {
-            try {
-                const formDataElement = document.getElementById('formData');
-                const data = JSON.parse(formDataElement.textContent);
-                formData = data;
-                document.getElementById('formTitle').value = formData.title || 'Mein Formular';
-            } catch (e) {
-                console.log('No existing form data found, starting fresh');
-            }
-        }
-
-        function switchMode(mode) {
-            currentMode = mode;
+        // Verbessertes Touch-Feedback für alle Buttons
+        function addTouchFeedback() {
+            const buttons = document.querySelectorAll('button, .image-upload, .btn');
             
-            // Update button states
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Show/hide content
-            document.getElementById('designMode').classList.toggle('active', mode === 'design');
-            document.getElementById('answerMode').classList.toggle('active', mode === 'answer');
-            
-            if (mode === 'answer') {
-                renderAnswerMode();
-            }
-        }
-
-        function addQuestion() {
-            questionCounter++;
-            const question = {
-                id: questionCounter,
-                type: 'text',
-                text: '',
-                options: [],
-                required: false,
-                imageCapture: false,
-                images: []
-            };
-            
-            formData.questions.push(question);
-            renderDesignMode();
-        }
-
-        function removeQuestion(questionId) {
-            formData.questions = formData.questions.filter(q => q.id !== questionId);
-            renderDesignMode();
-        }
-
-        function updateQuestion(questionId, field, value) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question) {
-                question[field] = value;
-                if (field === 'type' && ['radio', 'checkbox', 'dropdown'].includes(value) && question.options.length === 0) {
-                    question.options = ['Option 1', 'Option 2'];
-                }
-                renderDesignMode();
-            }
-        }
-
-        function addOption(questionId) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question) {
-                question.options.push(`Option ${question.options.length + 1}`);
-                renderDesignMode();
-            }
-        }
-
-        function removeOption(questionId, optionIndex) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question && question.options.length > 1) {
-                question.options.splice(optionIndex, 1);
-                renderDesignMode();
-            }
-        }
-
-        function updateOption(questionId, optionIndex, value) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question) {
-                question.options[optionIndex] = value;
-            }
-        }
-
-        function renderDesignMode() {
-            const container = document.getElementById('questionsContainer');
-            container.innerHTML = '';
-
-            formData.questions.forEach(question => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question-item';
-                questionDiv.innerHTML = `
-                    <div class="question-header">
-                        <select class="question-type-select" onchange="updateQuestion(${question.id}, 'type', this.value)">
-                            <option value="text" ${question.type === 'text' ? 'selected' : ''}>Textfeld</option>
-                            <option value="textarea" ${question.type === 'textarea' ? 'selected' : ''}>Textbereich</option>
-                            <option value="radio" ${question.type === 'radio' ? 'selected' : ''}>Einzelauswahl</option>
-                            <option value="checkbox" ${question.type === 'checkbox' ? 'selected' : ''}>Mehrfachauswahl</option>
-                            <option value="dropdown" ${question.type === 'dropdown' ? 'selected' : ''}>Dropdown-Menü</option>
-                            <option value="rating" ${question.type === 'rating' ? 'selected' : ''}>⭐ Sterne-Bewertung (1-5)</option>
-                            <option value="number" ${question.type === 'number' ? 'selected' : ''}>Zahl</option>
-                            <option value="email" ${question.type === 'email' ? 'selected' : ''}>E-Mail</option>
-                            <option value="date" ${question.type === 'date' ? 'selected' : ''}>Datum</option>
-                        </select>
-                        <button class="delete-question-btn" onclick="removeQuestion(${question.id})">🗑️ Löschen</button>
-                    </div>
-                    <textarea class="question-text-input" placeholder="Frage eingeben..." 
-                              onchange="updateQuestion(${question.id}, 'text', this.value)">${question.text}</textarea>
-                    ${renderQuestionOptions(question)}
-                    ${renderImageCaptureOption(question)}
-                `;
-                container.appendChild(questionDiv);
+            buttons.forEach(button => {
+                // Entferne alte Event Listener um Duplikate zu vermeiden
+                button.removeEventListener('touchstart', handleTouchStart);
+                button.removeEventListener('touchend', handleTouchEnd);
+                button.removeEventListener('touchcancel', handleTouchCancel);
+                
+                button.addEventListener('touchstart', handleTouchStart, { passive: true });
+                button.addEventListener('touchend', handleTouchEnd, { passive: true });
+                button.addEventListener('touchcancel', handleTouchCancel, { passive: true });
             });
         }
 
-        function renderQuestionOptions(question) {
-            if (!['radio', 'checkbox', 'dropdown', 'rating'].includes(question.type)) {
-                return '';
-            }
-
-            let optionsHtml = '';
-
-            // Rating preview
-            if (question.type === 'rating') {
-                optionsHtml += `
-                    <div class="rating-preview">
-                        <h4>⭐ Sterne-Bewertung Vorschau</h4>
-                        <div class="star-rating">
-                            <span class="star">★</span>
-                            <span class="star">★</span>
-                            <span class="star">★</span>
-                            <span class="star active">★</span>
-                            <span class="star">☆</span>
-                        </div>
-                        <div class="rating-labels">
-                            <span>Sehr schlecht</span>
-                            <span>Schlecht</span>
-                            <span>Okay</span>
-                            <span>Gut</span>
-                            <span>Sehr gut</span>
-                        </div>
-                        <p style="margin-top: 10px; color: #666; font-size: 12px;">
-                            Nutzer können durch Klicken auf die Sterne eine Bewertung von 1-5 abgeben
-                        </p>
-                    </div>
-                `;
-                return optionsHtml;
-            }
-
-            optionsHtml += '<div class="options-container"><h4>Antwortoptionen:</h4>';
-            
-            // File upload section for dropdown
-            if (question.type === 'dropdown') {
-                optionsHtml += `
-                    <div class="file-upload-section">
-                        <p><strong>📁 Optionen aus Textdatei laden</strong></p>
-                        <p style="font-size: 12px; color: #666; margin: 5px 0;">Unterstützte Formate: .txt, .csv - Eine Option pro Zeile</p>
-                        <input type="file" class="file-input" id="fileInput_${question.id}" accept=".txt,.csv" onchange="loadOptionsFromFile(${question.id}, this)">
-                        <button type="button" class="file-upload-btn" onclick="document.getElementById('fileInput_${question.id}').click()">
-                            📂 Datei auswählen
-                        </button>
-                        <button type="button" class="file-upload-btn" onclick="clearOptions(${question.id})">
-                            🗑️ Optionen löschen
-                        </button>
-                        <div id="fileStatus_${question.id}" class="file-status" style="display: none;"></div>
-                    </div>
-                `;
-            }
-            
-            question.options.forEach((option, index) => {
-                optionsHtml += `
-                    <div class="option-item">
-                        <input type="text" class="option-input" value="${option}" 
-                               onchange="updateOption(${question.id}, ${index}, this.value)">
-                        <button class="remove-option-btn" onclick="removeOption(${question.id}, ${index})">−</button>
-                    </div>
-                `;
-            });
-            
-            optionsHtml += `
-                <button class="add-option-btn" onclick="addOption(${question.id})">+ Option hinzufügen</button>
-            `;
-
-            // Preview for dropdown
-            if (question.type === 'dropdown' && question.options.length > 0) {
-                optionsHtml += `
-                    <div class="dropdown-preview">
-                        <strong>Vorschau:</strong>
-                        <select disabled>
-                            <option>Bitte wählen...</option>
-                            ${question.options.map(option => `<option>${option}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-            }
-
-            optionsHtml += '</div>';
-            
-            return optionsHtml;
+        function handleTouchStart(e) {
+            this.style.transform = 'scale(0.95)';
+            this.style.transition = 'transform 0.1s ease';
         }
 
-        function renderImageCaptureOption(question) {
-            return `
-                <div class="image-capture-section">
-                    <div class="image-capture-toggle">
-                        <label>
-                            <input type="checkbox" ${question.imageCapture ? 'checked' : ''} 
-                                   onchange="updateQuestion(${question.id}, 'imageCapture', this.checked)">
-                            📸 Bilderfassung aktivieren (Kamera/Galerie)
-                        </label>
-                    </div>
-                    ${question.imageCapture ? `
-                        <p style="font-size: 12px; color: #666; margin: 5px 0;">
-                            Nutzer können zu dieser Frage Bilder hinzufügen
-                        </p>
-                    ` : ''}
-                </div>
-            `;
+        function handleTouchEnd(e) {
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 50);
         }
 
-        function renderAnswerMode() {
-            const container = document.getElementById('formDisplay');
-            
-            if (formData.questions.length === 0) {
-                container.innerHTML = `
-                    <div class="form-title">Noch kein Formular erstellt</div>
-                    <p style="text-align: center; color: #666;">Wechseln Sie zum Entwurfsmodus, um ein Formular zu erstellen.</p>
-                `;
-                document.getElementById('exportSection').style.display = 'none';
-                return;
-            }
-
-            let html = `<div class="form-title">${formData.title || 'Formular'}</div>`;
-            
-            formData.questions.forEach(question => {
-                html += `<div class="answer-question">
-                    <h3>${question.text}</h3>
-                    ${renderAnswerInput(question)}
-                </div>`;
-            });
-            
-            html += `
-                <div class="submit-section">
-                    <p style="color: #666; margin-bottom: 15px;">Überprüfen Sie Ihre Antworten und schließen Sie die Survey ab</p>
-                </div>
-            `;
-            
-            container.innerHTML = html;
-            document.getElementById('exportSection').style.display = 'block';
-            
-            // Add hover effects for rating stars
-            setTimeout(addRatingHoverEffects, 100);
+        function handleTouchCancel(e) {
+            this.style.transform = 'scale(1)';
         }
 
-        function renderAnswerInput(question) {
-            let inputHtml = '';
-            
-            switch (question.type) {
-                case 'text':
-                case 'email':
-                case 'number':
-                case 'date':
-                    inputHtml = `<input type="${question.type}" class="answer-input" id="answer_${question.id}">`;
-                    break;
-                
-                case 'textarea':
-                    inputHtml = `<textarea class="answer-input" id="answer_${question.id}" rows="4"></textarea>`;
-                    break;
-                
-                case 'dropdown':
-                    inputHtml = `<select class="answer-input" id="answer_${question.id}">
-                        <option value="">Bitte wählen...</option>`;
-                    question.options.forEach(option => {
-                        inputHtml += `<option value="${option}">${option}</option>`;
-                    });
-                    inputHtml += '</select>';
-                    break;
-                
-                case 'rating':
-                    inputHtml = `
-                        <div class="rating-container">
-                            <div class="star-rating" id="stars_${question.id}">
-                                <span class="star" data-rating="1" onclick="setRating(${question.id}, 1)">★</span>
-                                <span class="star" data-rating="2" onclick="setRating(${question.id}, 2)">★</span>
-                                <span class="star" data-rating="3" onclick="setRating(${question.id}, 3)">★</span>
-                                <span class="star" data-rating="4" onclick="setRating(${question.id}, 4)">★</span>
-                                <span class="star" data-rating="5" onclick="setRating(${question.id}, 5)">★</span>
-                            </div>
-                            <span class="rating-value" id="ratingValue_${question.id}">-</span>
-                            <input type="hidden" id="answer_${question.id}" value="">
-                        </div>
-                        <div class="rating-labels">
-                            <span>Sehr schlecht</span>
-                            <span>Schlecht</span>
-                            <span>Okay</span>
-                            <span>Gut</span>
-                            <span>Sehr gut</span>
-                        </div>
-                    `;
-                    break;
-                
-                case 'radio':
-                    inputHtml = '<div class="radio-group">';
-                    question.options.forEach((option, index) => {
-                        inputHtml += `
-                            <div class="radio-option">
-                                <input type="radio" name="answer_${question.id}" value="${option}" id="radio_${question.id}_${index}">
-                                <label for="radio_${question.id}_${index}">${option}</label>
-                            </div>
-                        `;
-                    });
-                    inputHtml += '</div>';
-                    break;
-                
-                case 'checkbox':
-                    inputHtml = '<div class="checkbox-group">';
-                    question.options.forEach((option, index) => {
-                        inputHtml += `
-                            <div class="checkbox-option">
-                                <input type="checkbox" value="${option}" id="checkbox_${question.id}_${index}" name="answer_${question.id}">
-                                <label for="checkbox_${question.id}_${index}">${option}</label>
-                            </div>
-                        `;
-                    });
-                    inputHtml += '</div>';
-                    break;
-                
-                default:
-                    inputHtml = `<input type="text" class="answer-input" id="answer_${question.id}">`;
-                    break;
-            }
-
-            // Add image capture if enabled
-            if (question.imageCapture) {
-                inputHtml += `
-                    <div class="image-capture-section">
-                        <h4>📸 Bilder hinzufügen</h4>
-                        <div class="image-upload-controls">
-                            <button type="button" class="image-btn" onclick="captureFromCamera(${question.id})">
-                                📷 Kamera
-                            </button>
-                            <button type="button" class="image-btn" onclick="selectFromGallery(${question.id})">
-                                🖼️ Galerie
-                            </button>
-                        </div>
-                        <input type="file" class="camera-input" id="camera_${question.id}" accept="image/*" capture="environment" onchange="handleImageCapture(${question.id}, this, 'camera')">
-                        <input type="file" class="file-image-input" id="gallery_${question.id}" accept="image/*" multiple onchange="handleImageCapture(${question.id}, this, 'gallery')">
-                        <div class="image-preview-container" id="imageContainer_${question.id}"></div>
-                        <div class="image-count" id="imageCount_${question.id}">0 Bilder hinzugefügt</div>
-                    </div>
-                `;
-            }
-
-            return inputHtml;
-        }
-
-        function submitForm() {
-            const response = {
-                timestamp: new Date().toISOString(),
-                answers: {}
-            };
-
-            formData.questions.forEach(question => {
-                let answer = '';
-                let images = [];
-                
-                switch (question.type) {
-                    case 'radio':
-                        const radioInput = document.querySelector(`input[name="answer_${question.id}"]:checked`);
-                        answer = radioInput ? radioInput.value : '';
-                        break;
-                    
-                    case 'checkbox':
-                        const checkboxInputs = document.querySelectorAll(`input[name="answer_${question.id}"]:checked`);
-                        answer = Array.from(checkboxInputs).map(input => input.value);
-                        break;
-                    
-                    case 'dropdown':
-                        const dropdownInput = document.getElementById(`answer_${question.id}`);
-                        answer = dropdownInput ? dropdownInput.value : '';
-                        break;
-                    case 'rating':
-                        const ratingInput = document.getElementById(`answer_${question.id}`);
-                        answer = ratingInput ? ratingInput.value : '';
-                        break;
-                    
-                    default:
-                        const input = document.getElementById(`answer_${question.id}`);
-                        answer = input ? input.value : '';
-                        break;
-                }
-
-                // Collect images if image capture is enabled
-                if (question.imageCapture && question.images) {
-                    images = [...question.images];
-                }
-                
-                response.answers[question.id] = {
-                    question: question.text,
-                    answer: answer,
-                    images: images
-                };
-            });
-
-            formData.responses.push(response);
-            
-            alert('✅ Antworten erfolgreich übermittelt! Sie können sie nun exportieren.');
-            
-            // Clear form and images
-            formData.questions.forEach(question => {
-                switch (question.type) {
-                    case 'radio':
-                        document.querySelectorAll(`input[name="answer_${question.id}"]`).forEach(input => input.checked = false);
-                        break;
-                    case 'checkbox':
-                        document.querySelectorAll(`input[name="answer_${question.id}"]`).forEach(input => input.checked = false);
-                        break;
-                    case 'dropdown':
-                        const dropdownInput = document.getElementById(`answer_${question.id}`);
-                        if (dropdownInput) dropdownInput.selectedIndex = 0;
-                        break;
-                    case 'rating':
-                        const ratingInput = document.getElementById(`answer_${question.id}`);
-                        if (ratingInput) ratingInput.value = '';
-                        const starsContainer = document.getElementById(`stars_${question.id}`);
-                        const ratingValue = document.getElementById(`ratingValue_${question.id}`);
-                        if (starsContainer) {
-                            const stars = starsContainer.querySelectorAll('.star');
-                            stars.forEach(star => {
-                                star.classList.remove('active');
-                                star.style.color = '#ddd';
-                            });
-                        }
-                        if (ratingValue) ratingValue.textContent = '-';
-                        break;
-                    default:
-                        const input = document.getElementById(`answer_${question.id}`);
-                        if (input) input.value = '';
-                        break;
-                }
-                
-                // Clear images
-                if (question.imageCapture) {
-                    question.images = [];
-                    const imageContainer = document.getElementById(`imageContainer_${question.id}`);
-                    if (imageContainer) imageContainer.innerHTML = '';
-                    const imageCount = document.getElementById(`imageCount_${question.id}`);
-                    if (imageCount) imageCount.textContent = '0 Bilder hinzugefügt';
-                }
-            });
-        }
-
-        function saveForm() {
-            formData.title = document.getElementById('formTitle').value;
-            
-            // Update the embedded JSON
-            const formDataElement = document.getElementById('formData');
-            formDataElement.textContent = JSON.stringify(formData, null, 2);
-            
-            alert('✅ Formular gespeichert! Committen Sie diese HTML-Datei in Ihr Git Repository, damit andere Teammitglieder auf das Formular zugreifen können.');
-        }
-
-        function exportAsJSON() {
-            const dataStr = JSON.stringify(formData.responses, null, 2);
-            downloadFile(dataStr, 'form-responses.json', 'application/json');
-        }
-
-        function exportAsCSV() {
-            if (formData.responses.length === 0) {
-                alert('Keine Antworten zum Exportieren vorhanden.');
-                return;
-            }
-
-            let csv = 'Zeitstempel';
-            
-            // Headers
-            const firstResponse = formData.responses[0];
-            Object.values(firstResponse.answers).forEach(answer => {
-                csv += ',"' + answer.question.replace(/"/g, '""') + '"';
-                csv += ',"' + answer.question.replace(/"/g, '""') + ' (Bilder)"';
-            });
-            csv += '\n';
-
-            // Data rows
-            formData.responses.forEach(response => {
-                csv += '"' + response.timestamp + '"';
-                Object.values(response.answers).forEach(answer => {
-                    const answerText = Array.isArray(answer.answer) ? answer.answer.join('; ') : answer.answer;
-                    csv += ',"' + String(answerText).replace(/"/g, '""') + '"';
-                    
-                    const imageCount = answer.images ? answer.images.length : 0;
-                    csv += ',"' + imageCount + ' Bild(er)"';
+        // Mobile-optimierte Scroll-Funktion
+        function scrollToElement(element) {
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
-                csv += '\n';
-            });
-
-            downloadFile(csv, 'form-responses.csv', 'text/csv');
-        }
-
-        function exportAsTXT() {
-            let txt = `Formular: ${formData.title}\n`;
-            txt += `Exportiert am: ${new Date().toLocaleString('de-DE')}\n`;
-            txt += `Anzahl Antworten: ${formData.responses.length}\n\n`;
-            txt += '='.repeat(60) + '\n\n';
-
-            formData.responses.forEach((response, index) => {
-                txt += `Antwort ${index + 1}\n`;
-                txt += `Zeitstempel: ${new Date(response.timestamp).toLocaleString('de-DE')}\n`;
-                txt += '-'.repeat(40) + '\n';
-                
-                Object.values(response.answers).forEach(answer => {
-                    txt += `${answer.question}\n`;
-                    const answerText = Array.isArray(answer.answer) ? answer.answer.join(', ') : answer.answer;
-                    txt += `Antwort: ${answerText}\n`;
-                    
-                    if (answer.images && answer.images.length > 0) {
-                        txt += `Bilder: ${answer.images.length} Bild(er) hinzugefügt\n`;
-                        answer.images.forEach((image, imgIndex) => {
-                            txt += `  - Bild ${imgIndex + 1}: ${image.name} (${new Date(image.timestamp).toLocaleString('de-DE')})\n`;
-                        });
-                    }
-                    txt += '\n';
-                });
-                
-                txt += '='.repeat(60) + '\n\n';
-            });
-
-            downloadFile(txt, 'form-responses.txt', 'text/plain');
-        }
-
-        function downloadFile(content, filename, contentType) {
-            const blob = new Blob([content], { type: contentType });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-
-        function loadOptionsFromFile(questionId, fileInput) {
-            const file = fileInput.files[0];
-            const statusDiv = document.getElementById(`fileStatus_${questionId}`);
-            
-            if (!file) {
-                return;
             }
+        }
 
-            // Validate file type
-            const validTypes = ['text/plain', 'text/csv', 'application/csv'];
-            const fileExtension = file.name.toLowerCase().split('.').pop();
+        function addEntry() {
+            entryCounter++;
+            const container = document.getElementById('entriesContainer');
             
-            if (!validTypes.includes(file.type) && !['txt', 'csv'].includes(fileExtension)) {
-                showFileStatus(statusDiv, 'Fehler: Nur .txt und .csv Dateien sind erlaubt.', 'error');
-                fileInput.value = '';
-                return;
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'entry-item';
+            entryDiv.setAttribute('data-entry', entryCounter);
+            
+            entryDiv.innerHTML = `
+                <div class="entry-header">
+                    <span class="entry-number">Punkt ${entryCounter}</span>
+                    <button class="delete-btn" onclick="deleteEntry(this)" aria-label="Punkt ${entryCounter} löschen">🗑️ Löschen</button>
+                </div>
+                
+                <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt ${entryCounter}"></textarea>
+                
+                <div class="image-upload" onclick="document.getElementById('imageInput-${entryCounter}').click()" role="button" tabindex="0" aria-label="Bilder für Punkt ${entryCounter} hinzufügen">
+                    <p>📷 Tippen Sie hier um Bilder hinzuzufügen</p>
+                    <small>Unterstützte Formate: JPG, PNG, GIF</small>
+                    <input type="file" id="imageInput-${entryCounter}" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, ${entryCounter})" aria-label="Bilddateien auswählen">
+                </div>
+                
+                <div class="image-preview" id="imagePreview-${entryCounter}" aria-live="polite"></div>
+            `;
+            
+            container.appendChild(entryDiv);
+            
+            // Mobile-optimierte Initialisierung
+            setupDragAndDrop(entryDiv.querySelector('.image-upload'), entryCounter);
+            addTouchFeedback();
+            updateDeleteButtons();
+            
+            // Sanft zum neuen Element scrollen
+            setTimeout(() => {
+                scrollToElement(entryDiv);
+            }, 100);
+        }
+
+        // Mobile-optimierte Initialisierung
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop(document.querySelector('.image-upload'), 1);
+            addTouchFeedback();
+            
+            // Standort-basierte Filialvorschläge initialisieren
+            setTimeout(() => {
+                initGeolocation();
+            }, 1000); // Kurze Verzögerung für bessere UX
+            
+            // Viewport-Meta für mobile Optimierung prüfen
+            if (!document.querySelector('meta[name="viewport"]')) {
+                const viewport = document.createElement('meta');
+                viewport.name = 'viewport';
+                viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+                document.head.appendChild(viewport);
             }
+            
+            // iOS Safari Scrolling-Verbesserung
+            if (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile')) {
+                document.body.style.webkitOverflowScrolling = 'touch';
+            }
+        });
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const content = e.target.result;
-                    const lines = content.split('\n')
-                        .map(line => line.trim())
-                        .filter(line => line.length > 0 && !line.startsWith('#'));
-                    
-                    if (lines.length === 0) {
-                        showFileStatus(statusDiv, 'Fehler: Die Datei enthält keine gültigen Optionen.', 'error');
-                        return;
-                    }
+        function deleteEntry(button) {
+            const entry = button.closest('.entry-item');
+            const entryNumber = entry.getAttribute('data-entry');
+            
+            // Bilder aus imageData entfernen
+            delete imageData[entryNumber];
+            
+            entry.remove();
+            updateDeleteButtons();
+            renumberEntries();
+        }
 
-                    const question = formData.questions.find(q => q.id === questionId);
-                    if (question) {
-                        question.options = lines;
-                        renderDesignMode();
-                        showFileStatus(statusDiv, `✅ ${lines.length} Optionen erfolgreich geladen aus "${file.name}"`, 'success');
-                    }
-                } catch (error) {
-                    showFileStatus(statusDiv, `Fehler beim Lesen der Datei: ${error.message}`, 'error');
+        function updateDeleteButtons() {
+            const entries = document.querySelectorAll('.entry-item');
+            entries.forEach((entry, index) => {
+                const deleteBtn = entry.querySelector('.delete-btn');
+                if (entries.length > 1) {
+                    deleteBtn.classList.remove('hidden');
+                } else {
+                    deleteBtn.classList.add('hidden');
                 }
-            };
-
-            reader.onerror = function() {
-                showFileStatus(statusDiv, 'Fehler beim Lesen der Datei.', 'error');
-            };
-
-            reader.readAsText(file, 'UTF-8');
+            });
         }
 
-        function showFileStatus(statusDiv, message, type) {
-            statusDiv.textContent = message;
-            statusDiv.className = `file-status ${type}`;
-            statusDiv.style.display = 'block';
-            
-            if (type === 'success') {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 3000);
-            }
+        function renumberEntries() {
+            const entries = document.querySelectorAll('.entry-item');
+            entries.forEach((entry, index) => {
+                const number = index + 1;
+                entry.setAttribute('data-entry', number);
+                entry.querySelector('.entry-number').textContent = `Punkt ${number}`;
+            });
         }
 
-        function clearOptions(questionId) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question) {
-                question.options = [];
-                renderDesignMode();
-                
-                const statusDiv = document.getElementById(`fileStatus_${questionId}`);
-                showFileStatus(statusDiv, '🗑️ Alle Optionen gelöscht.', 'success');
-            }
-        }
-
-        function captureFromCamera(questionId) {
-            const input = document.getElementById(`camera_${questionId}`);
-            input.click();
-        }
-
-        function selectFromGallery(questionId) {
-            const input = document.getElementById(`gallery_${questionId}`);
-            input.click();
-        }
-
-        function handleImageCapture(questionId, input, source) {
+        function handleImageUpload(input, entryNumber) {
             const files = input.files;
-            if (!files || files.length === 0) return;
-
-            const question = formData.questions.find(q => q.id === questionId);
-            if (!question) return;
-
-            if (!question.images) question.images = [];
-
+            const preview = document.getElementById(`imagePreview-${entryNumber}`);
+            
+            if (!imageData[entryNumber]) {
+                imageData[entryNumber] = [];
+            }
+            
             Array.from(files).forEach(file => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        imageCounter++;
-                        const imageData = {
-                            id: imageCounter,
-                            name: file.name,
-                            data: e.target.result,
-                            timestamp: new Date().toISOString(),
-                            source: source
+                        const imageInfo = {
+                            src: e.target.result,
+                            name: file.name
                         };
                         
-                        question.images.push(imageData);
-                        updateImagePreview(questionId);
+                        imageData[entryNumber].push(imageInfo);
+                        displayImage(entryNumber, imageInfo, imageData[entryNumber].length - 1);
                     };
                     reader.readAsDataURL(file);
                 }
             });
-
-            input.value = '';
         }
 
-        function updateImagePreview(questionId) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (!question || !question.images) return;
-
-            const container = document.getElementById(`imageContainer_${questionId}`);
-            const countElement = document.getElementById(`imageCount_${questionId}`);
+        function displayImage(entryNumber, imageInfo, index) {
+            const preview = document.getElementById(`imagePreview-${entryNumber}`);
             
-            if (!container || !countElement) return;
-
-            container.innerHTML = '';
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'image-item';
             
-            question.images.forEach((image, index) => {
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'image-preview';
-                previewDiv.innerHTML = `
-                    <img src="${image.data}" alt="Bild ${index + 1}">
-                    <button class="remove-image" onclick="removeImage(${questionId}, ${image.id})" title="Bild entfernen">×</button>
-                `;
-                container.appendChild(previewDiv);
-            });
-
-            countElement.textContent = `${question.images.length} Bild${question.images.length !== 1 ? 'er' : ''} hinzugefügt`;
-        }
-
-        function removeImage(questionId, imageId) {
-            const question = formData.questions.find(q => q.id === questionId);
-            if (question && question.images) {
-                question.images = question.images.filter(img => img.id !== imageId);
-                updateImagePreview(questionId);
-            }
-        }
-
-        function setRating(questionId, rating) {
-            const starsContainer = document.getElementById(`stars_${questionId}`);
-            const ratingValue = document.getElementById(`ratingValue_${questionId}`);
-            const hiddenInput = document.getElementById(`answer_${questionId}`);
-            
-            if (!starsContainer || !ratingValue || !hiddenInput) return;
-            
-            // Update hidden input value
-            hiddenInput.value = rating;
-            
-            // Update visual display
-            const ratingLabels = ['', 'Sehr schlecht', 'Schlecht', 'Okay', 'Gut', 'Sehr gut'];
-            ratingValue.textContent = `${rating}/5 - ${ratingLabels[rating]}`;
-            
-            // Update stars
-            const stars = starsContainer.querySelectorAll('.star');
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.add('active');
-                    star.style.color = '#ffd700';
-                } else {
-                    star.classList.remove('active');
-                    star.style.color = '#ddd';
-                }
-            });
-        }
-
-        // Add hover effects for rating stars
-        function addRatingHoverEffects() {
-            document.querySelectorAll('.star-rating').forEach(container => {
-                const stars = container.querySelectorAll('.star');
-                
-                stars.forEach((star, index) => {
-                    star.addEventListener('mouseenter', () => {
-                        stars.forEach((s, i) => {
-                            if (i <= index) {
-                                s.style.color = '#ffd700';
-                            } else {
-                                s.style.color = '#ddd';
-                            }
-                        });
-                    });
-                });
-                
-                container.addEventListener('mouseleave', () => {
-                    // Restore original state based on current selection
-                    const hiddenInput = container.parentElement.querySelector('input[type="hidden"]');
-                    const currentRating = hiddenInput ? parseInt(hiddenInput.value) : 0;
-                    
-                    stars.forEach((s, i) => {
-                        if (i < currentRating) {
-                            s.style.color = '#ffd700';
-                        } else {
-                            s.style.color = '#ddd';
-                        }
-                    });
-                });
-            });
-        }
-
-        function completeSurvey() {
-            // Validate that all questions are answered
-            let allAnswered = true;
-            let missingQuestions = [];
-
-            formData.questions.forEach(question => {
-                let hasAnswer = false;
-                
-                switch (question.type) {
-                    case 'radio':
-                        const radioInput = document.querySelector(`input[name="answer_${question.id}"]:checked`);
-                        hasAnswer = radioInput && radioInput.value;
-                        break;
-                    case 'checkbox':
-                        const checkboxInputs = document.querySelectorAll(`input[name="answer_${question.id}"]:checked`);
-                        hasAnswer = checkboxInputs.length > 0;
-                        break;
-                    case 'dropdown':
-                        const dropdownInput = document.getElementById(`answer_${question.id}`);
-                        hasAnswer = dropdownInput && dropdownInput.value;
-                        break;
-                    case 'rating':
-                        const ratingInput = document.getElementById(`answer_${question.id}`);
-                        hasAnswer = ratingInput && ratingInput.value;
-                        break;
-                    default:
-                        const input = document.getElementById(`answer_${question.id}`);
-                        hasAnswer = input && input.value.trim() !== '';
-                        break;
-                }
-
-                if (!hasAnswer) {
-                    allAnswered = false;
-                    missingQuestions.push(question.text || `Frage ${question.id}`);
-                }
-            });
-
-            if (!allAnswered) {
-                alert(`Bitte beantworten Sie alle Fragen:\n\n${missingQuestions.join('\n')}`);
-                return;
-            }
-
-            // Collect answers
-            const response = {
-                timestamp: new Date().toISOString(),
-                answers: {}
-            };
-
-            formData.questions.forEach(question => {
-                let answer = '';
-                let images = [];
-                
-                switch (question.type) {
-                    case 'radio':
-                        const radioInput = document.querySelector(`input[name="answer_${question.id}"]:checked`);
-                        answer = radioInput ? radioInput.value : '';
-                        break;
-                    case 'checkbox':
-                        const checkboxInputs = document.querySelectorAll(`input[name="answer_${question.id}"]:checked`);
-                        answer = Array.from(checkboxInputs).map(input => input.value);
-                        break;
-                    case 'dropdown':
-                        const dropdownInput = document.getElementById(`answer_${question.id}`);
-                        answer = dropdownInput ? dropdownInput.value : '';
-                        break;
-                    default:
-                        const input = document.getElementById(`answer_${question.id}`);
-                        answer = input ? input.value : '';
-                        break;
-                }
-
-                // Collect images if image capture is enabled
-                if (question.imageCapture && question.images) {
-                    images = [...question.images];
-                }
-                
-                response.answers[question.id] = {
-                    question: question.text,
-                    answer: answer,
-                    images: images
-                };
-            });
-
-            // Generate PDF immediately
-            generateSurveyPDF(response);
-
-            // Reset survey after successful PDF generation
-            resetSurvey();
-        }
-
-        function generateSurveyPDF(response) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            let yPosition = 30;
-            const pageHeight = doc.internal.pageSize.height;
-            const marginLeft = 25;
-            const marginRight = 25;
-            const pageWidth = doc.internal.pageSize.width - marginLeft - marginRight;
-            
-            // Helper function to check if we need a new page
-            const checkNewPage = (requiredSpace = 30) => {
-                if (yPosition > pageHeight - requiredSpace) {
-                    doc.addPage();
-                    yPosition = 30;
-                    return true;
-                }
-                return false;
-            };
-
-            // Helper function to add header line
-            const addHeaderLine = () => {
-                doc.setLineWidth(0.5);
-                doc.setDrawColor(70, 130, 180); // Steel Blue
-                doc.line(marginLeft, 20, pageWidth + marginLeft, 20);
-            };
-
-            // Main Header
-            addHeaderLine();
-            doc.setFontSize(28);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(40, 40, 40);
-            doc.text(formData.title || 'Survey Report', marginLeft, yPosition);
-            yPosition += 15;
-
-            // Subtitle line
-            doc.setLineWidth(2);
-            doc.setDrawColor(70, 130, 180);
-            doc.line(marginLeft, yPosition, pageWidth + marginLeft, yPosition);
-            yPosition += 20;
-
-            // Meta Information Box
-            doc.setFillColor(248, 249, 250); // Light gray background
-            doc.setDrawColor(220, 220, 220);
-            doc.roundedRect(marginLeft, yPosition, pageWidth, 25, 3, 3, 'FD');
-            
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(100, 100, 100);
-            doc.text('Abgeschlossen am:', marginLeft + 10, yPosition + 10);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(60, 60, 60);
-            doc.text(new Date(response.timestamp).toLocaleString('de-DE'), marginLeft + 10, yPosition + 18);
-            
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(100, 100, 100);
-            doc.text('Anzahl Fragen:', marginLeft + 110, yPosition + 10);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(60, 60, 60);
-            doc.text(Object.keys(response.answers).length.toString(), marginLeft + 110, yPosition + 18);
-            
-            yPosition += 40;
-
-            // Process each answer
-            Object.values(response.answers).forEach((answer, index) => {
-                checkNewPage(60);
-
-                // Question Container
-                doc.setFillColor(255, 255, 255);
-                doc.setDrawColor(230, 230, 230);
-                const questionBoxHeight = answer.images && answer.images.length > 0 ? 
-                    Math.max(80, 40 + (answer.images.length * 65)) : 50;
-                
-                doc.roundedRect(marginLeft, yPosition, pageWidth, questionBoxHeight, 2, 2, 'FD');
-                
-                // Question Number Circle
-                doc.setFillColor(70, 130, 180);
-                doc.circle(marginLeft + 15, yPosition + 15, 8, 'F');
-                doc.setFontSize(12);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(255, 255, 255);
-                const questionNumber = (index + 1).toString();
-                const numberWidth = doc.getTextWidth(questionNumber);
-                doc.text(questionNumber, marginLeft + 15 - (numberWidth / 2), yPosition + 19);
-
-                // Question Text
-                doc.setFontSize(13);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(40, 40, 40);
-                const questionLines = doc.splitTextToSize(answer.question, pageWidth - 50);
-                doc.text(questionLines, marginLeft + 30, yPosition + 15);
-                
-                let answerYPos = yPosition + 15 + (questionLines.length * 6);
-
-                // Answer Text
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(80, 80, 80);
-                
-                let answerText = '';
-                if (Array.isArray(answer.answer)) {
-                    answerText = answer.answer.length > 0 ? answer.answer.join(' • ') : 'Keine Auswahl';
-                } else if (answer.answer) {
-                    // Check if this is a rating question
-                    const questionObj = formData.questions.find(q => q.text === answer.question);
-                    if (questionObj && questionObj.type === 'rating') {
-                        const rating = parseInt(answer.answer);
-                        if (rating >= 1 && rating <= 5) {
-                            const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-                            answerText = `${stars} (${rating}/5)`;
-                        } else {
-                            answerText = answer.answer;
-                        }
-                    } else {
-                        answerText = answer.answer;
-                    }
-                } else {
-                    answerText = 'Keine Antwort';
-                }
-                
-                // Answer with subtle background
-                doc.setFillColor(250, 252, 255);
-                const answerLines = doc.splitTextToSize(answerText, pageWidth - 50);
-                const answerBoxHeight = Math.max(12, answerLines.length * 5 + 6);
-                doc.roundedRect(marginLeft + 30, answerYPos + 2, pageWidth - 50, answerBoxHeight, 1, 1, 'F');
-                
-                doc.setTextColor(60, 60, 60);
-                doc.text(answerLines, marginLeft + 35, answerYPos + 8);
-                answerYPos += answerBoxHeight + 8;
-
-                // Images Section
-                if (answer.images && answer.images.length > 0) {
-                    // Images header
-                    doc.setFontSize(10);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(70, 130, 180);
-                    doc.text(`📷 Anhänge (${answer.images.length})`, marginLeft + 30, answerYPos);
-                    answerYPos += 8;
-
-                    // Images in a grid layout
-                    let imageX = marginLeft + 30;
-                    let imageY = answerYPos;
-                    const imageSpacing = 5;
-                    const imagesPerRow = 3;
-                    
-                    answer.images.forEach((image, imageIndex) => {
-                        try {
-                            // Smaller, professional image size
-                            const maxWidth = 45;
-                            const maxHeight = 35;
-                            
-                            // Create image border
-                            doc.setDrawColor(200, 200, 200);
-                            doc.setLineWidth(0.5);
-                            doc.roundedRect(imageX - 1, imageY - 1, maxWidth + 2, maxHeight + 2, 1, 1, 'S');
-                            
-                            // Add image
-                            doc.addImage(image.data, 'JPEG', imageX, imageY, maxWidth, maxHeight);
-                            
-                            // Image number badge
-                            doc.setFillColor(70, 130, 180);
-                            doc.circle(imageX + maxWidth - 6, imageY + 6, 4, 'F');
-                            doc.setFontSize(7);
-                            doc.setFont('helvetica', 'bold');
-                            doc.setTextColor(255, 255, 255);
-                            const imgNum = (imageIndex + 1).toString();
-                            const imgNumWidth = doc.getTextWidth(imgNum);
-                            doc.text(imgNum, imageX + maxWidth - 6 - (imgNumWidth / 2), imageY + 8);
-                            
-                            // Image timestamp (very small)
-                            doc.setFontSize(6);
-                            doc.setFont('helvetica', 'normal');
-                            doc.setTextColor(120, 120, 120);
-                            const timestamp = new Date(image.timestamp).toLocaleTimeString('de-DE', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            });
-                            doc.text(timestamp, imageX, imageY + maxHeight + 4);
-                            
-                            // Calculate next image position
-                            imageX += maxWidth + imageSpacing;
-                            
-                            // Move to next row if needed
-                            if ((imageIndex + 1) % imagesPerRow === 0 && imageIndex < answer.images.length - 1) {
-                                imageX = marginLeft + 30;
-                                imageY += maxHeight + 12;
-                            }
-                            
-                        } catch (error) {
-                            console.error('Error adding image to PDF:', error);
-                            doc.setFontSize(8);
-                            doc.setFont('helvetica', 'italic');
-                            doc.setTextColor(200, 100, 100);
-                            doc.text(`[Bild ${imageIndex + 1} nicht verfügbar]`, imageX, imageY + 10);
-                            imageX += 50;
-                        }
-                    });
-                }
-
-                yPosition += questionBoxHeight + 15;
-            });
-
-            // Footer with generation info
-            const footerY = pageHeight - 15;
-            doc.setLineWidth(0.3);
-            doc.setDrawColor(200, 200, 200);
-            doc.line(marginLeft, footerY - 5, pageWidth + marginLeft, footerY - 5);
-            
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(140, 140, 140);
-            doc.text('Generiert mit Git Form Builder', marginLeft, footerY);
-            doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth + marginLeft - 20, footerY);
-
-            // Save PDF with professional naming
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
-            const cleanTitle = (formData.title || 'survey').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-            const fileName = `${cleanTitle}-report-${timestamp}.pdf`;
-            doc.save(fileName);
-
-            // Show enhanced success message
-            const successModal = `
-✅ Survey erfolgreich abgeschlossen!
-
-📄 PDF-Report generiert: ${fileName}
-
-📊 Zusammenfassung:
-• ${Object.keys(response.answers).length} Fragen beantwortet
-• ${Object.values(response.answers).reduce((total, answer) => 
-    total + (answer.images ? answer.images.length : 0), 0)} Bilder enthalten
-• Professioneller PDF-Report erstellt
-
-🔄 Die Survey wurde zurückgesetzt und ist bereit für die nächste Verwendung.
+            imageDiv.innerHTML = `
+                <img src="${imageInfo.src}" alt="${imageInfo.name}">
+                <button class="image-remove" onclick="removeImage(${entryNumber}, ${index})">×</button>
             `;
             
-            alert(successModal);
+            preview.appendChild(imageDiv);
         }
 
-        function resetSurvey() {
-            // Clear all form inputs
-            formData.questions.forEach(question => {
-                switch (question.type) {
-                    case 'radio':
-                        document.querySelectorAll(`input[name="answer_${question.id}"]`).forEach(input => input.checked = false);
-                        break;
-                    case 'checkbox':
-                        document.querySelectorAll(`input[name="answer_${question.id}"]`).forEach(input => input.checked = false);
-                        break;
-                    case 'dropdown':
-                        const dropdownInput = document.getElementById(`answer_${question.id}`);
-                        if (dropdownInput) dropdownInput.selectedIndex = 0;
-                        break;
-                    default:
-                        const input = document.getElementById(`answer_${question.id}`);
-                        if (input) input.value = '';
-                        break;
+        function removeImage(entryNumber, index) {
+            imageData[entryNumber].splice(index, 1);
+            refreshImagePreview(entryNumber);
+        }
+
+        function refreshImagePreview(entryNumber) {
+            const preview = document.getElementById(`imagePreview-${entryNumber}`);
+            preview.innerHTML = '';
+            
+            if (imageData[entryNumber]) {
+                imageData[entryNumber].forEach((imageInfo, index) => {
+                    displayImage(entryNumber, imageInfo, index);
+                });
+            }
+        }
+
+        function setupDragAndDrop(uploadDiv, entryNumber) {
+            uploadDiv.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadDiv.classList.add('drag-over');
+            });
+            
+            uploadDiv.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadDiv.classList.remove('drag-over');
+            });
+            
+            uploadDiv.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadDiv.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                const input = document.getElementById(`imageInput-${entryNumber}`);
+                input.files = files;
+                handleImageUpload(input, entryNumber);
+            });
+        }
+
+        // Drag & Drop für initial existierenden Upload-Bereich
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDragAndDrop(document.querySelector('.image-upload'), 1);
+        });
+
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            const loadingEl = document.getElementById('loading');
+            const successEl = document.getElementById('successMessage');
+            
+            loadingEl.style.display = 'block';
+            
+            // Mobile: Scroll zum Loading-Indikator
+            scrollToElement(loadingEl);
+            
+            try {
+                // Header
+                pdf.setFontSize(18);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Filialbesuch Dokumentation', 20, 25);
+                
+                // Besuchsinformationen
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'normal');
+                const visitDate = document.getElementById('visitDate').value;
+                const branchName = document.getElementById('branchName').value;
+                const visitorName = document.getElementById('visitorName').value;
+                const visitTime = document.getElementById('visitTime').value;
+                
+                let yPos = 40;
+                pdf.text(`Datum: ${visitDate}`, 20, yPos);
+                pdf.text(`Uhrzeit: ${visitTime}`, 110, yPos);
+                yPos += 8;
+                pdf.text(`Filiale: ${branchName}`, 20, yPos);
+                yPos += 8;
+                pdf.text(`Besucher: ${visitorName}`, 20, yPos);
+                
+                yPos += 15;
+                
+                // Einträge
+                const entries = document.querySelectorAll('.entry-item');
+                
+                for (let i = 0; i < entries.length; i++) {
+                    const entry = entries[i];
+                    const entryNumber = entry.getAttribute('data-entry');
+                    const text = entry.querySelector('.text-area').value;
+                    
+                    // Neue Seite wenn nötig
+                    if (yPos > 260) {
+                        pdf.addPage();
+                        yPos = 20;
+                    }
+                    
+                    // Punkt-Header
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(`Punkt ${i + 1}:`, 20, yPos);
+                    yPos += 8;
+                    
+                    // Text
+                    pdf.setFontSize(10);
+                    pdf.setFont(undefined, 'normal');
+                    if (text) {
+                        const splitText = pdf.splitTextToSize(text, 170);
+                        pdf.text(splitText, 20, yPos);
+                        yPos += splitText.length * 5;
+                    } else {
+                        pdf.text('(Keine Notizen)', 20, yPos);
+                        yPos += 5;
+                    }
+                    
+                    // Bilder
+                    if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
+                        yPos += 5;
+                        
+                        for (let j = 0; j < imageData[entryNumber].length; j++) {
+                            const image = imageData[entryNumber][j];
+                            
+                            // Neue Seite wenn nötig
+                            if (yPos > 240) {
+                                pdf.addPage();
+                                yPos = 20;
+                            }
+                            
+                            try {
+                                // Mobile-optimierte Bildgröße
+                                const imgWidth = 45;
+                                const imgHeight = 35;
+                                pdf.addImage(image.src, 'JPEG', 20, yPos, imgWidth, imgHeight);
+                                
+                                // Bildname daneben
+                                pdf.setFontSize(8);
+                                pdf.text(image.name, 70, yPos + 8);
+                                pdf.setFontSize(10);
+                                
+                                yPos += imgHeight + 5;
+                            } catch (error) {
+                                console.log('Fehler beim Hinzufügen des Bildes:', error);
+                                pdf.setFontSize(8);
+                                pdf.text(`[Bild: ${image.name} - Fehler beim Laden]`, 20, yPos);
+                                yPos += 8;
+                                pdf.setFontSize(10);
+                            }
+                        }
+                    }
+                    
+                    yPos += 10;
                 }
                 
-                // Clear images
-                if (question.imageCapture) {
-                    question.images = [];
-                    const imageContainer = document.getElementById(`imageContainer_${question.id}`);
-                    if (imageContainer) imageContainer.innerHTML = '';
-                    const imageCount = document.getElementById(`imageCount_${question.id}`);
-                    if (imageCount) imageCount.textContent = '0 Bilder hinzugefügt';
+                // PDF herunterladen - mobile-freundlicher Dateiname
+                const date = visitDate || new Date().toISOString().split('T')[0];
+                const safeBranchName = (branchName || 'Unbekannt').substring(0, 30).replace(/[^\w\s-]/g, '');
+                const fileName = `Filialbesuch_${safeBranchName}_${date}.pdf`;
+                
+                pdf.save(fileName);
+                
+                // Erfolgsmeldung mit verbesserter mobiler UX
+                successEl.style.display = 'block';
+                scrollToElement(successEl);
+                
+                // Haptic Feedback für iOS
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate([100, 50, 100]);
                 }
-            });
+                
+                setTimeout(() => {
+                    successEl.style.display = 'none';
+                }, 4000);
+                
+            } catch (error) {
+                alert('Fehler beim Erstellen des PDFs: ' + error.message);
+                console.error('PDF Error:', error);
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
 
-            // Clear responses array (but keep form definition)
-            formData.responses = [];
+        function resetForm() {
+            // Mobile-optimierte Bestätigung
+            const confirmMessage = 'Möchten Sie wirklich alle Eingaben zurücksetzen?\n\nDies kann nicht rückgängig gemacht werden.';
+            
+            if (confirm(confirmMessage)) {
+                // Loading-Indikator für mobile UX
+                const loadingEl = document.getElementById('loading');
+                loadingEl.innerHTML = '🔄 Formular wird zurückgesetzt...';
+                loadingEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    // Alle Einträge außer dem ersten entfernen
+                    const entries = document.querySelectorAll('.entry-item');
+                    for (let i = entries.length - 1; i > 0; i--) {
+                        entries[i].remove();
+                    }
+                    
+                    // Ersten Eintrag zurücksetzen
+                    const firstEntry = document.querySelector('.entry-item');
+                    const textarea = firstEntry.querySelector('.text-area');
+                    const imagePreview = firstEntry.querySelector('.image-preview');
+                    
+                    textarea.value = '';
+                    imagePreview.innerHTML = '';
+                    
+                    // Besuchsinformationen zurücksetzen
+                    document.getElementById('branchName').selectedIndex = 0;
+                    // Namen aus Session wiederverwenden, falls vorhanden
+                    document.getElementById('visitorName').value = savedVisitorName;
+                    
+                    // Datum und Zeit auf heute/jetzt setzen
+                    document.getElementById('visitDate').valueAsDate = new Date();
+                    const now = new Date();
+                    document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
+                    
+                    // Image Data zurücksetzen
+                    imageData = {};
+                    entryCounter = 1;
+                    
+                    // Delete-Buttons aktualisieren
+                    updateDeleteButtons();
+                    
+                    // Touch-Feedback neu initialisieren
+                    addTouchFeedback();
+                    
+                    // Zum Anfang scrollen
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Loading ausblenden
+                    loadingEl.style.display = 'none';
+                    loadingEl.innerHTML = '📄 PDF wird erstellt...';
+                    
+                    // Haptic Feedback für iOS
+                    if (window.navigator && window.navigator.vibrate) {
+                        window.navigator.vibrate(100);
+                    }
+                    
+                    // Erfolg anzeigen
+                    const successEl = document.getElementById('successMessage');
+                    successEl.innerHTML = '✅ Formular erfolgreich zurückgesetzt!';
+                    successEl.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        successEl.style.display = 'none';
+                        successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
+                    }, 2000);
+                    
+                }, 100); // Kurze Verzögerung für bessere UX
+            }
         }
     </script>
 </body>
