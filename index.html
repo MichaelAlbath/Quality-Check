@@ -2126,7 +2126,8 @@
                         pdf.text('Angehängte Fotos:', margin + 5, yPosition);
                         yPosition += lineHeight + 5;
 
-                        for (const photo of photos[`q${question.id}`]) {
+                        for (let photoIndex = 0; photoIndex < photos[`q${question.id}`].length; photoIndex++) {
+                            const photo = photos[`q${question.id}`][photoIndex];
                             try {
                                 const processedImage = await processImageForPDF(photo.data);
                                 if (processedImage) {
@@ -2205,7 +2206,8 @@
                                 pdf.text('Angehängte Fotos:', margin + 5, yPosition);
                                 yPosition += lineHeight + 5;
 
-                                for (const photo of photos[fieldKey]) {
+                                for (let photoIndex = 0; photoIndex < photos[fieldKey].length; photoIndex++) {
+                                    const photo = photos[fieldKey][photoIndex];
                                     try {
                                         const processedImage = await processImageForPDF(photo.data);
                                         if (processedImage) {
