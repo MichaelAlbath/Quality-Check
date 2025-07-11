@@ -593,6 +593,12 @@
                 font-size: 14px;
             }
             
+            .delete-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
             .image-preview {
                 grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
                 gap: 8px;
@@ -974,7 +980,7 @@
                                 <input type="file" id="imageInput-1" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, 1)" aria-label="Bilddateien auswählen">
                             </div>
                         </div>
-                        <button class="delete-btn hidden" onclick="deleteEntry(this)" aria-label="Punkt 1 löschen">🗑️ Löschen</button>
+                        <button class="delete-btn hidden" onclick="deleteEntry(this)" aria-label="Punkt 1 löschen" title="Punkt löschen">🗑️</button>
                     </div>
                     
                     <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt 1"></textarea>
@@ -1193,33 +1199,44 @@
             });
         }
 
-        // Professionelle Bildzeile ohne Dateinamen
-        async function renderProfessionalImageRow(pdf, images, yPos, spacing) {
-            let currentX = 20;
+        // Audit-Stil Bildzeile
+        async function renderAuditImageRow(pdf, images, yPos, spacing) {
+            let currentX = 25;
             
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
                 
                 try {
-                    // Subtiler Rahmen um jedes Bild
-                    pdf.setDrawColor(225, 232, 237);
-                    pdf.setLineWidth(0.3);
+                    // Audit-Stil: Schwarzer Rahmen um Bilder
+                    pdf.setDrawColor(31, 41, 55);
+                    pdf.setLineWidth(1);
                     pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
                     
                     // Bild einfügen
                     pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
                     
+                    // Bildnummer unten rechts
+                    pdf.setFillColor(31, 41, 55);
+                    pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(7);
+                    pdf.text(String(i + 1), currentX + image.width - 6, yPos + image.height - 3, { align: 'center' });
+                    
                 } catch (error) {
                     console.log('Fehler beim Rendern des Bildes:', error);
-                    // Eleganter Fehler-Platzhalter
+                    // Audit-Stil Fehler-Box
                     pdf.setFillColor(248, 249, 250);
                     pdf.rect(currentX, yPos, image.width, image.height, 'F');
-                    pdf.setDrawColor(220, 220, 220);
+                    pdf.setDrawColor(220, 53, 69);
+                    pdf.setLineWidth(1);
                     pdf.rect(currentX, yPos, image.width, image.height, 'S');
                     
-                    pdf.setTextColor(128, 128, 128);
+                    pdf.setTextColor(220, 53, 69);
+                    pdf.setFont('helvetica', 'bold');
                     pdf.setFontSize(8);
-                    pdf.text('Bild nicht verfügbar', currentX + image.width/2, yPos + image.height/2, { align: 'center' });
+                    pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
+                    pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
                     pdf.setTextColor(0, 0, 0);
                 }
                 
@@ -1396,7 +1413,7 @@
                             <input type="file" id="imageInput-${entryCounter}" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, ${entryCounter})" aria-label="Bilddateien auswählen">
                         </div>
                     </div>
-                    <button class="delete-btn" onclick="deleteEntry(this)" aria-label="Punkt ${entryCounter} löschen">🗑️ Löschen</button>
+                    <button class="delete-btn" onclick="deleteEntry(this)" aria-label="Punkt ${entryCounter} löschen" title="Punkt löschen">🗑️</button>
                 </div>
                 
                 <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt ${entryCounter}"></textarea>
