@@ -1674,24 +1674,120 @@
                 const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
                 const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
                 
-                // PDF als echte Datei herunterladen - verschiedene Methoden für maximale Kompatibilität
-                try {
-                    // Primäre Methode - direkter Download
-                    pdf.save(fileName);
-                } catch (downloadError) {
-                    console.log('Direkter Download fehlgeschlagen, verwende alternative Methode:', downloadError);
+                // Safari iOS optimierter PDF-Download
+                const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
+                
+                // iOS Safari erkennen
+                const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+                                   /Safari/.test(navigator.userAgent) && 
+                                   !/CriOS|FxiOS|OPiOS|mercury/.test(navigator.userAgent);
+                
+                if (isIOSSafari) {
+                    // Für iOS Safari: PDF in neuem Tab öffnen
+                    const pdfData = pdf.output('datauristring');
+                    const newWindow = window.open('', '_blank');
+                    if (newWindow) {
+                        newWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>${fileName}</title>
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <style>
+                                    body {
+                                        margin: 0;
+                                        padding: 20px;
+                                        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                                        background: #f5f5f5;
+                                    }
+                                    .header {
+                                        background: white;
+                                        padding: 15px;
+                                        border-radius: 10px;
+                                        margin-bottom: 15px;
+                                        text-align: center;
+                                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                    }
+                                    .download-btn {
+                                        background: linear-gradient(45deg, #667eea, #764ba2);
+                                        color: white;
+                                        padding: 12px 24px;
+                                        border: none;
+                                        border-radius: 8px;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        cursor: pointer;
+                                        margin: 10px;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                    }
+                                    .pdf-container {
+                                        background: white;
+                                        border-radius: 10px;
+                                        overflow: hidden;
+                                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                    }
+                                    embed {
+                                        width: 100%;
+                                        height: 80vh;
+                                        border: none;
+                                    }
+                                    .instructions {
+                                        background: #e8f4fd;
+                                        color: #1976d2;
+                                        padding: 10px 15px;
+                                        border-radius: 8px;
+                                        margin: 10px 0;
+                                        font-size: 14px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="header">
+                                    <h1>📄 ${fileName}</h1>
+                                    <div class="instructions">
+                                        💡 Tippen Sie auf "Teilen" und dann "In Dateien sichern" um das PDF zu speichern
+                                    </div>
+                                    <a href="${pdfData}" download="${fileName}" class="download-btn">
+                                        📥 PDF herunterladen
+                                    </a>
+                                </div>
+                                <div class="pdf-container">
+                                    <embed src="${pdfData}" type="application/pdf">
+                                </div>
+                            </body>
+                            </html>
+                        `);
+                        newWindow.document.close();
+                        
+                        // Erfolg-Meldung anzeigen
+                        successEl.innerHTML = '✅ PDF wurde in neuem Tab geöffnet!<br><small>💡 Verwenden Sie "Teilen → In Dateien sichern" zum Speichern</small>';
+                    } else {
+                        // Fallback wenn Pop-up blockiert wird
+                        alert('Pop-ups sind blockiert. Bitte erlauben Sie Pop-ups für diese Seite und versuchen Sie es erneut.');
+                    }
+                } else {
+                    // Für alle anderen Browser: normaler Download
+                    try {
+                        pdf.save(fileName);
+                    } catch (downloadError) {
+                        console.log('Direkter Download fehlgeschlagen, verwende alternative Methode:', downloadError);
+                        
+                        // Alternative Methode - Blob erstellen und manuell herunterladen
+                        const pdfBlob = pdf.output('blob');
+                        const url = window.URL.createObjectURL(pdfBlob);
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = url;
+                        downloadLink.download = fileName;
+                        downloadLink.style.display = 'none';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                        window.URL.revokeObjectURL(url);
+                    }
                     
-                    // Alternative Methode - Blob erstellen und manuell herunterladen
-                    const pdfBlob = pdf.output('blob');
-                    const url = window.URL.createObjectURL(pdfBlob);
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = url;
-                    downloadLink.download = fileName;
-                    downloadLink.style.display = 'none';
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                    window.URL.revokeObjectURL(url);
+                    // Standard Erfolgs-Meldung
+                    successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
                 }
                 
                 successEl.style.display = 'block';
