@@ -1028,6 +1028,9 @@
         </div>
     </div>
 
+    <!-- Versionsnummer -->
+    <div class="app-version" id="appVersion" title="App-Version mit Zeitstempel"></div>
+
     <script>
         let entryCounter = 1;
         let imageData = {};
@@ -1035,11 +1038,14 @@
         let userLocation = null;
         let isLocationDetected = false;
 
+        // Versionsnummer - automatisch basierend auf aktuellem Datum und Uhrzeit
+        const now = new Date();
+        const APP_VERSION = `v${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}-${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
         // Datum auf heute setzen
         document.getElementById('visitDate').valueAsDate = new Date();
         
         // Aktuelle Zeit setzen
-        const now = new Date();
         document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
         // Standort-basierte Filialvorschläge
@@ -1616,6 +1622,9 @@
             setupDragAndDrop(document.querySelector('.image-upload'), 1);
             addTouchFeedback();
             setupCompetitorBranchLogic();
+            
+            // Versionsnummer anzeigen
+            document.getElementById('appVersion').textContent = APP_VERSION;
             
             // Standort-basierte Filialvorschläge initialisieren
             setTimeout(() => {
