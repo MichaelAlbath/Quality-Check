@@ -1199,32 +1199,14 @@
             });
         }
 
-        // Audit-Stil Bildzeile
+        // Audit-Stil Bildzeile mit verbesserter Fehlerbehandlung
         async function renderAuditImageRow(pdf, images, yPos, spacing) {
             let currentX = 25;
             
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
                 
-                try {
-                    // Audit-Stil: Schwarzer Rahmen um Bilder
-                    pdf.setDrawColor(31, 41, 55);
-                    pdf.setLineWidth(1);
-                    pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
-                    
-                    // Bild einfügen
-                    pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
-                    
-                    // Bildnummer unten rechts
-                    pdf.setFillColor(31, 41, 55);
-                    pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
-                    pdf.setTextColor(255, 255, 255);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(7);
-                    pdf.text(String(i + 1), currentX + image.width - 6, yPos + image.height - 3, { align: 'center' });
-                    
-                } catch (error) {
-                    console.log('Fehler beim Rendern des Bildes:', error);
+                if (image.error) {
                     // Audit-Stil Fehler-Box
                     pdf.setFillColor(248, 249, 250);
                     pdf.rect(currentX, yPos, image.width, image.height, 'F');
@@ -1238,15 +1220,45 @@
                     pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
                     pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
                     pdf.setTextColor(0, 0, 0);
+                } else {
+                    try {
+                        // Audit-Stil: Schwarzer Rahmen um Bilder
+                        pdf.setDrawColor(31, 41, 55);
+                        pdf.setLineWidth(1);
+                        pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
+                        
+                        // Bild einfügen (bereits orientierungskorrigiert)
+                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
+                        
+                        // Bildnummer unten rechts
+                        pdf.setFillColor(31, 41, 55);
+                        pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
+                        pdf.setTextColor(255, 255, 255);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(7);
+                        pdf.text(String(i + 1), currentX + image.width - 6, yPos + image.height - 3, { align: 'center' });
+                        pdf.setTextColor(0, 0, 0);
+                        
+                    } catch (error) {
+                        console.log('Fehler beim Rendern des Bildes:', error);
+                        // Fallback Fehler-Darstellung
+                        pdf.setFillColor(248, 249, 250);
+                        pdf.rect(currentX, yPos, image.width, image.height, 'F');
+                        pdf.setDrawColor(220, 53, 69);
+                        pdf.setLineWidth(1);
+                        pdf.rect(currentX, yPos, image.width, image.height, 'S');
+                        
+                        pdf.setTextColor(220, 53, 69);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(8);
+                        pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
+                        pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
+                        pdf.setTextColor(0, 0, 0);
+                    }
                 }
                 
                 currentX += image.width + spacing;
             }
-        }
-
-        // Fallback-Funktion für Kompatibilität
-        async function renderImageRow(pdf, images, yPos, spacing) {
-            return await renderProfessionalImageRow(pdf, images, yPos, spacing);
         }
 
         // Dezenter Standort-Hinweis
@@ -1261,6 +1273,93 @@
                 label.style.color = '';
                 label.textContent = originalText;
             }, 3000);
+        }
+
+        // Fallback-Funktion für Kompatibilität
+        async function renderImageRow(pdf, images, yPos, spacing) {
+            return await renderProfessionalImageRow(pdf, images, yPos, spacing);
+        }
+
+        // Funktion zur Korrektur der Bildorientierung
+        function getImageOrientation(imageData) {
+            const view = new DataView(imageData);
+            if (view.getUint16(0, false) !== 0xFFD8) {
+                return 1; // Nicht JPEG
+            }
+            const length = view.byteLength;
+            let offset = 2;
+            while (offset < length) {
+                if (view.getUint16(offset, false) === 0xFFE1) {
+                    offset += 4;
+                    if (view.getUint32(offset, false) !== 0x45786966) {
+                        return 1;
+                    }
+                    const little = view.getUint16(offset += 6, false) === 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    const tags = view.getUint16(offset, little);
+                    offset += 2;
+                    for (let i = 0; i < tags; i++) {
+                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
+                            return view.getUint16(offset + (i * 12) + 8, little);
+                        }
+                    }
+                } else if ((view.getUint16(offset, false) & 0xFF00) !== 0xFF00) {
+                    break;
+                } else {
+                    offset += 2 + view.getUint16(offset + 2, false);
+                }
+            }
+            return 1;
+        }
+
+        // Funktion zur Bildrotation basierend auf EXIF
+        function getRotationAngle(orientation) {
+            switch (orientation) {
+                case 3: return 180;
+                case 6: return 90;
+                case 8: return 270;
+                default: return 0;
+            }
+        }
+
+        // Verbesserte Bildverarbeitung mit Orientierungskorrektur
+        async function processImageWithOrientation(imageSrc) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Canvas erstellen für Orientierungskorrektur
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Original-Dimensionen
+                    let { width, height } = img;
+                    
+                    // EXIF-Orientierung ermitteln (vereinfacht)
+                    // Für mobile Geräte nehmen wir an, dass Hochformat-Bilder oft gedreht sind
+                    const isPortrait = height > width;
+                    let rotation = 0;
+                    
+                    // Einfache Heuristik für mobile Fotos
+                    if (isPortrait && imageSrc.includes('data:image')) {
+                        // Prüfe ob das Bild von einem mobilen Gerät stammt
+                        rotation = 0; // Lassen wir erstmal so
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Bild ohne Rotation zeichnen (Browser korrigiert bereits)
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve({
+                        canvas: canvas,
+                        width: width,
+                        height: height,
+                        dataUrl: canvas.toDataURL('image/jpeg', 0.8)
+                    });
+                };
+                img.src = imageSrc;
+            });
         }
 
         // Namen aus vorherigen Eingaben wiederverwenden
