@@ -1193,6 +1193,41 @@
             });
         }
 
+        // Funktion zum Rendern einer Bildzeile
+        async function renderImageRow(pdf, images, yPos, spacing) {
+            let currentX = 20;
+            
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                
+                if (image.error) {
+                    // Fehlermeldung anzeigen
+                    pdf.setFontSize(8);
+                    pdf.text(`[Fehler: ${image.name}]`, currentX, yPos + 5);
+                    pdf.setFontSize(10);
+                } else {
+                    try {
+                        // Bild hinzufügen
+                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
+                        
+                        // Bildname unter dem Bild
+                        pdf.setFontSize(7);
+                        const textWidth = pdf.getTextWidth(image.name);
+                        const textX = currentX + (image.width - textWidth) / 2; // Zentriert unter dem Bild
+                        pdf.text(image.name, textX, yPos + image.height + 8);
+                        pdf.setFontSize(10);
+                    } catch (error) {
+                        console.log('Fehler beim Rendern des Bildes:', error);
+                        pdf.setFontSize(8);
+                        pdf.text(`[Fehler: ${image.name}]`, currentX, yPos + 5);
+                        pdf.setFontSize(10);
+                    }
+                }
+                
+                currentX += image.width + spacing;
+            }
+        }
+
         // Dezenter Standort-Hinweis
         function showLocationHint(message) {
             const label = document.querySelector('label[for="branchName"]');
@@ -1602,12 +1637,19 @@
                         yPos += 5;
                     }
                     
-                    // Bilder mit korrektem Seitenverhältnis
+                    // Bilder mit korrektem Seitenverhältnis nebeneinander anordnen
                     if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
                         yPos += 5;
                         
-                        for (let j = 0; j < imageData[entryNumber].length; j++) {
-                            const image = imageData[entryNumber][j];
+                        const images = imageData[entryNumber];
+                        const maxRowWidth = 170; // Verfügbare Breite für Bilder
+                        const imageSpacing = 5; // Abstand zwischen Bildern
+                        
+                        let currentRowImages = [];
+                        let currentRowWidth = 0;
+                        
+                        for (let j = 0; j < images.length; j++) {
+                            const image = images[j];
                             
                             try {
                                 // Temporäres Image-Element erstellen um Dimensionen zu ermitteln
@@ -1628,63 +1670,85 @@
                                 const originalWidth = tempImg.naturalWidth || tempImg.width;
                                 const originalHeight = tempImg.naturalHeight || tempImg.height;
                                 
-                                // Maximale Größe im PDF
-                                const maxWidth = 80;
-                                const maxHeight = 60;
+                                // Maximale Größe pro Bild
+                                const maxImgWidth = 60;
+                                const maxImgHeight = 45;
                                 
                                 // Seitenverhältnis beibehalten
-                                let imgWidth = maxWidth;
-                                let imgHeight = maxHeight;
+                                let imgWidth = maxImgWidth;
+                                let imgHeight = maxImgHeight;
                                 
                                 if (originalWidth && originalHeight) {
                                     const aspectRatio = originalWidth / originalHeight;
                                     
                                     if (aspectRatio > 1) {
-                                        // Querformat - Breite begrenzen
-                                        imgWidth = maxWidth;
-                                        imgHeight = maxWidth / aspectRatio;
+                                        // Querformat
+                                        imgWidth = maxImgWidth;
+                                        imgHeight = maxImgWidth / aspectRatio;
                                         
-                                        if (imgHeight > maxHeight) {
-                                            imgHeight = maxHeight;
-                                            imgWidth = maxHeight * aspectRatio;
+                                        if (imgHeight > maxImgHeight) {
+                                            imgHeight = maxImgHeight;
+                                            imgWidth = maxImgHeight * aspectRatio;
                                         }
                                     } else {
-                                        // Hochformat - Höhe begrenzen
-                                        imgHeight = maxHeight;
-                                        imgWidth = maxHeight * aspectRatio;
+                                        // Hochformat
+                                        imgHeight = maxImgHeight;
+                                        imgWidth = maxImgHeight * aspectRatio;
                                         
-                                        if (imgWidth > maxWidth) {
-                                            imgWidth = maxWidth;
-                                            imgHeight = maxWidth / aspectRatio;
+                                        if (imgWidth > maxImgWidth) {
+                                            imgWidth = maxImgWidth;
+                                            imgHeight = maxImgWidth / aspectRatio;
                                         }
                                     }
                                 }
                                 
-                                // Neue Seite wenn nötig
-                                if (yPos + imgHeight > 260) {
-                                    pdf.addPage();
-                                    yPos = 20;
+                                // Prüfen ob Bild in aktuelle Zeile passt
+                                const neededWidth = currentRowWidth + (currentRowImages.length > 0 ? imageSpacing : 0) + imgWidth;
+                                
+                                if (neededWidth > maxRowWidth && currentRowImages.length > 0) {
+                                    // Aktuelle Zeile rendern
+                                    await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
+                                    yPos += Math.max(...currentRowImages.map(img => img.height)) + 15; // +15 für Bildnamen
+                                    
+                                    // Neue Zeile beginnen
+                                    currentRowImages = [];
+                                    currentRowWidth = 0;
+                                    
+                                    // Neue Seite wenn nötig
+                                    if (yPos + imgHeight > 260) {
+                                        pdf.addPage();
+                                        yPos = 20;
+                                    }
                                 }
                                 
-                                // Bild mit korrektem Seitenverhältnis hinzufügen
-                                pdf.addImage(image.src, 'JPEG', 20, yPos, imgWidth, imgHeight);
-                                
-                                // Bildname daneben
-                                pdf.setFontSize(8);
-                                pdf.text(image.name, 25 + imgWidth, yPos + 8);
-                                pdf.setFontSize(10);
-                                
-                                yPos += imgHeight + 8;
+                                // Bild zur aktuellen Zeile hinzufügen
+                                currentRowImages.push({
+                                    src: image.src,
+                                    name: image.name,
+                                    width: imgWidth,
+                                    height: imgHeight
+                                });
+                                currentRowWidth += imgWidth + (currentRowImages.length > 1 ? imageSpacing : 0);
                                 
                             } catch (error) {
-                                console.log('Fehler beim Hinzufügen des Bildes:', error);
-                                pdf.setFontSize(8);
-                                pdf.text(`[Bild: ${image.name} - Fehler beim Laden]`, 20, yPos);
-                                yPos += 8;
-                                pdf.setFontSize(10);
+                                console.log('Fehler beim Verarbeiten des Bildes:', error);
+                                // Fehlermeldung als "Bild" hinzufügen
+                                currentRowImages.push({
+                                    error: true,
+                                    name: image.name,
+                                    width: 50,
+                                    height: 10
+                                });
                             }
                         }
+                        
+                        // Letzte Zeile rendern
+                        if (currentRowImages.length > 0) {
+                            await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
+                            yPos += Math.max(...currentRowImages.map(img => img.height)) + 15; // +15 für Bildnamen
+                        }
                     }
+                    
                     
                     yPos += 10;
                 }
