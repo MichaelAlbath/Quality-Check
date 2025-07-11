@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+        .photo-upload-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .photo-upload-section > div:first-child {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -534,24 +545,41 @@
 
         /* Photo Upload Styles */
         .photo-upload-btn {
-            background: #4CAF50;
             color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            min-height: 44px;
+            gap: 4px;
+            min-height: 32px;
             text-decoration: none;
             border: none;
+            justify-content: center;
+            font-weight: normal;
+            opacity: 0.8;
         }
 
-        .photo-upload-btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
+        .photo-upload-btn.camera-btn {
+            background: #999;
+        }
+
+        .photo-upload-btn.camera-btn:hover {
+            background: #777;
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        .photo-upload-btn.gallery-btn {
+            background: #999;
+        }
+
+        .photo-upload-btn.gallery-btn:hover {
+            background: #777;
+            opacity: 1;
+            transform: scale(1.02);
         }
 
         .photo-thumbnails {
@@ -860,8 +888,9 @@
             }
             
             .photo-upload-btn {
-                padding: 12px 16px;
-                font-size: 1rem;
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                min-height: 36px;
             }
             
             .photo-thumbnails {
@@ -886,10 +915,10 @@
         
         @media (max-width: 480px) {
             .photo-upload-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 15px;
-                font-size: 1rem;
+                padding: 8px 10px;
+                font-size: 0.8rem;
+                min-height: 40px;
+                min-width: 80px;
             }
             
             .photo-thumbnails {
@@ -1091,7 +1120,7 @@
                                     ← Zurück zur Auswahl
                                 </button>
                                 <button type="submit" class="action-btn primary">
-                                    📊 Antworten senden
+                                    📄 PDF erstellen & senden
                                 </button>
                             </div>
                         </form>
@@ -1101,6 +1130,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         let currentQuestionId = 0;
         let surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
@@ -1246,10 +1276,15 @@
                 <textarea name="sonstiges_${sonstigesCounter}" placeholder="Weitere Anmerkung..." style="width: 100%; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical; -webkit-appearance: none; background: white;"></textarea>
                 <div class="photo-upload-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <label for="photoSonstiges${sonstigesCounter}" class="photo-upload-btn">
-                            📷 Foto hinzufügen
+                        <label for="photoCameraSonstiges${sonstigesCounter}" class="photo-upload-btn camera-btn">
+                            📷 Kamera
                         </label>
-                        <input type="file" id="photoSonstiges${sonstigesCounter}" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_${sonstigesCounter}', event)">
+                        <input type="file" id="photoCameraSonstiges${sonstigesCounter}" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_${sonstigesCounter}', event)">
+                        
+                        <label for="photoGallerySonstiges${sonstigesCounter}" class="photo-upload-btn gallery-btn">
+                            🖼️ Galerie
+                        </label>
+                        <input type="file" id="photoGallerySonstiges${sonstigesCounter}" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_${sonstigesCounter}', event)">
                     </div>
                     <div id="photoThumbnailssonstiges_${sonstigesCounter}" class="photo-thumbnails"></div>
                 </div>
@@ -1272,6 +1307,387 @@
                     delete questionPhotos[`sonstiges_${index}`];
                     field.remove();
                 }
+            }
+        }
+
+        // PDF Generation Function
+        async function generateSurveyPDF(survey) {
+            try {
+                // Sammle alle Antworten
+                const formData = new FormData(document.getElementById('surveyForm'));
+                const responses = {};
+
+                // Collect all responses
+                for (let [key, value] of formData.entries()) {
+                    if (responses[key]) {
+                        if (Array.isArray(responses[key])) {
+                            responses[key].push(value);
+                        } else {
+                            responses[key] = [responses[key], value];
+                        }
+                    } else {
+                        responses[key] = value;
+                    }
+                }
+
+                // Speichere auch im localStorage (optional)
+                const responseData = {
+                    surveyId: survey.id,
+                    surveyTitle: survey.title,
+                    responses: responses,
+                    photos: questionPhotos,
+                    timestamp: new Date().toISOString()
+                };
+
+                let savedResponses = JSON.parse(localStorage.getItem('surveyResponses') || '[]');
+                savedResponses.push(responseData);
+                localStorage.setItem('surveyResponses', JSON.stringify(savedResponses));
+
+                // PDF erstellen
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                let yPosition = 30;
+                const pageHeight = doc.internal.pageSize.height;
+                const pageWidth = doc.internal.pageSize.width;
+                const margin = 20;
+                const maxWidth = pageWidth - 2 * margin;
+                const primaryColor = [102, 126, 234]; // #667eea
+                const secondaryColor = [118, 75, 162]; // #764ba2
+                const lightGray = [248, 249, 250];
+                const darkGray = [108, 117, 125];
+
+                // Professional Header
+                doc.setFillColor(...primaryColor);
+                doc.rect(0, 0, pageWidth, 25, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(20);
+                doc.setFont(undefined, 'bold');
+                doc.text('UMFRAGE AUSWERTUNG', margin, 16);
+                
+                // Professional subtitle bar
+                doc.setFillColor(...lightGray);
+                doc.rect(0, 25, pageWidth, 8, 'F');
+
+                // Reset text color
+                doc.setTextColor(0, 0, 0);
+
+                // Document Info Section
+                yPosition = 45;
+                doc.setFontSize(16);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(...primaryColor);
+                doc.text(survey.title, margin, yPosition);
+                yPosition += 12;
+
+                // Info Box
+                doc.setFillColor(...lightGray);
+                doc.roundedRect(margin, yPosition - 2, maxWidth, 25, 3, 3, 'F');
+                
+                doc.setFontSize(10);
+                doc.setTextColor(...darkGray);
+                doc.setFont(undefined, 'normal');
+                
+                const currentDate = new Date();
+                const dateStr = currentDate.toLocaleDateString('de-DE', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                const timeStr = currentDate.toLocaleTimeString('de-DE');
+                
+                doc.text(`Ausgefüllt am: ${dateStr}`, margin + 5, yPosition + 6);
+                doc.text(`Uhrzeit: ${timeStr}`, margin + 5, yPosition + 12);
+                doc.text(`Anzahl Fragen: ${survey.questions.length}`, margin + 5, yPosition + 18);
+                
+                yPosition += 35;
+
+                // Description
+                if (survey.description && survey.description.trim()) {
+                    doc.setFontSize(11);
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont(undefined, 'italic');
+                    const descLines = doc.splitTextToSize(survey.description, maxWidth);
+                    doc.text(descLines, margin, yPosition);
+                    yPosition += descLines.length * 5 + 15;
+                }
+
+                // Separator line
+                doc.setDrawColor(...primaryColor);
+                doc.setLineWidth(0.5);
+                doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                yPosition += 15;
+
+                // Function to compress image
+                function compressImage(base64Data, maxWidth = 400, quality = 0.7) {
+                    return new Promise((resolve) => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        
+                        img.onload = function() {
+                            const aspectRatio = img.width / img.height;
+                            let newWidth = Math.min(img.width, maxWidth);
+                            let newHeight = newWidth / aspectRatio;
+                            
+                            canvas.width = newWidth;
+                            canvas.height = newHeight;
+                            
+                            ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                            const compressedData = canvas.toDataURL('image/jpeg', quality);
+                            resolve(compressedData);
+                        };
+                        
+                        img.src = base64Data;
+                    });
+                }
+
+                // Antworten zu den regulären Fragen
+                for (let i = 0; i < survey.questions.length; i++) {
+                    const question = survey.questions[i];
+                    
+                    // Neue Seite wenn nötig
+                    if (yPosition > pageHeight - 60) {
+                        doc.addPage();
+                        yPosition = 30;
+                    }
+
+                    // Question number and text
+                    doc.setFontSize(12);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(...primaryColor);
+                    
+                    const questionText = `${i + 1}. ${question.text}`;
+                    const questionLines = doc.splitTextToSize(questionText, maxWidth);
+                    doc.text(questionLines, margin, yPosition);
+                    yPosition += questionLines.length * 6 + 3;
+
+                    // Question type indicator
+                    doc.setFontSize(8);
+                    doc.setTextColor(...darkGray);
+                    const typeLabels = {
+                        'text': 'Textantwort',
+                        'textarea': 'Freitext',
+                        'radio': 'Einzelauswahl',
+                        'checkbox': 'Mehrfachauswahl',
+                        'dropdown': 'Dropdown-Auswahl',
+                        'rating': 'Bewertung'
+                    };
+                    doc.text(`[${typeLabels[question.type] || question.type}]`, margin, yPosition);
+                    yPosition += 8;
+
+                    // Answer box
+                    doc.setFillColor(250, 250, 250);
+                    const answerBoxHeight = 15;
+                    doc.roundedRect(margin, yPosition - 2, maxWidth, answerBoxHeight, 2, 2, 'F');
+                    
+                    // Answer text
+                    doc.setFontSize(11);
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont(undefined, 'normal');
+                    const responseKey = `q${question.id}`;
+                    let answer = responses[responseKey] || 'Keine Antwort';
+                    
+                    if (Array.isArray(answer)) {
+                        answer = answer.join(', ');
+                    }
+
+                    // Special formatting for rating
+                    if (question.type === 'rating' && answer !== 'Keine Antwort') {
+                        const stars = '⭐'.repeat(parseInt(answer));
+                        const emptyStars = '☆'.repeat(5 - parseInt(answer));
+                        answer = `${answer}/5 ${stars}${emptyStars}`;
+                    }
+
+                    const answerLines = doc.splitTextToSize(answer, maxWidth - 10);
+                    doc.text(answerLines, margin + 5, yPosition + 6);
+                    yPosition += Math.max(answerBoxHeight, answerLines.length * 5) + 5;
+
+                    // Fotos zu dieser Frage (komprimiert)
+                    if (questionPhotos[question.id] && questionPhotos[question.id].length > 0) {
+                        yPosition += 5;
+                        doc.setFontSize(9);
+                        doc.setTextColor(...darkGray);
+                        doc.text(`📷 Anhänge (${questionPhotos[question.id].length} Foto(s)):`, margin, yPosition);
+                        yPosition += 8;
+
+                        for (const photo of questionPhotos[question.id]) {
+                            // Prüfe ob genug Platz für Bild
+                            if (yPosition > pageHeight - 50) {
+                                doc.addPage();
+                                yPosition = 30;
+                            }
+
+                            try {
+                                // Bild komprimieren
+                                const compressedImage = await compressImage(photo.data, 300, 0.6);
+                                
+                                // Bild-Dimensionen berechnen (max. 40mm breit)
+                                const maxImgWidth = 40;
+                                const maxImgHeight = 40;
+                                
+                                const img = new Image();
+                                await new Promise((resolve, reject) => {
+                                    img.onload = resolve;
+                                    img.onerror = reject;
+                                    img.src = compressedImage;
+                                });
+
+                                const aspectRatio = img.width / img.height;
+                                let imgWidth = maxImgWidth;
+                                let imgHeight = maxImgWidth / aspectRatio;
+                                
+                                if (imgHeight > maxImgHeight) {
+                                    imgHeight = maxImgHeight;
+                                    imgWidth = maxImgHeight * aspectRatio;
+                                }
+
+                                // Bild mit border
+                                doc.setDrawColor(200, 200, 200);
+                                doc.setLineWidth(0.2);
+                                doc.rect(margin, yPosition, imgWidth, imgHeight);
+                                doc.addImage(compressedImage, 'JPEG', margin, yPosition, imgWidth, imgHeight);
+                                yPosition += imgHeight + 8;
+                            } catch (error) {
+                                console.warn('Fehler beim Hinzufügen des Bildes:', error);
+                                doc.setFontSize(8);
+                                doc.setTextColor(200, 0, 0);
+                                doc.text('⚠ Bild konnte nicht geladen werden', margin, yPosition);
+                                yPosition += 8;
+                            }
+                        }
+                    }
+
+                    yPosition += 12;
+                }
+
+                // Sonstiges-Antworten
+                const sonstigesAnswers = Object.keys(responses).filter(key => key.startsWith('sonstiges_'));
+                if (sonstigesAnswers.length > 0) {
+                    // Neue Seite wenn nötig
+                    if (yPosition > pageHeight - 60) {
+                        doc.addPage();
+                        yPosition = 30;
+                    }
+
+                    // Section header
+                    doc.setFillColor(...primaryColor);
+                    doc.rect(margin, yPosition - 5, maxWidth, 12, 'F');
+                    doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(255, 255, 255);
+                    doc.text('ZUSÄTZLICHE ANMERKUNGEN', margin + 5, yPosition + 3);
+                    yPosition += 20;
+
+                    let sonstigesIndex = 1;
+                    for (const key of sonstigesAnswers) {
+                        const answer = responses[key];
+                        
+                        if (answer && answer.trim()) {
+                            doc.setFontSize(11);
+                            doc.setFont(undefined, 'bold');
+                            doc.setTextColor(...primaryColor);
+                            doc.text(`Anmerkung ${sonstigesIndex}:`, margin, yPosition);
+                            yPosition += 8;
+                            
+                            doc.setFont(undefined, 'normal');
+                            doc.setTextColor(0, 0, 0);
+                            const answerLines = doc.splitTextToSize(answer, maxWidth);
+                            doc.text(answerLines, margin, yPosition);
+                            yPosition += answerLines.length * 5 + 5;
+
+                            // Fotos zu diesem Sonstiges-Feld
+                            if (questionPhotos[key] && questionPhotos[key].length > 0) {
+                                doc.setFontSize(9);
+                                doc.setTextColor(...darkGray);
+                                doc.text(`📷 Anhänge (${questionPhotos[key].length} Foto(s)):`, margin, yPosition);
+                                yPosition += 8;
+
+                                for (const photo of questionPhotos[key]) {
+                                    if (yPosition > pageHeight - 50) {
+                                        doc.addPage();
+                                        yPosition = 30;
+                                    }
+
+                                    try {
+                                        const compressedImage = await compressImage(photo.data, 300, 0.6);
+                                        const img = new Image();
+                                        await new Promise((resolve, reject) => {
+                                            img.onload = resolve;
+                                            img.onerror = reject;
+                                            img.src = compressedImage;
+                                        });
+
+                                        const aspectRatio = img.width / img.height;
+                                        let imgWidth = 40;
+                                        let imgHeight = 40 / aspectRatio;
+                                        
+                                        if (imgHeight > 40) {
+                                            imgHeight = 40;
+                                            imgWidth = 40 * aspectRatio;
+                                        }
+
+                                        doc.setDrawColor(200, 200, 200);
+                                        doc.setLineWidth(0.2);
+                                        doc.rect(margin, yPosition, imgWidth, imgHeight);
+                                        doc.addImage(compressedImage, 'JPEG', margin, yPosition, imgWidth, imgHeight);
+                                        yPosition += imgHeight + 8;
+                                    } catch (error) {
+                                        console.warn('Fehler beim Hinzufügen des Bildes:', error);
+                                        doc.setFontSize(8);
+                                        doc.setTextColor(200, 0, 0);
+                                        doc.text('⚠ Bild konnte nicht geladen werden', margin, yPosition);
+                                        yPosition += 8;
+                                    }
+                                }
+                            }
+
+                            yPosition += 15;
+                            sonstigesIndex++;
+                        }
+                    }
+                }
+
+                // Professional Footer on every page
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    
+                    // Footer line
+                    doc.setDrawColor(...primaryColor);
+                    doc.setLineWidth(0.3);
+                    doc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
+                    
+                    // Footer text
+                    doc.setFontSize(8);
+                    doc.setTextColor(...darkGray);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`Seite ${i} von ${totalPages}`, pageWidth - margin - 20, pageHeight - 8);
+                    doc.text(`Erstellt am ${new Date().toLocaleDateString('de-DE')}`, margin, pageHeight - 8);
+                }
+
+                // PDF speichern
+                const filename = `Umfrage_${survey.title.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.pdf`;
+                doc.save(filename);
+
+                alert('Vielen Dank für Ihre Teilnahme! Das professionelle PDF wurde erfolgreich erstellt und heruntergeladen.');
+                
+                // Reset für nächste Nutzung
+                questionPhotos = {};
+                sonstigesCounter = 0;
+                
+                backToSurveyList();
+
+            } catch (error) {
+                console.error('Fehler bei der PDF-Erstellung:', error);
+                alert('Es gab einen Fehler bei der PDF-Erstellung. Ihre Antworten wurden trotzdem gespeichert.');
+                
+                // Fallback: Normale Speicherung
+                questionPhotos = {};
+                sonstigesCounter = 0;
+                backToSurveyList();
             }
         }
 
@@ -1684,6 +2100,13 @@
         }
 
         function deleteSurvey(index) {
+            // Passwort-Abfrage vor dem Löschen
+            const password = prompt('Bitte geben Sie das Passwort zum Löschen ein:');
+            if (password !== '1508') {
+                alert('Falsches Passwort! Löschen nicht möglich.');
+                return;
+            }
+
             const survey = surveys[index];
             if (confirm(`Möchten Sie die Umfrage "${survey.title}" wirklich unwiderruflich löschen?`)) {
                 // Survey aus Array entfernen
@@ -1781,10 +2204,15 @@
                 questionHTML += `
                     <div class="photo-upload-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <label for="photo${question.id}" class="photo-upload-btn">
-                                📷 Foto hinzufügen
+                            <label for="photoCamera${question.id}" class="photo-upload-btn camera-btn">
+                                📷 Kamera
                             </label>
-                            <input type="file" id="photo${question.id}" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload(${question.id}, event)">
+                            <input type="file" id="photoCamera${question.id}" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload(${question.id}, event)">
+                            
+                            <label for="photoGallery${question.id}" class="photo-upload-btn gallery-btn">
+                                🖼️ Galerie
+                            </label>
+                            <input type="file" id="photoGallery${question.id}" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(${question.id}, event)">
                         </div>
                         <div id="photoThumbnails${question.id}" class="photo-thumbnails"></div>
                     </div>
@@ -1805,10 +2233,15 @@
                         <textarea name="sonstiges_0" placeholder="Ihre zusätzlichen Anmerkungen..." style="width: 100%; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical; -webkit-appearance: none; background: white;"></textarea>
                         <div class="photo-upload-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                <label for="photoSonstiges0" class="photo-upload-btn">
-                                    📷 Foto hinzufügen
+                                <label for="photoCameraSonstiges0" class="photo-upload-btn camera-btn">
+                                    📷 Kamera
                                 </label>
-                                <input type="file" id="photoSonstiges0" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_0', event)">
+                                <input type="file" id="photoCameraSonstiges0" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_0', event)">
+                                
+                                <label for="photoGallerySonstiges0" class="photo-upload-btn gallery-btn">
+                                    🖼️ Galerie
+                                </label>
+                                <input type="file" id="photoGallerySonstiges0" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload('sonstiges_0', event)">
                             </div>
                             <div id="photoThumbnailssonstiges_0" class="photo-thumbnails"></div>
                         </div>
@@ -1823,49 +2256,9 @@
             // Handle form submission
             document.getElementById('surveyForm').onsubmit = function(e) {
                 e.preventDefault();
-                const formData = new FormData(e.target);
-                const responses = {};
-
-                // Collect all responses
-                for (let [key, value] of formData.entries()) {
-                    if (responses[key]) {
-                        if (Array.isArray(responses[key])) {
-                            responses[key].push(value);
-                        } else {
-                            responses[key] = [responses[key], value];
-                        }
-                    } else {
-                        responses[key] = value;
-                    }
-                }
-
-                // Add photos to responses
-                Object.keys(questionPhotos).forEach(questionId => {
-                    if (questionPhotos[questionId] && questionPhotos[questionId].length > 0) {
-                        responses[`photos_q${questionId}`] = questionPhotos[questionId];
-                    }
-                });
-
-                // Save responses
-                const responseData = {
-                    surveyId: survey.id,
-                    surveyTitle: survey.title,
-                    responses: responses,
-                    photos: questionPhotos,
-                    timestamp: new Date().toISOString()
-                };
-
-                let savedResponses = JSON.parse(localStorage.getItem('surveyResponses') || '[]');
-                savedResponses.push(responseData);
-                localStorage.setItem('surveyResponses', JSON.stringify(savedResponses));
-
-                alert('Vielen Dank für Ihre Teilnahme! Ihre Antworten und Fotos wurden gespeichert.');
                 
-                // Reset photos and sonstiges for next use
-                questionPhotos = {};
-                sonstigesCounter = 0;
-                
-                backToSurveyList();
+                // Antworten sammeln und PDF generieren
+                generateSurveyPDF(survey);
             };
         }
 
