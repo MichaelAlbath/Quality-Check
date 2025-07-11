@@ -134,13 +134,6 @@
             padding-right: 40px;
         }
 
-        .competitor-option {
-            background-repeat: no-repeat;
-            background-position: left 12px center;
-            background-size: 20px 20px;
-            padding-left: 40px;
-        }
-
         .validation-error {
             border-color: #e74c3c !important;
             box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15) !important;
@@ -191,6 +184,12 @@
             align-items: center;
             margin-bottom: 16px;
             flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .entry-header-left {
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
 
@@ -279,20 +278,6 @@
             color: #667eea;
         }
 
-        .image-upload-label {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            margin-left: 8px;
-            font-weight: 500;
-        }
-
-        .image-upload-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
         .image-preview {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -329,7 +314,6 @@
             transform: scale(0.98);
         }
 
-        /* Lightbox für Bildvergrößerung */
         .lightbox {
             display: none;
             position: fixed;
@@ -398,27 +382,6 @@
             color: white;
             padding: 20px;
             text-align: center;
-        }
-
-        /* Mobile Lightbox Optimierungen */
-        @media (max-width: 768px) {
-            .lightbox-content {
-                max-width: 95%;
-                max-height: 95%;
-            }
-            
-            .lightbox-close {
-                top: 10px;
-                right: 10px;
-                width: 35px;
-                height: 35px;
-                font-size: 18px;
-            }
-            
-            .lightbox-info {
-                padding: 15px;
-                font-size: 0.9rem;
-            }
         }
 
         .image-remove {
@@ -537,151 +500,64 @@
             font-size: 1rem;
         }
 
-        /* iPhone Safari spezifische Fixes */
-        @supports (-webkit-touch-callout: none) {
-            .input-group input,
-            .input-group select,
-            .text-area {
-                font-size: 16px; /* Verhindert Zoom beim Fokus */
-                transform: translateZ(0); /* Hardware-Beschleunigung */
-            }
-            
-            .container {
-                -webkit-transform: translateZ(0);
-            }
-        }
-
-        /* iPhone SE und kleine Bildschirme */
+        /* Responsive Design */
         @media (max-width: 375px) {
-            body {
-                padding: 4px;
-            }
-            
-            .content {
-                padding: 12px;
-            }
-            
-            .visit-info {
-                padding: 12px;
-                gap: 12px;
-            }
-            
-            .entry-item {
-                padding: 12px;
-            }
-            
-            .header {
-                padding: 16px 12px;
-            }
-            
-            .header h1 {
-                font-size: 1.3rem;
-            }
-            
-            .budni-logo {
-                width: 50px;
-                height: 32px;
-            }
-            
-            .header-content {
-                gap: 8px;
-            }
-            
-            .entry-header-left {
-                gap: 8px;
-            }
-            
-            .image-upload {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .image-upload-icon {
-                font-size: 14px;
-            }
-            
-            .delete-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            
-            .image-preview {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                gap: 8px;
-            }
+            body { padding: 4px; }
+            .content { padding: 12px; }
+            .visit-info { padding: 12px; gap: 12px; }
+            .entry-item { padding: 12px; }
+            .header { padding: 16px 12px; }
+            .header h1 { font-size: 1.3rem; }
+            .budni-logo { width: 50px; height: 32px; }
+            .header-content { gap: 8px; }
+            .image-upload { width: 32px; height: 32px; }
+            .image-upload-icon { font-size: 14px; }
+            .delete-btn { width: 32px; height: 32px; font-size: 14px; }
+            .image-preview { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
         }
 
-        /* iPhone Pro Max und große Bildschirme */
         @media (min-width: 414px) {
-            .container {
-                max-width: 95%;
-            }
-            
-            .image-preview {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
+            .container { max-width: 95%; }
+            .image-preview { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
         }
 
-        /* Tablet Portrait */
         @media (min-width: 768px) {
-            body {
-                padding: 16px;
-            }
-            
-            .container {
-                max-width: 600px;
-            }
-            
-            .visit-info {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-            
-            .actions {
-                flex-direction: row;
-            }
-            
-            .content {
-                padding: 24px;
-            }
+            body { padding: 16px; }
+            .container { max-width: 600px; }
+            .visit-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+            .actions { flex-direction: row; }
+            .content { padding: 24px; }
         }
 
-        /* Desktop */
         @media (min-width: 1024px) {
-            body {
-                padding: 20px;
+            body { padding: 20px; }
+            .container { max-width: 800px; }
+            .content { padding: 30px; }
+            .header { padding: 30px; }
+            .header h1 { font-size: 2rem; }
+            .header p { font-size: 1.1rem; }
+            .budni-logo { width: 80px; height: 52px; }
+            .header-content { gap: 16px; }
+        }
+
+        /* Mobile Safari Fixes */
+        @supports (-webkit-touch-callout: none) {
+            .input-group input, .input-group select, .text-area {
+                font-size: 16px;
+                transform: translateZ(0);
             }
-            
-            .container {
-                max-width: 800px;
+            .container { -webkit-transform: translateZ(0); }
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            .container { background: #1a1a1a; color: #ffffff; }
+            .visit-info { background: #2d2d2d; }
+            .entry-item { background: #2d2d2d; border-color: #404040; }
+            .input-group input, .input-group select, .text-area {
+                background: #2d2d2d; border-color: #404040; color: #ffffff;
             }
-            
-            .content {
-                padding: 30px;
-            }
-            
-            .header {
-                padding: 30px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .header p {
-                font-size: 1.1rem;
-            }
-            
-            .budni-logo {
-                width: 80px;
-                height: 52px;
-            }
-            
-            .header-content {
-                gap: 16px;
-            }
+            .image-upload { background: #2d2d2d; border-color: #404040; }
         }
 
         /* Accessibility */
@@ -692,36 +568,6 @@
                 transition-duration: 0.01ms !important;
             }
         }
-
-        /* Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            .container {
-                background: #1a1a1a;
-                color: #ffffff;
-            }
-            
-            .visit-info {
-                background: #2d2d2d;
-            }
-            
-            .entry-item {
-                background: #2d2d2d;
-                border-color: #404040;
-            }
-            
-            .input-group input,
-            .input-group select,
-            .text-area {
-                background: #2d2d2d;
-                border-color: #404040;
-                color: #ffffff;
-            }
-            
-            .image-upload {
-                background: #2d2d2d;
-                border-color: #404040;
-            }
-        }
     </style>
 </head>
 <body>
@@ -729,15 +575,10 @@
         <div class="header">
             <div class="header-content">
                 <svg class="budni-logo" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Türkis/Cyan Kreis links hinten -->
                     <circle cx="45" cy="45" r="35" fill="#00BCD4"/>
-                    <!-- Orange/Koralle Kreis rechts hinten -->
                     <circle cx="95" cy="45" r="35" fill="#FF6B6B"/>
-                    <!-- Hauptkreis dunkelblau vorne (überlappt beide) -->
                     <circle cx="70" cy="45" r="35" fill="#2E4BC6"/>
-                    <!-- budni Text in weiß -->
                     <text x="70" y="52" font-family="Arial, sans-serif" font-size="16" font-weight="300" fill="white" text-anchor="middle">budni</text>
-                    <!-- Punkt nach dem i -->
                     <circle cx="88" cy="39" r="1.8" fill="white"/>
                 </svg>
                 <div class="header-text">
@@ -958,10 +799,10 @@
                     <label for="competitorName">🏢 Wettbewerber:</label>
                     <select id="competitorName">
                         <option value="">Wettbewerber auswählen...</option>
-                        <option value="DM" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNzVCRSIvPgo8dGV4dCB4PSIxMiIgeT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5kbTwvdGV4dD4KPC9zdmc+'); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">DM-Drogerie Markt</option>
-                        <option value="ROSSMANN" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0REMDAzMSIvPgo8dGV4dCB4PSIxMiIgeT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ST1NTPC90ZXh0Pgo8L3N2Zz4='); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">ROSSMANN</option>
-                        <option value="MÜLLER" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0ZGNzUwMCIvPgo8dGV4dCB4PSIxMiIgeT0iMTciIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0Pgo8L3N2Zz4='); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">MÜLLER Drogeriemarkt</option>
-                        <option value="EDEKA" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNjZBQSIvPgo8dGV4dCB4PSIxMiIgeT0iMTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRjMwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RURFS0E8L3RleHQ+CjwvcG9seWdvbj4KPC9zdmc+'); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">EDEKA</option>
+                        <option value="DM">DM-Drogerie Markt</option>
+                        <option value="ROSSMANN">ROSSMANN</option>
+                        <option value="MÜLLER">MÜLLER Drogeriemarkt</option>
+                        <option value="EDEKA">EDEKA</option>
                     </select>
                 </div>
                 <div class="selection-info">
@@ -1019,7 +860,6 @@
         </div>
     </div>
 
-    <!-- Lightbox für Bildvergrößerung -->
     <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox()" aria-label="Bild schließen">×</button>
@@ -1027,9 +867,6 @@
             <div class="lightbox-info" id="lightboxInfo"></div>
         </div>
     </div>
-
-    <!-- Versionsnummer -->
-    <div class="app-version" id="appVersion" title="App-Version mit Zeitstempel"></div>
 
     <script>
         let entryCounter = 1;
@@ -1097,10 +934,35 @@
             }
         };
 
+        // Lightbox Funktionen
+        function openLightbox(imgSrc, imgName) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxInfo = document.getElementById('lightboxInfo');
+            
+            lightboxImg.src = imgSrc;
+            lightboxInfo.textContent = imgName;
+            lightbox.classList.add('active');
+            
+            // Körper-Scroll verhindern
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('lightbox-close')) {
+                return;
+            }
+            
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            
+            // Körper-Scroll wieder aktivieren
+            document.body.style.overflow = '';
+        }
+
         // Geolocation initialisieren
         function initGeolocation() {
             if (navigator.geolocation) {
-                // Subtile Standort-Anfrage
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         userLocation = {
@@ -1109,26 +971,23 @@
                         };
                         sortFilialsByLocation();
                         isLocationDetected = true;
-                        
-                        // Dezenter Hinweis
                         showLocationHint('📍 Filialen nach Nähe sortiert');
                     },
                     function(error) {
-                        // Fehler stillschweigend ignorieren - kein störender Alert
                         console.log('Standort nicht verfügbar:', error.message);
                     },
                     {
                         enableHighAccuracy: false,
                         timeout: 5000,
-                        maximumAge: 300000 // 5 Minuten Cache
+                        maximumAge: 300000
                     }
                 );
             }
         }
 
-        // Distanz zwischen zwei Koordinaten berechnen (Haversine Formel)
+        // Distanz zwischen zwei Koordinaten berechnen
         function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371; // Erdradius in km
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLng = (lng2 - lng1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -1163,14 +1022,13 @@
         // Filialen nach Standort sortieren
         function sortFilialsByLocation() {
             const select = document.getElementById('branchName');
-            const options = Array.from(select.options).slice(1); // Erste Option ("Filiale auswählen") ausschließen
+            const options = Array.from(select.options).slice(1);
             
             const nearestRegion = findNearestRegion();
             if (!nearestRegion) return;
             
             const regionKeywords = filialLocations[nearestRegion].keywords;
             
-            // Sortiere Optionen: Nahe Filialen zuerst
             options.sort((a, b) => {
                 const aIsNear = regionKeywords.some(keyword => 
                     a.value.toLowerCase().includes(keyword.toLowerCase())
@@ -1181,13 +1039,11 @@
                 
                 if (aIsNear && !bIsNear) return -1;
                 if (!aIsNear && bIsNear) return 1;
-                return 0; // Ursprüngliche Reihenfolge beibehalten
+                return 0;
             });
             
-            // Dropdown neu aufbauen
             select.innerHTML = '<option value="">📍 Filiale auswählen...</option>';
             
-            // Gruppierung mit Trennlinie
             let nearOptionsAdded = false;
             options.forEach(option => {
                 const isNear = regionKeywords.some(keyword => 
@@ -1205,22 +1061,73 @@
                     separator.disabled = true;
                     separator.textContent = '──── 🏢 Weitere Filialen ────';
                     select.appendChild(separator);
-                    nearOptionsAdded = false; // Reset für weitere Gruppierungen
+                    nearOptionsAdded = false;
                 }
                 
                 select.appendChild(option);
             });
         }
 
-        // Audit-Stil Bildzeile mit verbesserter Fehlerbehandlung
-        async function renderAuditImageRow(pdf, images, yPos, spacing) {
+        // Verbesserte Bildverarbeitung mit Komprimierung und Orientierungskorrektur
+        async function processImageForPDF(imageSrc, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Original-Dimensionen
+                    let { width, height } = img;
+                    
+                    // Bildkomprimierung - Größe reduzieren falls zu groß
+                    if (width > maxWidth || height > maxWidth) {
+                        const scale = Math.min(maxWidth / width, maxWidth / height);
+                        width = Math.floor(width * scale);
+                        height = Math.floor(height * scale);
+                    }
+                    
+                    // Canvas-Größe setzen
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Hintergrund weiß setzen (für transparente Bilder)
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, width, height);
+                    
+                    // Bild zeichnen (Browser korrigiert EXIF-Rotation automatisch)
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Komprimiertes Bild als JPEG zurückgeben
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                    
+                    resolve({
+                        dataUrl: compressedDataUrl,
+                        width: width,
+                        height: height
+                    });
+                };
+                
+                img.onerror = () => {
+                    console.log('Fehler beim Laden des Bildes');
+                    resolve({
+                        error: true,
+                        width: 50,
+                        height: 50
+                    });
+                };
+                
+                img.src = imageSrc;
+            });
+        }
+
+        async function renderImageRow(pdf, images, yPos, spacing) {
             let currentX = 25;
             
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
                 
                 if (image.error) {
-                    // Audit-Stil Fehler-Box
+                    // Fehler-Darstellung
                     pdf.setFillColor(248, 249, 250);
                     pdf.rect(currentX, yPos, image.width, image.height, 'F');
                     pdf.setDrawColor(220, 53, 69);
@@ -1235,13 +1142,13 @@
                     pdf.setTextColor(0, 0, 0);
                 } else {
                     try {
-                        // Audit-Stil: Schwarzer Rahmen um Bilder
+                        // Schwarzer Rahmen um Bilder
                         pdf.setDrawColor(31, 41, 55);
                         pdf.setLineWidth(1);
                         pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
                         
-                        // Bild einfügen (bereits orientierungskorrigiert)
-                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
+                        // Komprimiertes Bild einfügen
+                        pdf.addImage(image.processedSrc, 'JPEG', currentX, yPos, image.width, image.height);
                         
                         // Bildnummer unten rechts
                         pdf.setFillColor(31, 41, 55);
@@ -1274,7 +1181,6 @@
             }
         }
 
-        // Dezenter Standort-Hinweis
         function showLocationHint(message) {
             const label = document.querySelector('label[for="branchName"]');
             const originalText = label.textContent;
@@ -1288,165 +1194,6 @@
             }, 3000);
         }
 
-        // Fallback-Funktion für Kompatibilität
-        async function renderImageRow(pdf, images, yPos, spacing) {
-            return await renderProfessionalImageRow(pdf, images, yPos, spacing);
-        }
-
-        // Funktion zur Korrektur der Bildorientierung
-        function getImageOrientation(imageData) {
-            const view = new DataView(imageData);
-            if (view.getUint16(0, false) !== 0xFFD8) {
-                return 1; // Nicht JPEG
-            }
-            const length = view.byteLength;
-            let offset = 2;
-            while (offset < length) {
-                if (view.getUint16(offset, false) === 0xFFE1) {
-                    offset += 4;
-                    if (view.getUint32(offset, false) !== 0x45786966) {
-                        return 1;
-                    }
-                    const little = view.getUint16(offset += 6, false) === 0x4949;
-                    offset += view.getUint32(offset + 4, little);
-                    const tags = view.getUint16(offset, little);
-                    offset += 2;
-                    for (let i = 0; i < tags; i++) {
-                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
-                            return view.getUint16(offset + (i * 12) + 8, little);
-                        }
-                    }
-                } else if ((view.getUint16(offset, false) & 0xFF00) !== 0xFF00) {
-                    break;
-                } else {
-                    offset += 2 + view.getUint16(offset + 2, false);
-                }
-            }
-            return 1;
-        }
-
-        // Funktion zur Bildrotation basierend auf EXIF
-        function getRotationAngle(orientation) {
-            switch (orientation) {
-                case 3: return 180;
-                case 6: return 90;
-                case 8: return 270;
-                default: return 0;
-            }
-        }
-
-        // Verbesserte Bildverarbeitung mit Orientierungskorrektur
-        async function processImageWithOrientation(imageSrc) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    // Canvas erstellen für Orientierungskorrektur
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Original-Dimensionen
-                    let { width, height } = img;
-                    
-                    // EXIF-Orientierung ermitteln (vereinfacht)
-                    // Für mobile Geräte nehmen wir an, dass Hochformat-Bilder oft gedreht sind
-                    const isPortrait = height > width;
-                    let rotation = 0;
-                    
-                    // Einfache Heuristik für mobile Fotos
-                    if (isPortrait && imageSrc.includes('data:image')) {
-                        // Prüfe ob das Bild von einem mobilen Gerät stammt
-                        rotation = 0; // Lassen wir erstmal so
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    
-                    // Bild ohne Rotation zeichnen (Browser korrigiert bereits)
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    resolve({
-                        canvas: canvas,
-                        width: width,
-                        height: height,
-                        dataUrl: canvas.toDataURL('image/jpeg', 0.8)
-                    });
-                };
-                img.src = imageSrc;
-            });
-        }
-
-        // Audit-Stil Bildzeile mit verbesserter Fehlerbehandlung
-        async function renderAuditImageRow(pdf, images, yPos, spacing) {
-            let currentX = 25;
-            
-            for (let i = 0; i < images.length; i++) {
-                const image = images[i];
-                
-                if (image.error) {
-                    // Audit-Stil Fehler-Box
-                    pdf.setFillColor(248, 249, 250);
-                    pdf.rect(currentX, yPos, image.width, image.height, 'F');
-                    pdf.setDrawColor(220, 53, 69);
-                    pdf.setLineWidth(1);
-                    pdf.rect(currentX, yPos, image.width, image.height, 'S');
-                    
-                    pdf.setTextColor(220, 53, 69);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(8);
-                    pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
-                    pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
-                    pdf.setTextColor(0, 0, 0);
-                } else {
-                    try {
-                        // Audit-Stil: Schwarzer Rahmen um Bilder
-                        pdf.setDrawColor(31, 41, 55);
-                        pdf.setLineWidth(1);
-                        pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
-                        
-                        // Bild einfügen (bereits orientierungskorrigiert)
-                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
-                        
-                        // Bildnummer unten rechts
-                        pdf.setFillColor(31, 41, 55);
-                        pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
-                        pdf.setTextColor(255, 255, 255);
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.setFontSize(7);
-                        pdf.text(String(i + 1), currentX + image.width - 6, yPos + image.height - 3, { align: 'center' });
-                        pdf.setTextColor(0, 0, 0);
-                        
-                    } catch (error) {
-                        console.log('Fehler beim Rendern des Bildes:', error);
-                        // Fallback Fehler-Darstellung
-                        pdf.setFillColor(248, 249, 250);
-                        pdf.rect(currentX, yPos, image.width, image.height, 'F');
-                        pdf.setDrawColor(220, 53, 69);
-                        pdf.setLineWidth(1);
-                        pdf.rect(currentX, yPos, image.width, image.height, 'S');
-                        
-                        pdf.setTextColor(220, 53, 69);
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.setFontSize(8);
-                        pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
-                        pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
-                        pdf.setTextColor(0, 0, 0);
-                    }
-                }
-                
-                currentX += image.width + spacing;
-            }
-        }
-
-        // Fallback-Funktionen für Kompatibilität - MÜSSEN VOR generatePDF definiert sein
-        async function renderImageRow(pdf, images, yPos, spacing) {
-            return await renderAuditImageRow(pdf, images, yPos, spacing);
-        }
-
-        async function renderProfessionalImageRow(pdf, images, yPos, spacing) {
-            return await renderAuditImageRow(pdf, images, yPos, spacing);
-        }
-
-        // Namen aus vorherigen Eingaben wiederverwenden
         document.getElementById('visitorName').addEventListener('blur', function() {
             savedVisitorName = this.value;
         });
@@ -1477,7 +1224,6 @@
             });
         }
 
-        // Validierungsfehler entfernen
         function clearValidationErrors() {
             const errorEl = document.getElementById('validationError');
             const branchSelect = document.getElementById('branchName');
@@ -1491,7 +1237,6 @@
             competitorSelect.classList.remove('validation-error');
         }
 
-        // Validierung vor PDF-Export
         function validateSelection() {
             const branchValue = document.getElementById('branchName').value;
             const competitorValue = document.getElementById('competitorName').value;
@@ -1505,23 +1250,19 @@
             return true;
         }
 
-        // Validierungsfehler anzeigen
         function showValidationError(message) {
             const branchSelect = document.getElementById('branchName');
             const competitorSelect = document.getElementById('competitorName');
             
-            // Felder rot markieren
             branchSelect.classList.add('validation-error');
             competitorSelect.classList.add('validation-error');
             
-            // Fehlermeldung erstellen oder aktualisieren
             let errorEl = document.getElementById('validationError');
             if (!errorEl) {
                 errorEl = document.createElement('div');
                 errorEl.id = 'validationError';
                 errorEl.className = 'error-message';
                 
-                // Nach der selection-info einfügen
                 const selectionInfo = document.querySelector('.selection-info');
                 selectionInfo.parentNode.insertBefore(errorEl, selectionInfo.nextSibling);
             }
@@ -1529,21 +1270,17 @@
             errorEl.textContent = `⚠️ ${message}`;
             errorEl.style.display = 'block';
             
-            // Zum Fehler scrollen
             scrollToElement(errorEl);
             
-            // Haptic Feedback für iOS
             if (window.navigator && window.navigator.vibrate) {
                 window.navigator.vibrate([100, 100, 100]);
             }
         }
 
-        // Verbessertes Touch-Feedback für alle Buttons
         function addTouchFeedback() {
             const buttons = document.querySelectorAll('button, .image-upload, .btn');
             
             buttons.forEach(button => {
-                // Entferne alte Event Listener um Duplikate zu vermeiden
                 button.removeEventListener('touchstart', handleTouchStart);
                 button.removeEventListener('touchend', handleTouchEnd);
                 button.removeEventListener('touchcancel', handleTouchCancel);
@@ -1569,7 +1306,6 @@
             this.style.transform = 'scale(1)';
         }
 
-        // Mobile-optimierte Scroll-Funktion
         function scrollToElement(element) {
             if (element) {
                 element.scrollIntoView({
@@ -1606,32 +1342,24 @@
             
             container.appendChild(entryDiv);
             
-            // Mobile-optimierte Initialisierung
             setupDragAndDrop(entryDiv.querySelector('.image-upload'), entryCounter);
             addTouchFeedback();
             updateDeleteButtons();
             
-            // Sanft zum neuen Element scrollen
             setTimeout(() => {
                 scrollToElement(entryDiv);
             }, 100);
         }
 
-        // Mobile-optimierte Initialisierung
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop(document.querySelector('.image-upload'), 1);
             addTouchFeedback();
             setupCompetitorBranchLogic();
             
-            // Versionsnummer anzeigen
-            document.getElementById('appVersion').textContent = APP_VERSION;
-            
-            // Standort-basierte Filialvorschläge initialisieren
             setTimeout(() => {
                 initGeolocation();
-            }, 1000); // Kurze Verzögerung für bessere UX
+            }, 1000);
             
-            // Viewport-Meta für mobile Optimierung prüfen
             if (!document.querySelector('meta[name="viewport"]')) {
                 const viewport = document.createElement('meta');
                 viewport.name = 'viewport';
@@ -1639,7 +1367,6 @@
                 document.head.appendChild(viewport);
             }
             
-            // iOS Safari Scrolling-Verbesserung
             if (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile')) {
                 document.body.style.webkitOverflowScrolling = 'touch';
             }
@@ -1649,7 +1376,6 @@
             const entry = button.closest('.entry-item');
             const entryNumber = entry.getAttribute('data-entry');
             
-            // Bilder aus imageData entfernen
             delete imageData[entryNumber];
             
             entry.remove();
@@ -1680,7 +1406,6 @@
 
         function handleImageUpload(input, entryNumber) {
             const files = input.files;
-            const preview = document.getElementById(`imagePreview-${entryNumber}`);
             
             if (!imageData[entryNumber]) {
                 imageData[entryNumber] = [];
@@ -1710,7 +1435,7 @@
             imageDiv.className = 'image-item';
             
             imageDiv.innerHTML = `
-                <img src="${imageInfo.src}" alt="${imageInfo.name}">
+                <img src="${imageInfo.src}" alt="${imageInfo.name}" onclick="openLightbox('${imageInfo.src}', '${imageInfo.name}')">
                 <button class="image-remove" onclick="removeImage(${entryNumber}, ${index})">×</button>
             `;
             
@@ -1755,13 +1480,7 @@
             });
         }
 
-        // Drag & Drop für initial existierenden Upload-Bereich
-        document.addEventListener('DOMContentLoaded', function() {
-            setupDragAndDrop(document.querySelector('.image-upload'), 1);
-        });
-
         async function generatePDF() {
-            // Validierung vor PDF-Erstellung
             if (!validateSelection()) {
                 return;
             }
@@ -1773,12 +1492,9 @@
             const successEl = document.getElementById('successMessage');
             
             loadingEl.style.display = 'block';
-            
-            // Mobile: Scroll zum Loading-Indikator
             scrollToElement(loadingEl);
             
             try {
-                // Header
                 pdf.setFontSize(18);
                 pdf.setFont(undefined, 'bold');
                 
@@ -1790,7 +1506,6 @@
                 
                 pdf.text(documentTitle, 20, 25);
                 
-                // Besuchsinformationen
                 pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 const visitDate = document.getElementById('visitDate').value;
@@ -1812,7 +1527,6 @@
                 
                 yPos += 15;
                 
-                // Einträge
                 const entries = document.querySelectorAll('.entry-item');
                 
                 for (let i = 0; i < entries.length; i++) {
@@ -1820,19 +1534,16 @@
                     const entryNumber = entry.getAttribute('data-entry');
                     const text = entry.querySelector('.text-area').value;
                     
-                    // Neue Seite wenn nötig
                     if (yPos > 260) {
                         pdf.addPage();
                         yPos = 20;
                     }
                     
-                    // Punkt-Header
                     pdf.setFontSize(12);
                     pdf.setFont(undefined, 'bold');
                     pdf.text(`Punkt ${i + 1}:`, 20, yPos);
                     yPos += 8;
                     
-                    // Text
                     pdf.setFontSize(10);
                     pdf.setFont(undefined, 'normal');
                     if (text) {
@@ -1844,13 +1555,12 @@
                         yPos += 5;
                     }
                     
-                    // Bilder mit korrektem Seitenverhältnis nebeneinander anordnen
                     if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
                         yPos += 5;
                         
                         const images = imageData[entryNumber];
-                        const maxRowWidth = 170; // Verfügbare Breite für Bilder
-                        const imageSpacing = 5; // Abstand zwischen Bildern
+                        const maxRowWidth = 170;
+                        const imageSpacing = 5;
                         
                         let currentRowImages = [];
                         let currentRowWidth = 0;
@@ -1859,29 +1569,27 @@
                             const image = images[j];
                             
                             try {
-                                // Temporäres Image-Element erstellen um Dimensionen zu ermitteln
-                                const tempImg = new Image();
-                                tempImg.src = image.src;
+                                // Bild komprimieren und orientierungskorrigieren
+                                const processedImage = await processImageForPDF(image.src, 800, 0.7);
                                 
-                                // Warten bis Bild geladen ist
-                                await new Promise((resolve) => {
-                                    if (tempImg.complete) {
-                                        resolve();
-                                    } else {
-                                        tempImg.onload = resolve;
-                                        tempImg.onerror = resolve;
-                                    }
-                                });
+                                if (processedImage.error) {
+                                    currentRowImages.push({
+                                        error: true,
+                                        name: image.name,
+                                        width: 50,
+                                        height: 10
+                                    });
+                                    continue;
+                                }
                                 
-                                // Originale Dimensionen
-                                const originalWidth = tempImg.naturalWidth || tempImg.width;
-                                const originalHeight = tempImg.naturalHeight || tempImg.height;
+                                // Seitenverhältnis für PDF berechnen
+                                const originalWidth = processedImage.width;
+                                const originalHeight = processedImage.height;
                                 
-                                // Maximale Größe pro Bild
-                                const maxImgWidth = 60;
-                                const maxImgHeight = 45;
+                                // Maximale Größe pro Bild im PDF
+                                const maxImgWidth = 50;  // Kleiner für kompakteres PDF
+                                const maxImgHeight = 35;
                                 
-                                // Seitenverhältnis beibehalten
                                 let imgWidth = maxImgWidth;
                                 let imgHeight = maxImgHeight;
                                 
@@ -1915,7 +1623,7 @@
                                 if (neededWidth > maxRowWidth && currentRowImages.length > 0) {
                                     // Aktuelle Zeile rendern
                                     await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                                    yPos += Math.max(...currentRowImages.map(img => img.height)) + 15; // +15 für Bildnamen
+                                    yPos += Math.max(...currentRowImages.map(img => img.height)) + 10; // Weniger Platz
                                     
                                     // Neue Zeile beginnen
                                     currentRowImages = [];
@@ -1930,7 +1638,7 @@
                                 
                                 // Bild zur aktuellen Zeile hinzufügen
                                 currentRowImages.push({
-                                    src: image.src,
+                                    processedSrc: processedImage.dataUrl, // Komprimiertes Bild verwenden
                                     name: image.name,
                                     width: imgWidth,
                                     height: imgHeight
@@ -1943,8 +1651,8 @@
                                 currentRowImages.push({
                                     error: true,
                                     name: image.name,
-                                    width: 50,
-                                    height: 10
+                                    width: 40,
+                                    height: 25
                                 });
                             }
                         }
@@ -1952,15 +1660,13 @@
                         // Letzte Zeile rendern
                         if (currentRowImages.length > 0) {
                             await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                            yPos += Math.max(...currentRowImages.map(img => img.height)) + 15; // +15 für Bildnamen
+                            yPos += Math.max(...currentRowImages.map(img => img.height)) + 10; // Weniger Platz
                         }
                     }
-                    
                     
                     yPos += 10;
                 }
                 
-                // PDF herunterladen - mobile-freundlicher Dateiname
                 const date = visitDate || new Date().toISOString().split('T')[0];
                 const safeName = competitorValue ? 
                     competitorValue.replace(/[^\w\s-]/g, '') : 
@@ -1968,13 +1674,29 @@
                 const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
                 const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
                 
-                pdf.save(fileName);
+                // PDF als echte Datei herunterladen - verschiedene Methoden für maximale Kompatibilität
+                try {
+                    // Primäre Methode - direkter Download
+                    pdf.save(fileName);
+                } catch (downloadError) {
+                    console.log('Direkter Download fehlgeschlagen, verwende alternative Methode:', downloadError);
+                    
+                    // Alternative Methode - Blob erstellen und manuell herunterladen
+                    const pdfBlob = pdf.output('blob');
+                    const url = window.URL.createObjectURL(pdfBlob);
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = url;
+                    downloadLink.download = fileName;
+                    downloadLink.style.display = 'none';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    window.URL.revokeObjectURL(url);
+                }
                 
-                // Erfolgsmeldung mit verbesserter mobiler UX
                 successEl.style.display = 'block';
                 scrollToElement(successEl);
                 
-                // Haptic Feedback für iOS
                 if (window.navigator && window.navigator.vibrate) {
                     window.navigator.vibrate([100, 50, 100]);
                 }
@@ -1992,23 +1714,19 @@
         }
 
         function resetForm() {
-            // Mobile-optimierte Bestätigung
             const confirmMessage = 'Möchten Sie wirklich alle Eingaben zurücksetzen?\n\nDies kann nicht rückgängig gemacht werden.';
             
             if (confirm(confirmMessage)) {
-                // Loading-Indikator für mobile UX
                 const loadingEl = document.getElementById('loading');
                 loadingEl.innerHTML = '🔄 Formular wird zurückgesetzt...';
                 loadingEl.style.display = 'block';
                 
                 setTimeout(() => {
-                    // Alle Einträge außer dem ersten entfernen
                     const entries = document.querySelectorAll('.entry-item');
                     for (let i = entries.length - 1; i > 0; i--) {
                         entries[i].remove();
                     }
                     
-                    // Ersten Eintrag zurücksetzen
                     const firstEntry = document.querySelector('.entry-item');
                     const textarea = firstEntry.querySelector('.text-area');
                     const imagePreview = firstEntry.querySelector('.image-preview');
@@ -2016,48 +1734,35 @@
                     textarea.value = '';
                     imagePreview.innerHTML = '';
                     
-                    // Besuchsinformationen zurücksetzen
                     document.getElementById('branchName').selectedIndex = 0;
                     document.getElementById('competitorName').selectedIndex = 0;
                     
-                    // Dropdown-Opacity zurücksetzen
                     document.getElementById('branchName').style.opacity = '1';
                     document.getElementById('competitorName').style.opacity = '1';
                     
-                    // Namen aus Session wiederverwenden, falls vorhanden
                     document.getElementById('visitorName').value = savedVisitorName;
                     
-                    // Datum und Zeit auf heute/jetzt setzen
                     document.getElementById('visitDate').valueAsDate = new Date();
                     const now = new Date();
                     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
                     
-                    // Validierungsfehler entfernen
                     clearValidationErrors();
                     
-                    // Image Data zurücksetzen
                     imageData = {};
                     entryCounter = 1;
                     
-                    // Delete-Buttons aktualisieren
                     updateDeleteButtons();
-                    
-                    // Touch-Feedback neu initialisieren
                     addTouchFeedback();
                     
-                    // Zum Anfang scrollen
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     
-                    // Loading ausblenden
                     loadingEl.style.display = 'none';
                     loadingEl.innerHTML = '📄 PDF wird erstellt...';
                     
-                    // Haptic Feedback für iOS
                     if (window.navigator && window.navigator.vibrate) {
                         window.navigator.vibrate(100);
                     }
                     
-                    // Erfolg anzeigen
                     const successEl = document.getElementById('successMessage');
                     successEl.innerHTML = '✅ Formular erfolgreich zurückgesetzt!';
                     successEl.style.display = 'block';
@@ -2067,7 +1772,7 @@
                         successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
                     }, 2000);
                     
-                }, 100); // Kurze Verzögerung für bessere UX
+                }, 100);
             }
         }
     </script>
