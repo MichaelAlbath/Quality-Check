@@ -1036,9 +1036,279 @@
         let currentSurvey = null;
         let questionPhotos = {}; // Speichert Fotos für jede Frage
         let sonstigesCounter = 0; // Zähler für Sonstiges-Felder
+        let debugMode = false; // Debug-Modus für iOS
+
+        // iOS Debug System
+        class IOSDebugger {
+            constructor() {
+                this.logs = [];
+                this.debugPanel = null;
+                this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                this.createDebugPanel();
+            }
+
+            createDebugPanel() {
+                if (!this.isIOS) return;
+                
+                this.debugPanel = document.createElement('div');
+                this.debugPanel.id = 'ios-debug-panel';
+                this.debugPanel.style.cssText = `
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    width: 300px;
+                    max-height: 400px;
+                    background: rgba(0,0,0,0.9);
+                    color: #00ff00;
+                    font-family: monospace;
+                    font-size: 12px;
+                    padding: 10px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    overflow-y: auto;
+                    display: none;
+                `;
+                
+                const header = document.createElement('div');
+                header.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong>iOS Debug Console</strong>
+                        <button onclick="iosDebugger.toggle()" style="background: #ff4444; color: white; border: none; padding: 5px; border-radius: 3px;">×</button>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <button onclick="iosDebugger.clear()" style="background: #4444ff; color: white; border: none; padding: 5px; border-radius: 3px; margin-right: 5px;">Clear</button>
+                        <button onclick="iosDebugger.testPDF()" style="background: #44ff44; color: black; border: none; padding: 5px; border-radius: 3px; margin-right: 5px;">Test PDF</button>
+                        <button onclick="iosDebugger.testPhoto()" style="background: #ffff44; color: black; border: none; padding: 5px; border-radius: 3px;">Test Photo</button>
+                    </div>
+                    <div id="debug-content"></div>
+                `;
+                this.debugPanel.appendChild(header);
+                document.body.appendChild(this.debugPanel);
+
+                // Debug-Toggle Button hinzufügen
+                const toggleBtn = document.createElement('button');
+                toggleBtn.innerHTML = '🐛 iOS Debug';
+                toggleBtn.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #ff9800;
+                    color: white;
+                    border: none;
+                    padding: 10px;
+                    border-radius: 50px;
+                    z-index: 9999;
+                    font-size: 12px;
+                `;
+                toggleBtn.onclick = () => this.toggle();
+                document.body.appendChild(toggleBtn);
+                
+                // Memory Monitoring starten
+                this.startMemoryMonitoring();
+            }
+
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    time: timestamp,
+                    message: message,
+                    type: type
+                };
+                
+                this.logs.push(logEntry);
+                
+                // Normale Konsole auch verwenden
+                console.log(`[iOS Debug ${timestamp}] ${message}`);
+                
+                // Debug Panel aktualisieren
+                this.updatePanel();
+                
+                // Zu viele Logs? Alte entfernen
+                if (this.logs.length > 50) {
+                    this.logs = this.logs.slice(-30);
+                }
+            }
+
+            error(message, error = null) {
+                let errorMsg = message;
+                if (error) {
+                    errorMsg += ` | Error: ${error.message} | Stack: ${error.stack?.slice(0, 100)}`;
+                }
+                this.log(errorMsg, 'error');
+            }
+
+            updatePanel() {
+                if (!this.debugPanel) return;
+                
+                const content = this.debugPanel.querySelector('#debug-content');
+                if (!content) return;
+                
+                content.innerHTML = this.logs.map(log => {
+                    const color = log.type === 'error' ? '#ff4444' : 
+                                 log.type === 'warning' ? '#ffaa00' : '#00ff00';
+                    return `<div style="color: ${color}; margin-bottom: 5px;">
+                        [${log.time}] ${log.message}
+                    </div>`;
+                }).join('');
+                
+                content.scrollTop = content.scrollHeight;
+            }
+
+            toggle() {
+                if (!this.debugPanel) return;
+                
+                const isVisible = this.debugPanel.style.display !== 'none';
+                this.debugPanel.style.display = isVisible ? 'none' : 'block';
+            }
+
+            clear() {
+                this.logs = [];
+                this.updatePanel();
+            }
+
+            testPDF() {
+                this.log('=== PDF Test Started ===');
+                try {
+                    const { jsPDF } = window.jspdf;
+                    if (!jsPDF) {
+                        throw new Error('jsPDF not available');
+                    }
+                    this.log('jsPDF available ✓');
+                    
+                    const doc = new jsPDF();
+                    doc.text('Test PDF', 20, 20);
+                    this.log('PDF created ✓');
+                    
+                    // Test speichern ohne Download
+                    const pdfData = doc.output('blob');
+                    this.log(`PDF blob created: ${Math.round(pdfData.size / 1024)}KB ✓`);
+                    
+                    this.log('PDF Test completed successfully!');
+                } catch (error) {
+                    this.error('PDF Test failed', error);
+                }
+            }
+
+            testPhoto() {
+                this.log('=== Photo Test Started ===');
+                try {
+                    // Test Canvas
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        throw new Error('Canvas context not available');
+                    }
+                    this.log('Canvas available ✓');
+                    
+                    // Test Image
+                    const img = new Image();
+                    img.onload = () => {
+                        this.log('Image load test ✓');
+                        
+                        // Test Compression
+                        canvas.width = 100;
+                        canvas.height = 100;
+                        ctx.drawImage(img, 0, 0, 100, 100);
+                        
+                        const compressedData = canvas.toDataURL('image/jpeg', 0.2);
+                        const sizeKB = Math.round(compressedData.length / 1024);
+                        this.log(`Image compression test: ${sizeKB}KB ✓`);
+                        
+                        this.log('Photo Test completed successfully!');
+                    };
+                    
+                    img.onerror = () => {
+                        this.error('Image load test failed');
+                    };
+                    
+                    // 1x1 Pixel Bild als Test
+                    img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+                    
+                } catch (error) {
+                    this.error('Photo Test failed', error);
+                }
+            }
+
+            getMemoryInfo() {
+                let info = [];
+                
+                if (window.performance && window.performance.memory) {
+                    const memory = window.performance.memory;
+                    info.push(`Memory: ${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB used`);
+                    info.push(`${Math.round(memory.totalJSHeapSize / 1024 / 1024)}MB total`);
+                    info.push(`${Math.round(memory.jsHeapSizeLimit / 1024 / 1024)}MB limit`);
+                }
+                
+                if (navigator.deviceMemory) {
+                    info.push(`Device: ${navigator.deviceMemory}GB RAM`);
+                }
+                
+                if (navigator.hardwareConcurrency) {
+                    info.push(`CPU cores: ${navigator.hardwareConcurrency}`);
+                }
+                
+                return info.length > 0 ? info.join(' | ') : 'Memory info not available';
+            }
+
+            startMemoryMonitoring() {
+                if (!this.isIOS) return;
+                
+                setInterval(() => {
+                    if (window.performance && window.performance.memory) {
+                        const memory = window.performance.memory;
+                        const usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                        const totalMB = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+                        
+                        // Warnung bei hohem Memory-Verbrauch
+                        if (usedMB > 100) {
+                            this.log(`⚠️ High memory usage: ${usedMB}MB`, 'warning');
+                        }
+                    }
+                }, 5000); // Alle 5 Sekunden
+            }
+
+            checkPhotoData(photos) {
+                if (!photos || photos.length === 0) {
+                    this.log('No photos to check');
+                    return;
+                }
+
+                photos.forEach((photo, index) => {
+                    const sizeKB = Math.round(photo.data.length / 1024);
+                    this.log(`Photo ${index + 1}: ${sizeKB}KB, Format: ${photo.data.slice(5, 15)}`);
+                });
+            }
+        }
+
+        // iOS Debugger initialisieren
+        const iosDebugger = new IOSDebugger();
+
+        // Global Error Handler für iOS
+        window.addEventListener('error', function(event) {
+            iosDebugger.error('Global Error', {
+                message: event.error?.message || event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                stack: event.error?.stack
+            });
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            iosDebugger.error('Unhandled Promise Rejection', {
+                reason: event.reason,
+                promise: event.promise
+            });
+        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            iosDebugger.log('App initialized');
+            iosDebugger.log(`User Agent: ${navigator.userAgent}`);
+            iosDebugger.log(`iOS detected: ${iosDebugger.isIOS}`);
+            iosDebugger.log(`Screen: ${window.screen.width}x${window.screen.height}`);
+            iosDebugger.log(`Viewport: ${window.innerWidth}x${window.innerHeight}`);
+            iosDebugger.log(iosDebugger.getMemoryInfo());
             updateSurveyList();
             createPhotoModal();
         });
@@ -1071,34 +1341,67 @@
         }
 
         function handlePhotoUpload(questionId, event) {
+            iosDebugger.log(`=== Photo Upload Started ===`);
+            iosDebugger.log(`Question ID: ${questionId}`);
+            iosDebugger.log(iosDebugger.getMemoryInfo());
+            
             const files = event.target.files;
-            if (!files.length) return;
+            if (!files.length) {
+                iosDebugger.log('No files selected');
+                return;
+            }
+
+            iosDebugger.log(`Files selected: ${files.length}`);
 
             if (!questionPhotos[questionId]) {
                 questionPhotos[questionId] = [];
             }
 
-            Array.from(files).forEach(file => {
+            Array.from(files).forEach((file, index) => {
+                iosDebugger.log(`Processing file ${index + 1}: ${file.name}, size: ${Math.round(file.size / 1024)}KB, type: ${file.type}`);
+                
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
+                    
                     reader.onload = function(e) {
-                        const photoData = {
-                            id: Date.now() + Math.random(),
-                            data: e.target.result,
-                            name: file.name
-                        };
-                        
-                        questionPhotos[questionId].push(photoData);
-                        updateThumbnails(questionId);
+                        try {
+                            iosDebugger.log(`File ${index + 1} loaded successfully`);
+                            
+                            const photoData = {
+                                id: Date.now() + Math.random(),
+                                data: e.target.result,
+                                name: file.name
+                            };
+                            
+                            const base64Size = Math.round(photoData.data.length / 1024);
+                            iosDebugger.log(`File ${index + 1} converted to base64: ${base64Size}KB`);
+                            
+                            questionPhotos[questionId].push(photoData);
+                            iosDebugger.log(`File ${index + 1} added to questionPhotos. Total for question ${questionId}: ${questionPhotos[questionId].length}`);
+                            
+                            updateThumbnails(questionId);
+                            iosDebugger.log(`Thumbnails updated for question ${questionId}`);
+                            iosDebugger.log(iosDebugger.getMemoryInfo());
+                            
+                        } catch (error) {
+                            iosDebugger.error(`File ${index + 1} processing failed`, error);
+                        }
                     };
+                    
+                    reader.onerror = function(error) {
+                        iosDebugger.error(`File ${index + 1} reader error`, error);
+                    };
+                    
                     reader.readAsDataURL(file);
                 } else {
+                    iosDebugger.log(`File ${index + 1} skipped: not an image (${file.type})`);
                     alert('Bitte wählen Sie nur Bilddateien aus.');
                 }
             });
 
             // Reset input
             event.target.value = '';
+            iosDebugger.log('File input reset');
         }
 
         function updateThumbnails(questionId) {
@@ -1804,10 +2107,15 @@
             }
         });
 
-        // PDF Generation Function
+        // PDF Generation Function mit Debug
         async function generateSurveyPDF(survey) {
+            iosDebugger.log('=== PDF Generation Started ===');
+            iosDebugger.log(`Survey: ${survey.title}`);
+            iosDebugger.log(iosDebugger.getMemoryInfo());
+            
             try {
                 // Sammle alle Antworten
+                iosDebugger.log('Collecting form data...');
                 const formData = new FormData(document.getElementById('surveyForm'));
                 const responses = {};
 
@@ -1824,7 +2132,10 @@
                     }
                 }
 
+                iosDebugger.log(`Responses collected: ${Object.keys(responses).length} items`);
+
                 // Speichere auch im localStorage
+                iosDebugger.log('Saving to localStorage...');
                 const responseData = {
                     surveyId: survey.id,
                     surveyTitle: survey.title,
@@ -1836,21 +2147,35 @@
                 let savedResponses = JSON.parse(localStorage.getItem('surveyResponses') || '[]');
                 savedResponses.push(responseData);
                 localStorage.setItem('surveyResponses', JSON.stringify(savedResponses));
+                iosDebugger.log('localStorage save successful');
+
+                // Photo analysis
+                const totalPhotos = Object.values(questionPhotos).reduce((sum, photos) => sum + (photos ? photos.length : 0), 0);
+                iosDebugger.log(`Total photos: ${totalPhotos}`);
+                
+                Object.keys(questionPhotos).forEach(key => {
+                    if (questionPhotos[key]) {
+                        iosDebugger.log(`Question ${key}: ${questionPhotos[key].length} photos`);
+                        iosDebugger.checkPhotoData(questionPhotos[key]);
+                    }
+                });
 
                 // iOS Safari Detection
                 const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+                iosDebugger.log(`iOS Safari detected: ${isIOSSafari}`);
 
                 if (isIOSSafari) {
-                    // Simplified PDF for iOS Safari
+                    iosDebugger.log('Using iOS-optimized PDF generation');
                     await generateSimplifiedPDF(survey, responses);
                 } else {
-                    // Full PDF for other browsers
+                    iosDebugger.log('Using full PDF generation');
                     await generateFullPDF(survey, responses);
                 }
 
             } catch (error) {
-                console.error('Fehler bei der PDF-Erstellung:', error);
-                alert('Es gab einen Fehler bei der PDF-Erstellung. Ihre Antworten wurden trotzdem gespeichert.');
+                iosDebugger.error('PDF Generation failed', error);
+                iosDebugger.log(iosDebugger.getMemoryInfo());
+                alert(`PDF-Fehler: ${error.message}\n\nCheck Debug-Panel für Details`);
                 
                 // Fallback: Normale Speicherung
                 questionPhotos = {};
@@ -1859,11 +2184,19 @@
             }
         }
 
-        // Simplified PDF for iOS Safari
+        // Simplified PDF for iOS Safari mit Debug
         async function generateSimplifiedPDF(survey, responses) {
+            iosDebugger.log('=== iOS PDF Generation ===');
+            
             try {
+                iosDebugger.log('Initializing jsPDF...');
                 const { jsPDF } = window.jspdf;
+                if (!jsPDF) {
+                    throw new Error('jsPDF not loaded');
+                }
+                
                 const doc = new jsPDF();
+                iosDebugger.log('jsPDF initialized successfully');
                 
                 let yPosition = 30;
                 const pageHeight = doc.internal.pageSize.height;
@@ -1871,7 +2204,10 @@
                 const margin = 20;
                 const maxWidth = pageWidth - 2 * margin;
 
+                iosDebugger.log(`Page dimensions: ${pageWidth}x${pageHeight}`);
+
                 // Simple Header
+                iosDebugger.log('Adding header...');
                 doc.setFontSize(18);
                 doc.setFont(undefined, 'bold');
                 doc.text('BUDNI SURVEY TOOL', margin, yPosition);
@@ -1886,57 +2222,122 @@
                 doc.text(`Ausgefüllt am: ${new Date().toLocaleDateString('de-DE')}`, margin, yPosition);
                 yPosition += 20;
 
-                // iOS-optimierte Bildkomprimierung
-                function compressImageForIOS(base64Data) {
+                iosDebugger.log('Header added successfully');
+
+                // iOS-optimierte Bildkomprimierung mit Debug
+                function compressImageForIOS(base64Data, index = 0) {
                     return new Promise((resolve) => {
+                        iosDebugger.log(`Compressing image ${index + 1}...`);
+                        
                         try {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             const img = new Image();
                             
+                            const startTime = Date.now();
+                            
                             img.onload = function() {
-                                // Sehr aggressive Komprimierung für iOS
-                                const maxSize = 150; // Sehr klein
-                                const aspectRatio = img.width / img.height;
-                                
-                                let newWidth = Math.min(img.width, maxSize);
-                                let newHeight = newWidth / aspectRatio;
-                                
-                                if (newHeight > maxSize) {
-                                    newHeight = maxSize;
-                                    newWidth = maxSize * aspectRatio;
+                                try {
+                                    iosDebugger.log(`Image ${index + 1} loaded: ${img.width}x${img.height}`);
+                                    
+                                    // Ultra-aggressive Komprimierung für mehr Bilder
+                                    const maxSize = 100;
+                                    const aspectRatio = img.width / img.height;
+                                    
+                                    let newWidth = Math.min(img.width, maxSize);
+                                    let newHeight = newWidth / aspectRatio;
+                                    
+                                    if (newHeight > maxSize) {
+                                        newHeight = maxSize;
+                                        newWidth = maxSize * aspectRatio;
+                                    }
+                                    
+                                    canvas.width = newWidth;
+                                    canvas.height = newHeight;
+                                    
+                                    iosDebugger.log(`Image ${index + 1} resized to: ${newWidth}x${newHeight}`);
+                                    
+                                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                                    
+                                    // Ultra-niedrige Qualität für iOS
+                                    const compressedData = canvas.toDataURL('image/jpeg', 0.2);
+                                    const compressionTime = Date.now() - startTime;
+                                    const originalSize = Math.round(base64Data.length / 1024);
+                                    const compressedSize = Math.round(compressedData.length / 1024);
+                                    
+                                    iosDebugger.log(`Image ${index + 1} compressed: ${originalSize}KB → ${compressedSize}KB in ${compressionTime}ms`);
+                                    
+                                    resolve(compressedData);
+                                } catch (canvasError) {
+                                    iosDebugger.error(`Canvas error for image ${index + 1}`, canvasError);
+                                    resolve(null);
                                 }
-                                
-                                canvas.width = newWidth;
-                                canvas.height = newHeight;
-                                
-                                ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                                
-                                // Sehr niedrige Qualität für iOS
-                                const compressedData = canvas.toDataURL('image/jpeg', 0.3);
-                                resolve(compressedData);
                             };
                             
-                            img.onerror = function() {
-                                console.warn('iOS: Bild-Komprimierung fehlgeschlagen');
-                                resolve(null); // null statt Original-Bild
+                            img.onerror = function(imgError) {
+                                iosDebugger.error(`Image ${index + 1} load failed`, imgError);
+                                resolve(null);
                             };
+                            
+                            // Timeout für einzelne Bilder
+                            setTimeout(() => {
+                                iosDebugger.error(`Image ${index + 1} timeout after 3s`);
+                                resolve(null);
+                            }, 3000);
                             
                             img.src = base64Data;
                         } catch (error) {
-                            console.warn('iOS: Canvas-Fehler:', error);
+                            iosDebugger.error(`Image ${index + 1} processing error`, error);
                             resolve(null);
                         }
                     });
                 }
 
+                // Batch-Processing für iOS mit Debug
+                async function processPhotosForIOS(photos, maxPhotos = 5) {
+                    iosDebugger.log(`Processing ${photos.length} photos (max: ${maxPhotos})`);
+                    
+                    const processedPhotos = [];
+                    const photosToProcess = Math.min(photos.length, maxPhotos);
+                    
+                    for (let i = 0; i < photosToProcess; i++) {
+                        iosDebugger.log(`Processing photo ${i + 1}/${photosToProcess}`);
+                        iosDebugger.log(iosDebugger.getMemoryInfo());
+                        
+                        try {
+                            const compressedImage = await compressImageForIOS(photos[i].data, i);
+                            if (compressedImage) {
+                                processedPhotos.push(compressedImage);
+                                iosDebugger.log(`Photo ${i + 1} processed successfully`);
+                            } else {
+                                iosDebugger.log(`Photo ${i + 1} failed to process`);
+                            }
+                            
+                            // Kleine Pause zwischen Bildern um Memory zu entlasten
+                            if (i < photosToProcess - 1) {
+                                iosDebugger.log(`Pausing 200ms before next photo...`);
+                                await new Promise(resolve => setTimeout(resolve, 200));
+                            }
+                        } catch (error) {
+                            iosDebugger.error(`Photo ${i + 1} batch error`, error);
+                        }
+                    }
+                    
+                    iosDebugger.log(`Batch processing complete: ${processedPhotos.length}/${photosToProcess} photos processed`);
+                    return processedPhotos;
+                }
+
                 // Questions and Answers
+                iosDebugger.log(`Processing ${survey.questions.length} questions...`);
+                
                 for (let i = 0; i < survey.questions.length; i++) {
                     const question = survey.questions[i];
+                    iosDebugger.log(`Processing question ${i + 1}: ${question.text.slice(0, 30)}...`);
                     
                     if (yPosition > pageHeight - 50) {
                         doc.addPage();
                         yPosition = 30;
+                        iosDebugger.log('Added new page');
                     }
 
                     // Question
@@ -1967,70 +2368,89 @@
                     doc.text(answerLines, margin, yPosition);
                     yPosition += answerLines.length * 6;
 
-                    // Fotos für iOS - nur kleine, komprimierte Versionen
+                    // Fotos für iOS - bis zu 5 Bilder pro Frage
                     if (questionPhotos[question.id] && questionPhotos[question.id].length > 0) {
+                        iosDebugger.log(`Question ${i + 1} has ${questionPhotos[question.id].length} photos`);
                         yPosition += 5;
                         doc.setFontSize(9);
                         doc.text(`📷 Bilder (${questionPhotos[question.id].length}):`, margin, yPosition);
                         yPosition += 8;
 
-                        // Nur maximal 2 Bilder pro Frage für iOS
-                        const maxPhotosForIOS = Math.min(questionPhotos[question.id].length, 2);
-                        
-                        for (let photoIndex = 0; photoIndex < maxPhotosForIOS; photoIndex++) {
-                            const photo = questionPhotos[question.id][photoIndex];
+                        try {
+                            // Batch-Processing für bis zu 5 Bilder
+                            const processedImages = await processPhotosForIOS(questionPhotos[question.id], 5);
+                            iosDebugger.log(`Question ${i + 1}: ${processedImages.length} images ready for PDF`);
                             
-                            if (yPosition > pageHeight - 40) {
-                                doc.addPage();
-                                yPosition = 30;
-                            }
-
-                            try {
-                                // Sehr aggressive Komprimierung
-                                const compressedImage = await compressImageForIOS(photo.data);
+                            for (let imgIndex = 0; imgIndex < processedImages.length; imgIndex++) {
+                                const compressedImage = processedImages[imgIndex];
                                 
-                                if (compressedImage) {
+                                if (yPosition > pageHeight - 30) {
+                                    doc.addPage();
+                                    yPosition = 30;
+                                    iosDebugger.log('Added new page for images');
+                                }
+
+                                try {
+                                    iosDebugger.log(`Adding image ${imgIndex + 1} to PDF...`);
+                                    
                                     const img = new Image();
                                     await new Promise((resolve, reject) => {
-                                        const timeout = setTimeout(() => reject(new Error('Timeout')), 2000);
+                                        const timeout = setTimeout(() => {
+                                            iosDebugger.error(`Image ${imgIndex + 1} PDF timeout`);
+                                            reject(new Error('PDF Image Timeout'));
+                                        }, 2000);
+                                        
                                         img.onload = () => {
                                             clearTimeout(timeout);
                                             resolve();
                                         };
                                         img.onerror = () => {
                                             clearTimeout(timeout);
-                                            reject(new Error('Load error'));
+                                            reject(new Error('PDF Image Load Error'));
                                         };
                                         img.src = compressedImage;
                                     });
 
-                                    // Sehr kleine Bildgröße für iOS
+                                    // Ultra-kleine Bildgröße für iOS (mehr Bilder möglich)
                                     const aspectRatio = img.width / img.height;
-                                    let imgWidth = 25; // Sehr klein
-                                    let imgHeight = 25 / aspectRatio;
+                                    let imgWidth = 20;
+                                    let imgHeight = 20 / aspectRatio;
                                     
-                                    if (imgHeight > 25) {
-                                        imgHeight = 25;
-                                        imgWidth = 25 * aspectRatio;
+                                    if (imgHeight > 20) {
+                                        imgHeight = 20;
+                                        imgWidth = 20 * aspectRatio;
                                     }
 
-                                    doc.addImage(compressedImage, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-                                    yPosition += imgHeight + 5;
-                                } else {
-                                    throw new Error('Komprimierung fehlgeschlagen');
+                                    // Bilder nebeneinander wenn Platz da ist
+                                    const xOffset = margin + (imgIndex % 3) * (imgWidth + 5);
+                                    const yOffset = yPosition + Math.floor(imgIndex / 3) * (imgHeight + 5);
+                                    
+                                    doc.addImage(compressedImage, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
+                                    iosDebugger.log(`Image ${imgIndex + 1} added to PDF at ${xOffset},${yOffset}`);
+                                    
+                                    // Y-Position nur bei jeder 3. Bild-Reihe anpassen
+                                    if ((imgIndex + 1) % 3 === 0 || imgIndex === processedImages.length - 1) {
+                                        yPosition = yOffset + imgHeight + 5;
+                                    }
+                                } catch (error) {
+                                    iosDebugger.error(`PDF Image ${imgIndex + 1} failed`, error);
+                                    doc.setFontSize(8);
+                                    doc.text(`📷 Bild ${imgIndex + 1}: Fehler`, margin, yPosition);
+                                    yPosition += 8;
                                 }
-                            } catch (error) {
-                                console.warn('iOS Bild-Fehler:', error);
+                            }
+                            
+                            // Hinweis wenn mehr Bilder vorhanden als verarbeitet
+                            if (questionPhotos[question.id].length > 5) {
                                 doc.setFontSize(8);
-                                doc.text(`📷 Bild ${photoIndex + 1}: Nicht darstellbar auf iOS`, margin, yPosition);
+                                doc.text(`... und ${questionPhotos[question.id].length - 5} weitere Bilder (iOS-Limit: 5/Frage)`, margin, yPosition);
                                 yPosition += 8;
                             }
-                        }
-                        
-                        // Hinweis wenn mehr Bilder vorhanden
-                        if (questionPhotos[question.id].length > 2) {
+                            
+                        } catch (error) {
+                            iosDebugger.error(`Question ${i + 1} photo processing failed`, error);
                             doc.setFontSize(8);
-                            doc.text(`... und ${questionPhotos[question.id].length - 2} weitere Bilder`, margin, yPosition);
+                            doc.text(`📷 ${questionPhotos[question.id].length} Bild(er): iOS-Verarbeitung fehlgeschlagen`, margin, yPosition);
                             yPosition += 8;
                         }
                     }
@@ -2041,6 +2461,8 @@
                 // Sonstiges section - vereinfacht für iOS
                 const sonstigesAnswers = Object.keys(responses).filter(key => key.startsWith('sonstiges_'));
                 if (sonstigesAnswers.length > 0) {
+                    iosDebugger.log(`Processing ${sonstigesAnswers.length} sonstiges answers...`);
+                    
                     if (yPosition > pageHeight - 50) {
                         doc.addPage();
                         yPosition = 30;
@@ -2079,14 +2501,21 @@
                 }
 
                 // Save PDF
+                iosDebugger.log('Saving PDF...');
                 const filename = `Budni_Survey_${survey.title.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.pdf`;
                 doc.save(filename);
+                iosDebugger.log('PDF saved successfully!');
 
                 // Spezielle iOS-Nachricht
                 let message = 'PDF wurde erfolgreich erstellt!';
                 const totalPhotos = Object.values(questionPhotos).reduce((sum, photos) => sum + (photos ? photos.length : 0), 0);
                 if (totalPhotos > 0) {
-                    message += `\n\n📱 iOS-Version: ${Math.min(totalPhotos, survey.questions.length * 2)} von ${totalPhotos} Bildern eingebettet (iOS-Beschränkung)`;
+                    const maxPossiblePhotos = survey.questions.length * 5; // 5 pro Frage
+                    const actualPhotos = Math.min(totalPhotos, maxPossiblePhotos);
+                    message += `\n\n📱 iOS-Version: ${actualPhotos} von ${totalPhotos} Bildern eingebettet`;
+                    if (totalPhotos > maxPossiblePhotos) {
+                        message += `\n(iOS-Limit: max. 5 Bilder pro Frage)`;
+                    }
                 }
                 
                 alert(message);
@@ -2096,14 +2525,16 @@
                 backToSurveyList();
 
             } catch (error) {
-                console.error('iOS PDF Error:', error);
+                iosDebugger.error('iOS PDF Generation failed', error);
+                iosDebugger.log(iosDebugger.getMemoryInfo());
                 
                 // iOS Fallback: PDF ohne Bilder
                 try {
+                    iosDebugger.log('Attempting text-only fallback...');
                     alert('Bild-Verarbeitung auf iOS fehlgeschlagen. Erstelle PDF nur mit Text...');
                     await generateTextOnlyPDF(survey, responses);
                 } catch (fallbackError) {
-                    console.error('iOS Fallback Error:', fallbackError);
+                    iosDebugger.error('iOS Fallback failed', fallbackError);
                     throw error;
                 }
             }
