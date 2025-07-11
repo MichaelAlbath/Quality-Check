@@ -313,6 +313,105 @@
             height: 100%;
             object-fit: cover;
             border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-item img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Lightbox für Bildvergrößerung */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .lightbox-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .lightbox-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Mobile Lightbox Optimierungen */
+        @media (max-width: 768px) {
+            .lightbox-content {
+                max-width: 95%;
+                max-height: 95%;
+            }
+            
+            .lightbox-close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+            
+            .lightbox-info {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
         }
 
         .image-remove {
@@ -481,6 +580,19 @@
                 gap: 8px;
             }
             
+            .entry-header-left {
+                gap: 8px;
+            }
+            
+            .image-upload {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .image-upload-icon {
+                font-size: 14px;
+            }
+            
             .image-preview {
                 grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
                 gap: 8px;
@@ -616,7 +728,7 @@
                     <circle cx="88" cy="39" r="1.8" fill="white"/>
                 </svg>
                 <div class="header-text">
-                    <h1>📋 Filialbesuch Dokumentation</h1>
+                    <h1>Filialbesuch Dokumentation</h1>
                     <p>Erfassen Sie Ihre Beobachtungen und Notizen strukturiert</p>
                 </div>
             </div>
@@ -855,19 +967,17 @@
             <div id="entriesContainer">
                 <div class="entry-item" data-entry="1">
                     <div class="entry-header">
-                        <span class="entry-number">Punkt 1</span>
+                        <div class="entry-header-left">
+                            <span class="entry-number">Punkt 1</span>
+                            <div class="image-upload" onclick="document.getElementById('imageInput-1').click()" role="button" tabindex="0" aria-label="Bilder für ersten Punkt hinzufügen" title="Bilder hinzufügen">
+                                <span class="image-upload-icon">📷</span>
+                                <input type="file" id="imageInput-1" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, 1)" aria-label="Bilddateien auswählen">
+                            </div>
+                        </div>
                         <button class="delete-btn hidden" onclick="deleteEntry(this)" aria-label="Punkt 1 löschen">🗑️ Löschen</button>
                     </div>
                     
                     <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt 1"></textarea>
-                    
-                    <div class="image-upload-container">
-                        <div class="image-upload" onclick="document.getElementById('imageInput-1').click()" role="button" tabindex="0" aria-label="Bilder für ersten Punkt hinzufügen">
-                            <span class="image-upload-icon">📷</span>
-                            <input type="file" id="imageInput-1" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, 1)" aria-label="Bilddateien auswählen">
-                        </div>
-                        <span class="image-upload-label">Bilder hinzufügen</span>
-                    </div>
                     
                     <div class="image-preview" id="imagePreview-1" aria-live="polite"></div>
                 </div>
@@ -893,6 +1003,15 @@
                     🔄 Zurücksetzen
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Lightbox für Bildvergrößerung -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()" aria-label="Bild schließen">×</button>
+            <img class="lightbox-img" id="lightboxImg" src="" alt="">
+            <div class="lightbox-info" id="lightboxInfo"></div>
         </div>
     </div>
 
@@ -1231,19 +1350,17 @@
             
             entryDiv.innerHTML = `
                 <div class="entry-header">
-                    <span class="entry-number">Punkt ${entryCounter}</span>
+                    <div class="entry-header-left">
+                        <span class="entry-number">Punkt ${entryCounter}</span>
+                        <div class="image-upload" onclick="document.getElementById('imageInput-${entryCounter}').click()" role="button" tabindex="0" aria-label="Bilder für Punkt ${entryCounter} hinzufügen" title="Bilder hinzufügen">
+                            <span class="image-upload-icon">📷</span>
+                            <input type="file" id="imageInput-${entryCounter}" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, ${entryCounter})" aria-label="Bilddateien auswählen">
+                        </div>
+                    </div>
                     <button class="delete-btn" onclick="deleteEntry(this)" aria-label="Punkt ${entryCounter} löschen">🗑️ Löschen</button>
                 </div>
                 
                 <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt ${entryCounter}"></textarea>
-                
-                <div class="image-upload-container">
-                    <div class="image-upload" onclick="document.getElementById('imageInput-${entryCounter}').click()" role="button" tabindex="0" aria-label="Bilder für Punkt ${entryCounter} hinzufügen">
-                        <span class="image-upload-icon">📷</span>
-                        <input type="file" id="imageInput-${entryCounter}" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, ${entryCounter})" aria-label="Bilddateien auswählen">
-                    </div>
-                    <span class="image-upload-label">Bilder hinzufügen</span>
-                </div>
                 
                 <div class="image-preview" id="imagePreview-${entryCounter}" aria-live="polite"></div>
             `;
@@ -1485,31 +1602,80 @@
                         yPos += 5;
                     }
                     
-                    // Bilder
+                    // Bilder mit korrektem Seitenverhältnis
                     if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
                         yPos += 5;
                         
                         for (let j = 0; j < imageData[entryNumber].length; j++) {
                             const image = imageData[entryNumber][j];
                             
-                            // Neue Seite wenn nötig
-                            if (yPos > 240) {
-                                pdf.addPage();
-                                yPos = 20;
-                            }
-                            
                             try {
-                                // Mobile-optimierte Bildgröße
-                                const imgWidth = 45;
-                                const imgHeight = 35;
+                                // Temporäres Image-Element erstellen um Dimensionen zu ermitteln
+                                const tempImg = new Image();
+                                tempImg.src = image.src;
+                                
+                                // Warten bis Bild geladen ist
+                                await new Promise((resolve) => {
+                                    if (tempImg.complete) {
+                                        resolve();
+                                    } else {
+                                        tempImg.onload = resolve;
+                                        tempImg.onerror = resolve;
+                                    }
+                                });
+                                
+                                // Originale Dimensionen
+                                const originalWidth = tempImg.naturalWidth || tempImg.width;
+                                const originalHeight = tempImg.naturalHeight || tempImg.height;
+                                
+                                // Maximale Größe im PDF
+                                const maxWidth = 80;
+                                const maxHeight = 60;
+                                
+                                // Seitenverhältnis beibehalten
+                                let imgWidth = maxWidth;
+                                let imgHeight = maxHeight;
+                                
+                                if (originalWidth && originalHeight) {
+                                    const aspectRatio = originalWidth / originalHeight;
+                                    
+                                    if (aspectRatio > 1) {
+                                        // Querformat - Breite begrenzen
+                                        imgWidth = maxWidth;
+                                        imgHeight = maxWidth / aspectRatio;
+                                        
+                                        if (imgHeight > maxHeight) {
+                                            imgHeight = maxHeight;
+                                            imgWidth = maxHeight * aspectRatio;
+                                        }
+                                    } else {
+                                        // Hochformat - Höhe begrenzen
+                                        imgHeight = maxHeight;
+                                        imgWidth = maxHeight * aspectRatio;
+                                        
+                                        if (imgWidth > maxWidth) {
+                                            imgWidth = maxWidth;
+                                            imgHeight = maxWidth / aspectRatio;
+                                        }
+                                    }
+                                }
+                                
+                                // Neue Seite wenn nötig
+                                if (yPos + imgHeight > 260) {
+                                    pdf.addPage();
+                                    yPos = 20;
+                                }
+                                
+                                // Bild mit korrektem Seitenverhältnis hinzufügen
                                 pdf.addImage(image.src, 'JPEG', 20, yPos, imgWidth, imgHeight);
                                 
                                 // Bildname daneben
                                 pdf.setFontSize(8);
-                                pdf.text(image.name, 70, yPos + 8);
+                                pdf.text(image.name, 25 + imgWidth, yPos + 8);
                                 pdf.setFontSize(10);
                                 
-                                yPos += imgHeight + 5;
+                                yPos += imgHeight + 8;
+                                
                             } catch (error) {
                                 console.log('Fehler beim Hinzufügen des Bildes:', error);
                                 pdf.setFontSize(8);
