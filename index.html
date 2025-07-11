@@ -1193,35 +1193,34 @@
             });
         }
 
-        // Funktion zum Rendern einer Bildzeile
-        async function renderImageRow(pdf, images, yPos, spacing) {
+        // Professionelle Bildzeile ohne Dateinamen
+        async function renderProfessionalImageRow(pdf, images, yPos, spacing) {
             let currentX = 20;
             
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
                 
-                if (image.error) {
-                    // Fehlermeldung anzeigen
+                try {
+                    // Subtiler Rahmen um jedes Bild
+                    pdf.setDrawColor(225, 232, 237);
+                    pdf.setLineWidth(0.3);
+                    pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
+                    
+                    // Bild einfügen
+                    pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
+                    
+                } catch (error) {
+                    console.log('Fehler beim Rendern des Bildes:', error);
+                    // Eleganter Fehler-Platzhalter
+                    pdf.setFillColor(248, 249, 250);
+                    pdf.rect(currentX, yPos, image.width, image.height, 'F');
+                    pdf.setDrawColor(220, 220, 220);
+                    pdf.rect(currentX, yPos, image.width, image.height, 'S');
+                    
+                    pdf.setTextColor(128, 128, 128);
                     pdf.setFontSize(8);
-                    pdf.text(`[Fehler: ${image.name}]`, currentX, yPos + 5);
-                    pdf.setFontSize(10);
-                } else {
-                    try {
-                        // Bild hinzufügen
-                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
-                        
-                        // Bildname unter dem Bild
-                        pdf.setFontSize(7);
-                        const textWidth = pdf.getTextWidth(image.name);
-                        const textX = currentX + (image.width - textWidth) / 2; // Zentriert unter dem Bild
-                        pdf.text(image.name, textX, yPos + image.height + 8);
-                        pdf.setFontSize(10);
-                    } catch (error) {
-                        console.log('Fehler beim Rendern des Bildes:', error);
-                        pdf.setFontSize(8);
-                        pdf.text(`[Fehler: ${image.name}]`, currentX, yPos + 5);
-                        pdf.setFontSize(10);
-                    }
+                    pdf.text('Bild nicht verfügbar', currentX + image.width/2, yPos + image.height/2, { align: 'center' });
+                    pdf.setTextColor(0, 0, 0);
                 }
                 
                 currentX += image.width + spacing;
