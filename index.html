@@ -436,6 +436,12 @@
             .data-management {
                 flex-direction: column;
                 text-align: center;
+                gap: 10px;
+            }
+
+            .data-management .btn {
+                width: 100%;
+                margin: 5px 0;
             }
         }
     </style>
@@ -458,7 +464,8 @@
             <div class="data-management">
                 <h3>Datenmanagement</h3>
                 <button class="btn btn-success" onclick="exportData()">📥 Checkliste exportieren</button>
-                <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 Checkliste importieren</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 Datei importieren</button>
+                <button class="btn btn-secondary" onclick="showUrlImportDialog()">🌐 Von URL importieren</button>
                 <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alle Daten löschen</button>
                 <input type="file" id="import-file" class="file-upload" accept=".json" onchange="importData(event)">
             </div>
@@ -603,6 +610,53 @@
             link.href = URL.createObjectURL(dataBlob);
             link.download = `${checklistData.title || 'Checkliste'}_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
+        }
+
+        function showUrlImportDialog() {
+            const url = prompt(
+                'GitHub JSON-URL eingeben:\n\n' + 
+                'Beispiel:\n' +
+                'https://raw.githubusercontent.com/username/repository/main/checkliste.json\n\n' +
+                'URL:'
+            );
+            
+            if (url && url.trim()) {
+                importFromUrl(url.trim());
+            }
+        }
+
+        async function importFromUrl(url) {
+            try {
+                showSaveStatus('saving');
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const importedData = await response.json();
+                
+                if (importedData.checklistData) {
+                    checklistData = importedData.checklistData;
+                    if (importedData.workData) {
+                        workData = importedData.workData;
+                    }
+                    
+                    // Update item counter
+                    itemCounter = Math.max(checklistData.items.length, itemCounter);
+                    
+                    loadChecklistIntoEditor();
+                    saveToLocalStorage();
+                    
+                    alert('Checkliste erfolgreich von URL importiert!');
+                } else {
+                    throw new Error('Ungültiges Dateiformat');
+                }
+            } catch (error) {
+                alert(`Fehler beim Laden von URL:\n${error.message}\n\nStellen Sie sicher, dass:\n- Die URL korrekt ist\n- Die Datei öffentlich zugänglich ist\n- Es sich um eine gültige JSON-Datei handelt`);
+                console.error('URL Import error:', error);
+                showSaveStatus('saved');
+            }
         }
 
         function importData(event) {
@@ -1058,7 +1112,7 @@
         }
 
         // PDF Export
-        function exportToPDF() {
+        async function exportToPDF() {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF();
             
@@ -1070,22 +1124,27 @@
             pdf.text(`Erstellt am: ${new Date().toLocaleDateString('de-DE')}`, 20, 30);
             
             if (checklistData.description) {
-                pdf.text(`Beschreibung: ${checklistData.description}`, 20, 40);
+                const splitDescription = pdf.splitTextToSize(`Beschreibung: ${checklistData.description}`, 170);
+                pdf.text(splitDescription, 20, 40);
             }
             
             let yPosition = 60;
             const pageHeight = pdf.internal.pageSize.height;
+            const pageWidth = pdf.internal.pageSize.width;
             
             // Items
-            checklistData.items.forEach((item, index) => {
+            for (let index = 0; index < checklistData.items.length; index++) {
+                const item = checklistData.items[index];
+                
                 if (yPosition > pageHeight - 40) {
                     pdf.addPage();
                     yPosition = 20;
                 }
                 
                 pdf.setFontSize(14);
-                pdf.text(`${index + 1}. ${item.description}`, 20, yPosition);
-                yPosition += 10;
+                const splitTitle = pdf.splitTextToSize(`${index + 1}. ${item.description}`, 170);
+                pdf.text(splitTitle, 20, yPosition);
+                yPosition += splitTitle.length * 7;
                 
                 // Rating
                 const rating = workData[index];
@@ -1101,9 +1160,8 @@
                     yPosition += 8;
                 }
                 
-                // Comments and Images
+                // Comments
                 const comments = rating?.comments;
-                
                 if (comments) {
                     pdf.setFontSize(10);
                     const splitComments = pdf.splitTextToSize(`Bemerkungen: ${comments}`, 160);
@@ -1111,17 +1169,60 @@
                     yPosition += splitComments.length * 5;
                 }
                 
+                // Images
                 if (rating && rating.images && rating.images.length > 0) {
                     pdf.setFontSize(10);
-                    pdf.text(`Dokumentationsfotos: ${rating.images.length} Bild(er) aufgenommen`, 30, yPosition);
-                    yPosition += 8;
+                    pdf.text(`Dokumentationsfotos (${rating.images.length}):`, 30, yPosition);
+                    yPosition += 10;
+                    
+                    // Add images to PDF
+                    const imageWidth = 40;
+                    const imageHeight = 30;
+                    const imagesPerRow = 4;
+                    let currentRow = 0;
+                    let currentCol = 0;
+                    
+                    for (let imgIndex = 0; imgIndex < rating.images.length; imgIndex++) {
+                        const imageSrc = rating.images[imgIndex];
+                        
+                        // Check if we need a new page
+                        if (yPosition + imageHeight + 10 > pageHeight - 20) {
+                            pdf.addPage();
+                            yPosition = 20;
+                            currentRow = 0;
+                            currentCol = 0;
+                        }
+                        
+                        try {
+                            // Calculate position
+                            const xPos = 30 + (currentCol * (imageWidth + 5));
+                            const yPos = yPosition + (currentRow * (imageHeight + 5));
+                            
+                            // Add image to PDF
+                            pdf.addImage(imageSrc, 'JPEG', xPos, yPos, imageWidth, imageHeight);
+                            
+                            // Move to next position
+                            currentCol++;
+                            if (currentCol >= imagesPerRow) {
+                                currentCol = 0;
+                                currentRow++;
+                            }
+                            
+                        } catch (error) {
+                            console.warn(`Fehler beim Hinzufügen von Bild ${imgIndex + 1}:`, error);
+                        }
+                    }
+                    
+                    // Calculate total rows used
+                    const totalRows = Math.ceil(rating.images.length / imagesPerRow);
+                    yPosition += totalRows * (imageHeight + 5) + 10;
                 }
                 
-                yPosition += 10;
-            });
+                yPosition += 15;
+            }
             
             // Summary
-            if (yPosition > pageHeight - 60) {
+            if (yPosition > pageHeight - 80) {
                 pdf.addPage();
                 yPosition = 20;
             }
@@ -1129,7 +1230,7 @@
             yPosition += 10;
             pdf.setFontSize(14);
             pdf.text('Zusammenfassung:', 20, yPosition);
-            yPosition += 10;
+            yPosition += 15;
             
             const totalItems = checklistData.items.length;
             const completedItems = Object.keys(workData).filter(key => 
@@ -1148,6 +1249,9 @@
             pdf.text(`Abgeschlossene Prüfpunkte: ${completedItems}`, 30, yPosition + 10);
             pdf.text(`Erfolgreich geprüfte Punkte: ${positiveItems}`, 30, yPosition + 20);
             pdf.text(`Dokumentationsfotos gesamt: ${totalImages}`, 30, yPosition + 30);
+            
+            const successRate = totalItems > 0 ? ((positiveItems / totalItems) * 100).toFixed(1) : 0;
+            pdf.text(`Erfolgsquote: ${successRate}%`, 30, yPosition + 40);
             
             // Save
             const fileName = `${checklistData.title || 'Checkliste'}_${new Date().toISOString().split('T')[0]}.pdf`;
