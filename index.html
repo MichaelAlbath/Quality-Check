@@ -1767,7 +1767,27 @@
                     try {
                         const survey = JSON.parse(e.target.result);
                         loadSurveyData(survey);
-                        alert('Umfrage wurde erfolgreich geladen!');
+                        
+                        // Umfrage zu verfügbaren Umfragen hinzufügen
+                        if (!survey.id) {
+                            survey.id = Date.now();
+                        }
+                        if (!survey.created) {
+                            survey.created = new Date().toLocaleDateString('de-DE');
+                        }
+                        
+                        // Prüfe ob Umfrage bereits existiert
+                        const existingIndex = surveys.findIndex(s => s.title === survey.title);
+                        if (existingIndex !== -1) {
+                            surveys[existingIndex] = survey;
+                        } else {
+                            surveys.push(survey);
+                        }
+                        
+                        localStorage.setItem('surveys', JSON.stringify(surveys));
+                        updateSurveyList();
+                        
+                        alert('Umfrage wurde erfolgreich geladen und ist jetzt verfügbar!');
                     } catch (error) {
                         alert('Fehler beim Laden der Datei: ' + error.message);
                     }
