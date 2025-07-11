@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fragebogen Designer & Umfrage Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -656,6 +657,95 @@
             transform: scale(1.1);
         }
 
+        /* Star Rating Styles */
+        .star-rating {
+            text-align: center;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        .star {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            filter: grayscale(100%);
+            opacity: 0.3;
+            transform: scale(1);
+        }
+
+        .star:hover,
+        .star.active {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .star:hover {
+            text-shadow: 0 0 10px #ffd700;
+        }
+
+        /* Other Fields Styles */
+        .other-field-item {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .other-field-item:first-child .remove-other-field {
+            display: none;
+        }
+
+        .add-other-field-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-other-field-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .remove-other-field {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-other-field:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .container {
@@ -824,6 +914,58 @@
                 top: 5px;
                 right: 15px;
                 font-size: 25px;
+            }
+            
+            .stars {
+                font-size: 1.8rem;
+                gap: 8px;
+            }
+            
+            .star {
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .add-other-field-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .other-field-item {
+                padding: 12px;
+            }
+            
+            .remove-other-field {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stars {
+                font-size: 2.2rem;
+                gap: 10px;
+            }
+            
+            .star {
+                min-width: 50px;
+                min-height: 50px;
+            }
+            
+            .other-field-item {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .remove-other-field {
+                width: 40px;
+                height: 40px;
+                top: 8px;
+                right: 8px;
             }
         }
         
@@ -1001,6 +1143,7 @@
         let surveys = JSON.parse(localStorage.getItem('surveys') || '[]');
         let currentSurvey = null;
         let questionPhotos = {}; // Speichert Fotos für jede Frage
+        let otherFieldCounter = 1; // Zähler für "Sonstiges"-Felder
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1033,6 +1176,74 @@
                     closePhotoModal();
                 }
             });
+
+            // Event delegation for star ratings
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('star')) {
+                    handleStarClick(e.target);
+                }
+            });
+        }
+
+        function handleStarClick(star) {
+            const rating = star.getAttribute('data-rating');
+            const starsContainer = star.parentElement;
+            const questionId = starsContainer.getAttribute('data-question-id');
+            const hiddenInput = starsContainer.parentElement.querySelector('input[type="hidden"]');
+            
+            // Set the value
+            hiddenInput.value = rating;
+            
+            // Update visual state
+            const allStars = starsContainer.querySelectorAll('.star');
+            allStars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+            
+            // Update rating text
+            const ratingText = starsContainer.parentElement.querySelector('.rating-text');
+            const ratingTexts = ['', 'Sehr schlecht', 'Schlecht', 'Mittelmäßig', 'Gut', 'Sehr gut'];
+            ratingText.textContent = `${rating}/5 - ${ratingTexts[rating]}`;
+        }
+
+        function addOtherField() {
+            otherFieldCounter++;
+            const container = document.getElementById('otherFieldsContainer');
+            
+            const newField = document.createElement('div');
+            newField.className = 'other-field-item';
+            newField.setAttribute('data-other-id', otherFieldCounter);
+            newField.innerHTML = `
+                <button type="button" class="remove-other-field" onclick="removeOtherField(${otherFieldCounter})" title="Feld entfernen">×</button>
+                <textarea name="other_${otherFieldCounter}" placeholder="Weitere Anmerkungen, Feedback oder sonstige Bemerkungen..." style="width: 100%; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical; -webkit-appearance: none; background: white;"></textarea>
+                
+                <div class="photo-upload-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <label for="photoOther${otherFieldCounter}" class="photo-upload-btn">
+                            📷 Foto hinzufügen
+                        </label>
+                        <input type="file" id="photoOther${otherFieldCounter}" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('other_${otherFieldCounter}', event)">
+                    </div>
+                    <div id="photoThumbnailsother_${otherFieldCounter}" class="photo-thumbnails"></div>
+                </div>
+            `;
+            
+            container.appendChild(newField);
+        }
+
+        function removeOtherField(fieldId) {
+            if (confirm('Möchten Sie dieses Feld wirklich entfernen?')) {
+                const field = document.querySelector(`[data-other-id="${fieldId}"]`);
+                if (field) {
+                    // Fotos aus dem Speicher entfernen
+                    delete questionPhotos[`other_${fieldId}`];
+                    field.remove();
+                }
+            }
         }
 
         function handlePhotoUpload(questionId, event) {
@@ -1524,6 +1735,7 @@
         function showSurvey(survey) {
             currentSurvey = survey;
             questionPhotos = {}; // Reset photos when starting new survey
+            otherFieldCounter = 1; // Reset other field counter
             
             document.getElementById('survey-selection').classList.add('hidden');
             document.getElementById('survey-form-container').classList.remove('hidden');
@@ -1579,12 +1791,18 @@
                     questionHTML += '</select>';
                 } else if (question.type === 'rating') {
                     questionHTML += `
-                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                            <span>1</span>
-                            <input type="range" name="q${question.id}" min="1" max="5" value="3" 
-                                   style="flex: 1;" oninput="updateRatingDisplay(this)">
-                            <span>5</span>
-                            <span class="rating-display" style="font-weight: bold; margin-left: 10px;">3</span>
+                        <div class="star-rating" style="margin-top: 15px;">
+                            <input type="hidden" name="q${question.id}" value="">
+                            <div class="stars" data-question-id="${question.id}">
+                                <span class="star" data-rating="1">⭐</span>
+                                <span class="star" data-rating="2">⭐</span>
+                                <span class="star" data-rating="3">⭐</span>
+                                <span class="star" data-rating="4">⭐</span>
+                                <span class="star" data-rating="5">⭐</span>
+                            </div>
+                            <div class="rating-text" style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                                Klicken Sie auf die Sterne für Ihre Bewertung
+                            </div>
                         </div>
                     `;
                 }
@@ -1606,8 +1824,38 @@
                 questionsContainer.appendChild(questionDiv);
             });
 
+            // Sonstiges-Sektion am Ende hinzufügen
+            const otherSection = document.createElement('div');
+            otherSection.className = 'survey-question';
+            otherSection.style.borderLeft = '5px solid #ff9800';
+            otherSection.innerHTML = `
+                <h3>Sonstiges / Weitere Anmerkungen</h3>
+                <div id="otherFieldsContainer">
+                    <div class="other-field-item" data-other-id="1">
+                        <textarea name="other_1" placeholder="Weitere Anmerkungen, Feedback oder sonstige Bemerkungen..." style="width: 100%; padding: 15px; border: 2px solid #e1e8ed; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical; -webkit-appearance: none; background: white;"></textarea>
+                        
+                        <div class="photo-upload-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <label for="photoOther1" class="photo-upload-btn">
+                                    📷 Foto hinzufügen
+                                </label>
+                                <input type="file" id="photoOther1" accept="image/*" capture="environment" multiple style="display: none;" onchange="handlePhotoUpload('other_1', event)">
+                            </div>
+                            <div id="photoThumbnailsother_1" class="photo-thumbnails"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <button type="button" class="add-other-field-btn" onclick="addOtherField()">
+                        ➕ Weiteres Feld hinzufügen
+                    </button>
+                </div>
+            `;
+            questionsContainer.appendChild(otherSection);
+
             // Handle form submission
-            document.getElementById('surveyForm').onsubmit = function(e) {
+            document.getElementById('surveyForm').onsubmit = async function(e) {
                 e.preventDefault();
                 const formData = new FormData(e.target);
                 const responses = {};
@@ -1645,7 +1893,22 @@
                 savedResponses.push(responseData);
                 localStorage.setItem('surveyResponses', JSON.stringify(savedResponses));
 
-                alert('Vielen Dank für Ihre Teilnahme! Ihre Antworten und Fotos wurden gespeichert.');
+                // PDF generieren
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = '📄 PDF wird erstellt...';
+                submitButton.disabled = true;
+
+                try {
+                    await generateSurveyPDF(survey, responses, questionPhotos);
+                    alert('Vielen Dank für Ihre Teilnahme! Ihre Antworten und Fotos wurden gespeichert und als PDF heruntergeladen.');
+                } catch (error) {
+                    console.error('PDF generation error:', error);
+                    alert('Es gab einen Fehler beim Erstellen des PDFs, aber Ihre Antworten wurden gespeichert.');
+                } finally {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
                 
                 // Reset photos for next use
                 questionPhotos = {};
@@ -1654,16 +1917,374 @@
             };
         }
 
-        function updateRatingDisplay(input) {
-            const display = input.parentElement.querySelector('.rating-display');
-            display.textContent = input.value;
-        }
+
 
         function backToSurveyList() {
             document.getElementById('survey-selection').classList.remove('hidden');
             document.getElementById('survey-form-container').classList.add('hidden');
             currentSurvey = null;
-            questionPhotos = {}; // Reset photos when going back
+            questionPhotos = {}; // Reset other field counter
+        }
+
+        async function generateSurveyPDF(survey, responses, photos) {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            let yPosition = 20;
+            const margin = 20;
+            const lineHeight = 7;
+            const maxWidth = pageWidth - (margin * 2);
+
+            // Helper function to add new page if needed
+            function checkNewPage(requiredHeight = 15) {
+                if (yPosition + requiredHeight > pageHeight - margin) {
+                    pdf.addPage();
+                    yPosition = margin;
+                    return true;
+                }
+                return false;
+            }
+
+            // Helper function to wrap text
+            function addWrappedText(text, x, y, maxWidth, fontSize = 12) {
+                pdf.setFontSize(fontSize);
+                const lines = pdf.splitTextToSize(text, maxWidth);
+                lines.forEach((line, index) => {
+                    checkNewPage();
+                    pdf.text(line, x, y + (index * lineHeight));
+                });
+                return lines.length * lineHeight;
+            }
+
+            // Helper function to resize image to fit constraints while maintaining aspect ratio
+            function calculateImageSize(imgWidth, imgHeight, maxWidth = 160, maxHeight = 120) {
+                const aspectRatio = imgWidth / imgHeight;
+                let newWidth = maxWidth;
+                let newHeight = maxWidth / aspectRatio;
+                
+                if (newHeight > maxHeight) {
+                    newHeight = maxHeight;
+                    newWidth = maxHeight * aspectRatio;
+                }
+                
+                return { width: newWidth, height: newHeight };
+            }
+
+            // Helper function to process image for PDF
+            async function processImageForPDF(imageData) {
+                return new Promise((resolve) => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        // Maintain aspect ratio while scaling to reasonable size
+                        const maxDimension = 1200; // Maximum width or height
+                        const aspectRatio = this.width / this.height;
+                        
+                        let canvasWidth, canvasHeight;
+                        
+                        if (this.width > this.height) {
+                            // Landscape: limit width to maxDimension
+                            canvasWidth = Math.min(this.width, maxDimension);
+                            canvasHeight = canvasWidth / aspectRatio;
+                        } else {
+                            // Portrait or square: limit height to maxDimension
+                            canvasHeight = Math.min(this.height, maxDimension);
+                            canvasWidth = canvasHeight * aspectRatio;
+                        }
+                        
+                        // Ensure minimum quality while keeping reasonable file size
+                        const minDimension = 400;
+                        if (canvasWidth < minDimension && canvasHeight < minDimension) {
+                            if (canvasWidth > canvasHeight) {
+                                canvasWidth = minDimension;
+                                canvasHeight = minDimension / aspectRatio;
+                            } else {
+                                canvasHeight = minDimension;
+                                canvasWidth = minDimension * aspectRatio;
+                            }
+                        }
+                        
+                        canvas.width = canvasWidth;
+                        canvas.height = canvasHeight;
+                        
+                        // Draw image on canvas with high quality
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        ctx.drawImage(this, 0, 0, canvasWidth, canvasHeight);
+                        
+                        // Convert to high-quality JPEG
+                        const processedImageData = canvas.toDataURL('image/jpeg', 0.9);
+                        resolve({
+                            data: processedImageData,
+                            width: canvasWidth,
+                            height: canvasHeight
+                        });
+                    };
+                    
+                    img.onerror = function() {
+                        resolve(null);
+                    };
+                    
+                    img.src = imageData;
+                });
+            }
+
+            try {
+                // PDF Header
+                pdf.setFillColor(102, 126, 234);
+                pdf.rect(0, 0, pageWidth, 40, 'F');
+                
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(24);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(survey.title, margin, 25);
+                
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('Umfrageergebnis', margin, 35);
+                
+                // Date and time
+                const now = new Date();
+                const dateString = now.toLocaleDateString('de-DE', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                pdf.text(`Erstellt am: ${dateString}`, pageWidth - margin - 60, 35);
+
+                yPosition = 55;
+
+                // Survey Description
+                if (survey.description) {
+                    pdf.setTextColor(64, 64, 64);
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, 'italic');
+                    const descHeight = addWrappedText(survey.description, margin, yPosition, maxWidth);
+                    yPosition += descHeight + 10;
+                }
+
+                // Process each question and answer
+                for (let i = 0; i < survey.questions.length; i++) {
+                    const question = survey.questions[i];
+                    const answer = responses[`q${question.id}`];
+                    
+                    checkNewPage(30);
+                    
+                    // Question header with background
+                    pdf.setFillColor(248, 249, 250);
+                    pdf.rect(margin - 5, yPosition - 5, maxWidth + 10, 12, 'F');
+                    
+                    pdf.setTextColor(51, 51, 51);
+                    pdf.setFontSize(14);
+                    pdf.setFont(undefined, 'bold');
+                    const questionHeight = addWrappedText(`${i + 1}. ${question.text}`, margin, yPosition + 5, maxWidth);
+                    yPosition += questionHeight + 8;
+
+                    // Answer
+                    pdf.setTextColor(68, 68, 68);
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, 'normal');
+                    
+                    if (answer) {
+                        if (Array.isArray(answer)) {
+                            const answerText = answer.join(', ');
+                            const answerHeight = addWrappedText(`Antwort: ${answerText}`, margin + 5, yPosition, maxWidth - 10);
+                            yPosition += answerHeight + 5;
+                        } else {
+                            // Special formatting for rating questions
+                            if (question.type === 'rating' && !isNaN(answer)) {
+                                const rating = parseInt(answer);
+                                const stars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
+                                const ratingTexts = ['', 'Sehr schlecht', 'Schlecht', 'Mittelmäßig', 'Gut', 'Sehr gut'];
+                                pdf.setFont(undefined, 'bold');
+                                pdf.text(`Bewertung: ${stars} (${rating}/5 - ${ratingTexts[rating]})`, margin + 5, yPosition);
+                                yPosition += lineHeight + 5;
+                            } else {
+                                const answerHeight = addWrappedText(`Antwort: ${answer}`, margin + 5, yPosition, maxWidth - 10);
+                                yPosition += answerHeight + 5;
+                            }
+                        }
+                    } else {
+                        pdf.setTextColor(150, 150, 150);
+                        pdf.setFont(undefined, 'italic');
+                        pdf.text('Keine Antwort gegeben', margin + 5, yPosition);
+                        yPosition += lineHeight + 5;
+                    }
+
+                    // Add photos for this question
+                    if (photos[`q${question.id}`] && photos[`q${question.id}`].length > 0) {
+                        checkNewPage(50);
+                        
+                        pdf.setTextColor(102, 126, 234);
+                        pdf.setFontSize(12);
+                        pdf.setFont(undefined, 'bold');
+                        pdf.text('Angehängte Fotos:', margin + 5, yPosition);
+                        yPosition += lineHeight + 5;
+
+                        for (const photo of photos[`q${question.id}`]) {
+                            try {
+                                const processedImage = await processImageForPDF(photo.data);
+                                if (processedImage) {
+                                    const { width, height } = calculateImageSize(processedImage.width, processedImage.height, 150, 100);
+                                    checkNewPage(height + 15);
+                                    
+                                    // Add a subtle border around the image
+                                    pdf.setDrawColor(200, 200, 200);
+                                    pdf.rect(margin + 8, yPosition - 2, width + 4, height + 4);
+                                    
+                                    pdf.addImage(processedImage.data, 'JPEG', margin + 10, yPosition, width, height);
+                                    
+                                    // Add image caption
+                                    pdf.setTextColor(120, 120, 120);
+                                    pdf.setFontSize(9);
+                                    pdf.text(photo.name || 'Bild', margin + 10, yPosition + height + 8);
+                                    
+                                    yPosition += height + 15;
+                                } else {
+                                    pdf.setTextColor(200, 100, 100);
+                                    pdf.setFontSize(10);
+                                    pdf.text('⚠ Bild konnte nicht geladen werden', margin + 10, yPosition);
+                                    yPosition += lineHeight + 5;
+                                }
+                            } catch (error) {
+                                console.error('Error processing image:', error);
+                                pdf.setTextColor(200, 100, 100);
+                                pdf.setFontSize(10);
+                                pdf.text('⚠ Fehler beim Verarbeiten des Bildes', margin + 10, yPosition);
+                                yPosition += lineHeight + 5;
+                            }
+                        }
+                    }
+
+                    yPosition += 5;
+                }
+
+                // Add "Sonstiges" section
+                const otherFields = Object.keys(responses).filter(key => key.startsWith('other_'));
+                if (otherFields.length > 0) {
+                    checkNewPage(40);
+                    
+                    // Section header
+                    pdf.setFillColor(255, 152, 0);
+                    pdf.rect(margin - 5, yPosition - 5, maxWidth + 10, 12, 'F');
+                    
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFontSize(16);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Sonstiges / Weitere Anmerkungen', margin, yPosition + 5);
+                    yPosition += 20;
+
+                    otherFields.forEach((fieldKey, index) => {
+                        const fieldValue = responses[fieldKey];
+                        if (fieldValue && fieldValue.trim()) {
+                            checkNewPage(20);
+                            
+                            pdf.setTextColor(51, 51, 51);
+                            pdf.setFontSize(12);
+                            pdf.setFont(undefined, 'bold');
+                            pdf.text(`${index + 1}. Zusätzliche Anmerkung:`, margin, yPosition);
+                            yPosition += lineHeight + 3;
+
+                            pdf.setTextColor(68, 68, 68);
+                            pdf.setFont(undefined, 'normal');
+                            const textHeight = addWrappedText(fieldValue, margin + 5, yPosition, maxWidth - 10);
+                            yPosition += textHeight + 5;
+
+                            // Add photos for this "other" field
+                            if (photos[fieldKey] && photos[fieldKey].length > 0) {
+                                checkNewPage(50);
+                                
+                                pdf.setTextColor(255, 152, 0);
+                                pdf.setFontSize(11);
+                                pdf.setFont(undefined, 'bold');
+                                pdf.text('Angehängte Fotos:', margin + 5, yPosition);
+                                yPosition += lineHeight + 5;
+
+                                for (const photo of photos[fieldKey]) {
+                                    try {
+                                        const processedImage = await processImageForPDF(photo.data);
+                                        if (processedImage) {
+                                            const { width, height } = calculateImageSize(processedImage.width, processedImage.height, 150, 100);
+                                            checkNewPage(height + 15);
+                                            
+                                            // Add a subtle border around the image
+                                            pdf.setDrawColor(255, 152, 0);
+                                            pdf.rect(margin + 8, yPosition - 2, width + 4, height + 4);
+                                            
+                                            pdf.addImage(processedImage.data, 'JPEG', margin + 10, yPosition, width, height);
+                                            
+                                            // Add image caption
+                                            pdf.setTextColor(120, 120, 120);
+                                            pdf.setFontSize(9);
+                                            pdf.text(photo.name || 'Bild', margin + 10, yPosition + height + 8);
+                                            
+                                            yPosition += height + 15;
+                                        } else {
+                                            pdf.setTextColor(200, 100, 100);
+                                            pdf.setFontSize(10);
+                                            pdf.text('⚠ Bild konnte nicht geladen werden', margin + 10, yPosition);
+                                            yPosition += lineHeight + 5;
+                                        }
+                                    } catch (error) {
+                                        console.error('Error processing image:', error);
+                                        pdf.setTextColor(200, 100, 100);
+                                        pdf.setFontSize(10);
+                                        pdf.text('⚠ Fehler beim Verarbeiten des Bildes', margin + 10, yPosition);
+                                        yPosition += lineHeight + 5;
+                                    }
+                                }
+                            }
+                            yPosition += 10;
+                        }
+                    });
+                }
+
+                // Footer
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    
+                    // Footer background
+                    pdf.setFillColor(248, 249, 250);
+                    pdf.rect(0, pageHeight - 20, pageWidth, 20, 'F');
+                    
+                    // Footer line
+                    pdf.setDrawColor(200, 200, 200);
+                    pdf.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
+                    
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.setFontSize(9);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.text(`Umfrageergebnis - ${survey.title}`, margin, pageHeight - 8);
+                    pdf.text(`Seite ${i} von ${totalPages}`, pageWidth - margin - 25, pageHeight - 8);
+                    
+                    // Add generation timestamp
+                    pdf.setFontSize(8);
+                    pdf.text(`Generiert am ${dateString}`, margin, pageHeight - 3);
+                }
+
+                // Add metadata to PDF
+                pdf.setProperties({
+                    title: `Umfrageergebnis - ${survey.title}`,
+                    subject: 'Umfrageergebnis',
+                    author: 'Fragebogen-Tool',
+                    creator: 'Fragebogen-Tool',
+                    producer: 'jsPDF'
+                });
+
+                // Save the PDF
+                const fileName = `Umfrage_${survey.title.replace(/[^a-z0-9äöüß]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+                pdf.save(fileName);
+
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Es gab einen Fehler beim Erstellen des PDFs. Bitte versuchen Sie es erneut.');
+            }
         }
 
         // Check for survey URL parameter on load
