@@ -1227,6 +1227,11 @@
             }
         }
 
+        // Fallback-Funktion für Kompatibilität
+        async function renderImageRow(pdf, images, yPos, spacing) {
+            return await renderProfessionalImageRow(pdf, images, yPos, spacing);
+        }
+
         // Dezenter Standort-Hinweis
         function showLocationHint(message) {
             const label = document.querySelector('label[for="branchName"]');
