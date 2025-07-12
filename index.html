@@ -352,6 +352,128 @@
             box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         }
 
+        /* Star Rating System */
+        .rating-section {
+            background: #f1f8ff;
+            border: 2px solid #e1e8ed;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .rating-section h3 {
+            color: #3f51b5;
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+
+        .rating-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .rating-item:hover {
+            border-color: #3f51b5;
+            box-shadow: 0 4px 15px rgba(63, 81, 181, 0.1);
+        }
+
+        .rating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .rating-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .rating-label:hover {
+            background: rgba(63, 81, 181, 0.1);
+            color: #3f51b5;
+        }
+
+        .rating-label::after {
+            content: "✏️";
+            font-size: 10px;
+            opacity: 0;
+            margin-left: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        .rating-label:hover::after {
+            opacity: 0.7;
+        }
+
+        .rating-description {
+            font-size: 12px;
+            color: #666;
+            font-weight: normal;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .rating-delete {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .rating-delete:hover {
+            background: #ff3742;
+            transform: scale(1.05);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .star {
+            font-size: 28px;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffd700;
+            transform: scale(1.1);
+        }
+
+        .star:hover {
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .rating-value {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
         .actions {
             display: flex;
             gap: 15px;
@@ -359,6 +481,22 @@
             justify-content: center;
             margin-top: 30px;
             padding: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .rating-item {
+                padding: 15px;
+            }
+            
+            .star {
+                font-size: 24px;
+            }
+            
+            .rating-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
         }
 
         .export-info {
@@ -978,6 +1116,228 @@
                 </div>
             </div>
 
+            <!-- Rating Section -->
+            <div class="rating-section">
+                <h3>⭐ Bewertung der Bereiche</h3>
+                <div id="ratingsContainer">
+                    <div class="rating-item" data-rating="aussenbereich">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('aussenbereich')" title="Klicken zum Bearbeiten">Außenbereich</div>
+                                <div class="rating-description">Warenfülle Schütten, Unkraut, Markise</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('aussenbereich')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="aussenbereich">
+                            <span class="star" data-value="1" onclick="setRating('aussenbereich', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('aussenbereich', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('aussenbereich', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('aussenbereich', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('aussenbereich', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-aussenbereich">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="aktionszone">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('aktionszone')" title="Klicken zum Bearbeiten">Aktionszone</div>
+                                <div class="rating-description">Aktionsmeter, Saisonwand</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('aktionszone')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="aktionszone">
+                            <span class="star" data-value="1" onclick="setRating('aktionszone', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('aktionszone', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('aktionszone', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('aktionszone', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('aktionszone', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-aktionszone">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="dekorative-kosmetik">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('dekorative-kosmetik')" title="Klicken zum Bearbeiten">Dekorative Kosmetik</div>
+                                <div class="rating-description">Ordnung, Abverkaufsware, Spiegel</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('dekorative-kosmetik')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="dekorative-kosmetik">
+                            <span class="star" data-value="1" onclick="setRating('dekorative-kosmetik', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('dekorative-kosmetik', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('dekorative-kosmetik', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('dekorative-kosmetik', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('dekorative-kosmetik', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-dekorative-kosmetik">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="regalbild">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('regalbild')" title="Klicken zum Bearbeiten">Regalbild</div>
+                                <div class="rating-description">vorgezogen, OOS Situation, FL zugestellt</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('regalbild')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="regalbild">
+                            <span class="star" data-value="1" onclick="setRating('regalbild', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('regalbild', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('regalbild', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('regalbild', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('regalbild', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-regalbild">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="mopro">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('mopro')" title="Klicken zum Bearbeiten">Mopro</div>
+                                <div class="rating-description">Warenfülle, Top 50, Reduzierungen</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('mopro')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="mopro">
+                            <span class="star" data-value="1" onclick="setRating('mopro', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('mopro', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('mopro', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('mopro', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('mopro', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-mopro">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="marketingmittel">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('marketingmittel')" title="Klicken zum Bearbeiten">Marketingmittel</div>
+                                <div class="rating-description">Vollständigkeit, kein Tesa</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('marketingmittel')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="marketingmittel">
+                            <span class="star" data-value="1" onclick="setRating('marketingmittel', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('marketingmittel', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('marketingmittel', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('marketingmittel', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('marketingmittel', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-marketingmittel">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="sauberkeit">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('sauberkeit')" title="Klicken zum Bearbeiten">Sauberkeit</div>
+                                <div class="rating-description">genereller Eindruck, Spinnweben, Reinigungsleistung Boden</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('sauberkeit')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="sauberkeit">
+                            <span class="star" data-value="1" onclick="setRating('sauberkeit', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('sauberkeit', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('sauberkeit', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('sauberkeit', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('sauberkeit', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-sauberkeit">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="ordnung-kasse">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('ordnung-kasse')" title="Klicken zum Bearbeiten">Ordnung Kasse</div>
+                                <div class="rating-description">keine Plakate, keine Flyer, freie Arbeitsplätze</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('ordnung-kasse')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="ordnung-kasse">
+                            <span class="star" data-value="1" onclick="setRating('ordnung-kasse', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('ordnung-kasse', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('ordnung-kasse', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('ordnung-kasse', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('ordnung-kasse', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-ordnung-kasse">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="pausenraum">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('pausenraum')" title="Klicken zum Bearbeiten">Pausenraum</div>
+                                <div class="rating-description">Pflegezustand, Kühlschrank</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('pausenraum')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="pausenraum">
+                            <span class="star" data-value="1" onclick="setRating('pausenraum', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('pausenraum', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('pausenraum', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('pausenraum', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('pausenraum', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-pausenraum">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="lager">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('lager')" title="Klicken zum Bearbeiten">Lager</div>
+                                <div class="rating-description">Ordnung, Füllstand Rollis</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('lager')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="lager">
+                            <span class="star" data-value="1" onclick="setRating('lager', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('lager', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('lager', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('lager', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('lager', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-lager">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="packtische">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('packtische')" title="Klicken zum Bearbeiten">Packtische</div>
+                                <div class="rating-description">sauber und nicht überfrachtet</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('packtische')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="packtische">
+                            <span class="star" data-value="1" onclick="setRating('packtische', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('packtische', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('packtische', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('packtische', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('packtische', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-packtische">Noch nicht bewertet</div>
+                    </div>
+
+                    <div class="rating-item" data-rating="displayzustand">
+                        <div class="rating-header">
+                            <div>
+                                <div class="rating-label" onclick="editRatingTitle('displayzustand')" title="Klicken zum Bearbeiten">Displayzustand</div>
+                                <div class="rating-description">Befüllung, rechtzeitiger Abbau</div>
+                            </div>
+                            <button type="button" class="rating-delete" onclick="deleteRating('displayzustand')">✕ Entfernen</button>
+                        </div>
+                        <div class="star-rating" data-rating-id="displayzustand">
+                            <span class="star" data-value="1" onclick="setRating('displayzustand', 1)">⭐</span>
+                            <span class="star" data-value="2" onclick="setRating('displayzustand', 2)">⭐</span>
+                            <span class="star" data-value="3" onclick="setRating('displayzustand', 3)">⭐</span>
+                            <span class="star" data-value="4" onclick="setRating('displayzustand', 4)">⭐</span>
+                            <span class="star" data-value="5" onclick="setRating('displayzustand', 5)">⭐</span>
+                        </div>
+                        <div class="rating-value" id="rating-displayzustand">Noch nicht bewertet</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="actions">
                 <button type="button" class="btn btn-secondary" onclick="addQuestion()">
                     ➕ Weiteres Thema hinzufügen
@@ -1049,7 +1409,9 @@
         let auditData = {
             questions: {},
             images: {},
-            customTitles: {}
+            customTitles: {},
+            ratings: {},
+            customRatingTitles: {}
         };
 
         function toggleLocationDetails() {
@@ -1072,6 +1434,73 @@
                 const questionElement = document.querySelector(`[data-question="${questionId}"]`);
                 const titleElement = questionElement.querySelector('.question-number');
                 titleElement.textContent = newTitle.trim();
+            }
+        }
+
+        function editRatingTitle(ratingId) {
+            const defaultTitles = {
+                'aussenbereich': 'Außenbereich',
+                'aktionszone': 'Aktionszone',
+                'dekorative-kosmetik': 'Dekorative Kosmetik',
+                'regalbild': 'Regalbild',
+                'mopro': 'Mopro',
+                'marketingmittel': 'Marketingmittel',
+                'sauberkeit': 'Sauberkeit',
+                'ordnung-kasse': 'Ordnung Kasse',
+                'pausenraum': 'Pausenraum',
+                'lager': 'Lager',
+                'packtische': 'Packtische',
+                'displayzustand': 'Displayzustand'
+            };
+            
+            const currentTitle = auditData.customRatingTitles[ratingId] || defaultTitles[ratingId];
+            const newTitle = prompt('Bewertungs-Titel bearbeiten:', currentTitle);
+            
+            if (newTitle !== null && newTitle.trim() !== '') {
+                auditData.customRatingTitles[ratingId] = newTitle.trim();
+                
+                // Update the display
+                const ratingElement = document.querySelector(`[data-rating="${ratingId}"]`);
+                const titleElement = ratingElement.querySelector('.rating-label');
+                titleElement.textContent = newTitle.trim();
+            }
+        }
+
+        // Rating System Functions
+        function setRating(ratingId, value) {
+            auditData.ratings[ratingId] = value;
+            
+            // Update visual stars
+            const starContainer = document.querySelector(`[data-rating-id="${ratingId}"]`);
+            const stars = starContainer.querySelectorAll('.star');
+            
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+            
+            // Update rating text
+            const ratingText = document.getElementById(`rating-${ratingId}`);
+            const ratingLabels = {
+                1: '⭐ Sehr schlecht',
+                2: '⭐⭐ Schlecht', 
+                3: '⭐⭐⭐ Befriedigend',
+                4: '⭐⭐⭐⭐ Gut',
+                5: '⭐⭐⭐⭐⭐ Sehr gut'
+            };
+            ratingText.textContent = ratingLabels[value];
+            ratingText.style.color = value >= 4 ? '#28a745' : value >= 3 ? '#ffc107' : '#dc3545';
+        }
+
+        function deleteRating(ratingId) {
+            const ratingItem = document.querySelector(`[data-rating="${ratingId}"]`);
+            if (ratingItem) {
+                ratingItem.remove();
+                delete auditData.ratings[ratingId];
+                delete auditData.customRatingTitles[ratingId];
             }
         }
 
@@ -1323,8 +1752,13 @@
             });
 
             if (!hasContent) {
-                alert('Bitte füllen Sie mindestens ein Thema aus (Text oder Foto).');
-                return;
+                // Check if there are any ratings
+                const hasRatings = Object.keys(auditData.ratings).length > 0;
+                
+                if (!hasRatings) {
+                    alert('Bitte füllen Sie mindestens ein Thema aus (Text, Foto oder Bewertung).');
+                    return;
+                }
             }
 
             // Generate report
@@ -1388,6 +1822,66 @@
 
                 reportContent.appendChild(section);
             });
+
+            // Add ratings section if there are any ratings
+            if (Object.keys(auditData.ratings).length > 0) {
+                const ratingsSection = document.createElement('div');
+                ratingsSection.className = 'report-section';
+                
+                const ratingsTitle = document.createElement('h3');
+                ratingsTitle.textContent = '⭐ Bewertungen';
+                ratingsSection.appendChild(ratingsTitle);
+
+                const ratingsContent = document.createElement('div');
+                ratingsContent.className = 'report-content';
+                
+                const ratingLabels = {
+                    'aussenbereich': 'Außenbereich',
+                    'aktionszone': 'Aktionszone',
+                    'dekorative-kosmetik': 'Dekorative Kosmetik',
+                    'regalbild': 'Regalbild',
+                    'mopro': 'Mopro',
+                    'marketingmittel': 'Marketingmittel',
+                    'sauberkeit': 'Sauberkeit',
+                    'ordnung-kasse': 'Ordnung Kasse',
+                    'pausenraum': 'Pausenraum',
+                    'lager': 'Lager',
+                    'packtische': 'Packtische',
+                    'displayzustand': 'Displayzustand'
+                };
+
+                const ratingDescriptions = {
+                    1: 'Sehr schlecht',
+                    2: 'Schlecht',
+                    3: 'Befriedigend',
+                    4: 'Gut',
+                    5: 'Sehr gut'
+                };
+
+                let ratingsHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+                
+                Object.keys(auditData.ratings).forEach(ratingId => {
+                    const rating = auditData.ratings[ratingId];
+                    // Use custom title if available, otherwise fall back to default
+                    const label = auditData.customRatingTitles[ratingId] || ratingLabels[ratingId] || ratingId;
+                    const description = ratingDescriptions[rating];
+                    const stars = '⭐'.repeat(rating);
+                    const color = rating >= 4 ? '#28a745' : rating >= 3 ? '#ffc107' : '#dc3545';
+                    
+                    ratingsHTML += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">${label}</div>
+                            <div style="font-size: 18px; margin-bottom: 5px;">${stars}</div>
+                            <div style="font-size: 12px; color: ${color};">${description}</div>
+                        </div>
+                    `;
+                });
+                
+                ratingsHTML += '</div>';
+                ratingsContent.innerHTML = ratingsHTML;
+                ratingsSection.appendChild(ratingsContent);
+                reportContent.appendChild(ratingsSection);
+            }
         }
 
         function backToForm() {
@@ -1407,7 +1901,9 @@
             auditData = {
                 questions: {},
                 images: {},
-                customTitles: {}
+                customTitles: {},
+                ratings: {},
+                customRatingTitles: {}
             };
             questionCounter = 1;
 
@@ -1452,6 +1948,96 @@
 
             // Delete-Buttons aktualisieren
             updateDeleteButtons();
+
+            // Rating-Bereiche zurücksetzen
+            const allRatingItems = document.querySelectorAll('.rating-item');
+            allRatingItems.forEach(item => {
+                // Sterne zurücksetzen
+                const stars = item.querySelectorAll('.star');
+                stars.forEach(star => star.classList.remove('active'));
+                
+                // Text zurücksetzen
+                const ratingValue = item.querySelector('.rating-value');
+                if (ratingValue) {
+                    ratingValue.textContent = 'Noch nicht bewertet';
+                    ratingValue.style.color = '#666';
+                }
+            });
+
+            // Alle ursprünglichen Rating-Bereiche wieder hinzufügen (falls welche gelöscht wurden)
+            const ratingsContainer = document.getElementById('ratingsContainer');
+            const defaultRatings = [
+                'aussenbereich', 'aktionszone', 'dekorative-kosmetik', 'regalbild', 
+                'mopro', 'marketingmittel', 'sauberkeit', 'ordnung-kasse', 
+                'pausenraum', 'lager', 'packtische', 'displayzustand'
+            ];
+            
+            const ratingLabels = {
+                'aussenbereich': 'Außenbereich',
+                'aktionszone': 'Aktionszone',
+                'dekorative-kosmetik': 'Dekorative Kosmetik',
+                'regalbild': 'Regalbild',
+                'mopro': 'Mopro',
+                'marketingmittel': 'Marketingmittel',
+                'sauberkeit': 'Sauberkeit',
+                'ordnung-kasse': 'Ordnung Kasse',
+                'pausenraum': 'Pausenraum',
+                'lager': 'Lager',
+                'packtische': 'Packtische',
+                'displayzustand': 'Displayzustand'
+            };
+
+            const ratingDescriptions = {
+                'aussenbereich': 'Warenfülle Schütten, Unkraut, Markise',
+                'aktionszone': 'Aktionsmeter, Saisonwand',
+                'dekorative-kosmetik': 'Ordnung, Abverkaufsware, Spiegel',
+                'regalbild': 'vorgezogen, OOS Situation, FL zugestellt',
+                'mopro': 'Warenfülle, Top 50, Reduzierungen',
+                'marketingmittel': 'Vollständigkeit, kein Tesa',
+                'sauberkeit': 'genereller Eindruck, Spinnweben, Reinigungsleistung Boden',
+                'ordnung-kasse': 'keine Plakate, keine Flyer, freie Arbeitsplätze',
+                'pausenraum': 'Pflegezustand, Kühlschrank',
+                'lager': 'Ordnung, Füllstand Rollis',
+                'packtische': 'sauber und nicht überfrachtet',
+                'displayzustand': 'Befüllung, rechtzeitiger Abbau'
+            };
+
+            // Prüfe welche Rating-Items fehlen und füge sie hinzu
+            defaultRatings.forEach(ratingId => {
+                if (!document.querySelector(`[data-rating="${ratingId}"]`)) {
+                    const ratingHTML = `
+                        <div class="rating-item" data-rating="${ratingId}">
+                            <div class="rating-header">
+                                <div>
+                                    <div class="rating-label" onclick="editRatingTitle('${ratingId}')" title="Klicken zum Bearbeiten">${ratingLabels[ratingId]}</div>
+                                    <div class="rating-description">${ratingDescriptions[ratingId]}</div>
+                                </div>
+                                <button type="button" class="rating-delete" onclick="deleteRating('${ratingId}')">✕ Entfernen</button>
+                            </div>
+                            <div class="star-rating" data-rating-id="${ratingId}">
+                                <span class="star" data-value="1" onclick="setRating('${ratingId}', 1)">⭐</span>
+                                <span class="star" data-value="2" onclick="setRating('${ratingId}', 2)">⭐</span>
+                                <span class="star" data-value="3" onclick="setRating('${ratingId}', 3)">⭐</span>
+                                <span class="star" data-value="4" onclick="setRating('${ratingId}', 4)">⭐</span>
+                                <span class="star" data-value="5" onclick="setRating('${ratingId}', 5)">⭐</span>
+                            </div>
+                            <div class="rating-value" id="rating-${ratingId}">Noch nicht bewertet</div>
+                        </div>
+                    `;
+                    ratingsContainer.insertAdjacentHTML('beforeend', ratingHTML);
+                }
+            });
+
+            // Auch die Titel der vorhandenen Rating-Items zurücksetzen
+            defaultRatings.forEach(ratingId => {
+                const ratingElement = document.querySelector(`[data-rating="${ratingId}"]`);
+                if (ratingElement) {
+                    const titleElement = ratingElement.querySelector('.rating-label');
+                    if (titleElement) {
+                        titleElement.textContent = ratingLabels[ratingId];
+                    }
+                }
+            });
 
             // Neue Datum/Zeit setzen
             const now = new Date();
@@ -1524,6 +2110,58 @@
                     
                     yPosition += 10;
                 });
+                
+                // Add ratings if any exist
+                if (Object.keys(auditData.ratings).length > 0) {
+                    if (yPosition > 200) {
+                        pdf.addPage();
+                        yPosition = 30;
+                    }
+                    
+                    pdf.setFontSize(14);
+                    pdf.text('Bewertungen:', 20, yPosition);
+                    yPosition += 15;
+                    
+                    const ratingLabels = {
+                        'aussenbereich': 'Außenbereich',
+                        'aktionszone': 'Aktionszone',
+                        'dekorative-kosmetik': 'Dekorative Kosmetik',
+                        'regalbild': 'Regalbild',
+                        'mopro': 'Mopro',
+                        'marketingmittel': 'Marketingmittel',
+                        'sauberkeit': 'Sauberkeit',
+                        'ordnung-kasse': 'Ordnung Kasse',
+                        'pausenraum': 'Pausenraum',
+                        'lager': 'Lager',
+                        'packtische': 'Packtische',
+                        'displayzustand': 'Displayzustand'
+                    };
+
+                    const ratingDescriptions = {
+                        1: 'Sehr schlecht',
+                        2: 'Schlecht',
+                        3: 'Befriedigend', 
+                        4: 'Gut',
+                        5: 'Sehr gut'
+                    };
+
+                    Object.keys(auditData.ratings).forEach(ratingId => {
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            yPosition = 30;
+                        }
+                        
+                        const rating = auditData.ratings[ratingId];
+                        // Use custom title if available, otherwise fall back to default
+                        const label = auditData.customRatingTitles[ratingId] || ratingLabels[ratingId] || ratingId;
+                        const description = ratingDescriptions[rating];
+                        const stars = '*'.repeat(rating);
+                        
+                        pdf.setFontSize(10);
+                        pdf.text(`${label}: ${stars} (${description})`, 25, yPosition);
+                        yPosition += 12;
+                    });
+                }
                 
                 // Download PDF
                 const filename = auditorName === 'Anonym' 
@@ -2292,6 +2930,62 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 
                 htmlContent += '</div>';
             });
+
+            // Add ratings section to HTML export if there are any ratings
+            if (Object.keys(auditData.ratings).length > 0) {
+                const ratingLabels = {
+                    'aussenbereich': 'Außenbereich',
+                    'aktionszone': 'Aktionszone', 
+                    'dekorative-kosmetik': 'Dekorative Kosmetik',
+                    'regalbild': 'Regalbild',
+                    'mopro': 'Mopro',
+                    'marketingmittel': 'Marketingmittel',
+                    'sauberkeit': 'Sauberkeit',
+                    'ordnung-kasse': 'Ordnung Kasse',
+                    'pausenraum': 'Pausenraum',
+                    'lager': 'Lager',
+                    'packtische': 'Packtische',
+                    'displayzustand': 'Displayzustand'
+                };
+
+                const ratingDescriptions = {
+                    1: 'Sehr schlecht',
+                    2: 'Schlecht', 
+                    3: 'Befriedigend',
+                    4: 'Gut',
+                    5: 'Sehr gut'
+                };
+
+                htmlContent += `
+                    <div class="report-section">
+                        <h3>⭐ Bewertungen</h3>
+                        <div class="report-content">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                `;
+
+                Object.keys(auditData.ratings).forEach(ratingId => {
+                    const rating = auditData.ratings[ratingId];
+                    // Use custom title if available, otherwise fall back to default
+                    const label = auditData.customRatingTitles[ratingId] || ratingLabels[ratingId] || ratingId;
+                    const description = ratingDescriptions[rating];
+                    const stars = '⭐'.repeat(rating);
+                    const color = rating >= 4 ? '#28a745' : rating >= 3 ? '#ffc107' : '#dc3545';
+                    
+                    htmlContent += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">${label}</div>
+                            <div style="font-size: 18px; margin-bottom: 5px;">${stars}</div>
+                            <div style="font-size: 12px; color: ${color};">${description}</div>
+                        </div>
+                    `;
+                });
+
+                htmlContent += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
             
             // Calculate estimated file size
             const estimatedSize = Math.round(htmlContent.length / 1024);
