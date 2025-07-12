@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Filialbesuch Feedback</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,7 +18,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00bcd4 0%, #3f51b5 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +33,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3f51b5 0%, #00bcd4 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -73,10 +78,10 @@
 
         select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus {
             outline: none;
-            border-color: #4facfe;
+            border-color: #3f51b5;
             background: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15);
+            box-shadow: 0 8px 25px rgba(63, 81, 181, 0.15);
         }
 
         .location-section {
@@ -97,8 +102,8 @@
         }
 
         .question-item:hover {
-            border-color: #4facfe;
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.1);
+            border-color: #3f51b5;
+            box-shadow: 0 8px 25px rgba(63, 81, 181, 0.1);
         }
 
         .question-header {
@@ -115,7 +120,7 @@
         }
 
         .question-number {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3f51b5 0%, #00bcd4 100%);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
@@ -124,7 +129,7 @@
         }
 
         .camera-icon {
-            background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -141,7 +146,7 @@
 
         .camera-icon:hover {
             transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(66, 230, 149, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
 
         .delete-question {
@@ -229,7 +234,7 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(135deg, #3f51b5 0%, #00bcd4 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -245,7 +250,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+            box-shadow: 0 8px 25px rgba(63, 81, 181, 0.3);
         }
 
         .btn:active {
@@ -253,13 +258,13 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: #333;
+            background: linear-gradient(135deg, #00bcd4 0%, #80deea 100%);
+            color: white;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
-            color: #333;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            color: white;
         }
 
         .actions {
@@ -270,6 +275,28 @@
             margin-top: 30px;
             padding: 20px 0;
         }
+
+        .export-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .export-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .status-ready { background: #dcfce7; color: #166534; }
+        .status-demo { background: #fef3c7; color: #92400e; }
+        .status-requires { background: #fecaca; color: #991b1b; }
 
         .report {
             display: none;
@@ -282,7 +309,7 @@
             text-align: center;
             margin-bottom: 40px;
             padding-bottom: 20px;
-            border-bottom: 3px solid #4facfe;
+            border-bottom: 3px solid #3f51b5;
         }
 
         .report-title {
@@ -512,20 +539,23 @@
                     <label for="locationType">📍 Standort-Typ:</label>
                     <select id="locationType" onchange="toggleLocationDetails()">
                         <option value="">Bitte auswählen...</option>
-                        <option value="own">Eigenes Geschäft</option>
+                        <option value="own">Budni Filiale</option>
                         <option value="competitor">Wettbewerb</option>
                     </select>
                 </div>
 
                 <div id="ownBusinessSection" class="form-group" style="display: none;">
-                    <label for="ownBusiness">🏢 Eigenes Geschäft:</label>
+                    <label for="ownBusiness">🏢 Budni Filiale:</label>
                     <select id="ownBusiness">
-                        <option value="">Geschäft auswählen...</option>
-                        <option value="Hauptfiliale München">Hauptfiliale München</option>
-                        <option value="Filiale Hamburg">Filiale Hamburg</option>
-                        <option value="Filiale Berlin">Filiale Berlin</option>
-                        <option value="Filiale Köln">Filiale Köln</option>
-                        <option value="Filiale Frankfurt">Filiale Frankfurt</option>
+                        <option value="">Filiale auswählen...</option>
+                        <option value="Budni Hamburg Hauptbahnhof">Budni Hamburg Hauptbahnhof</option>
+                        <option value="Budni Hamburg Altona">Budni Hamburg Altona</option>
+                        <option value="Budni Hamburg Wandsbek">Budni Hamburg Wandsbek</option>
+                        <option value="Budni Hamburg Eimsbüttel">Budni Hamburg Eimsbüttel</option>
+                        <option value="Budni Kiel">Budni Kiel</option>
+                        <option value="Budni Lübeck">Budni Lübeck</option>
+                        <option value="Budni Neumünster">Budni Neumünster</option>
+                        <option value="Budni Schleswig">Budni Schleswig</option>
                     </select>
                 </div>
 
@@ -585,12 +615,39 @@
 
             <div id="reportContent"></div>
 
+            <div class="export-info">
+                <h4>📤 Export-Optionen zum Testen:</h4>
+                <p><strong>📄 PDF Export</strong> <span class="export-status status-ready">Sofort verfügbar</span><br>
+                Erstellt PDF mit Text (Bilder als Referenz)</p>
+                
+                <p><strong>📱 iOS/Safari Teilen</strong> <span class="export-status status-ready">Safari/iOS</span><br>
+                Nutzt native Share-Funktion für AirDrop, WhatsApp, Mail etc.</p>
+                
+                <p><strong>💾 ZIP Download</strong> <span class="export-status status-ready">Sofort verfügbar</span><br>
+                HTML-Datei + alle Bilder in separaten Ordnern</p>
+                
+                <p><strong>☁️ Cloud Speichern</strong> <span class="export-status status-demo">Demo-Modus</span><br>
+                Vorbereitet für Dropbox/Google Drive/iCloud Integration</p>
+                
+                <p><strong>📧 Server E-Mail</strong> <span class="export-status status-requires">Benötigt Backend</span><br>
+                Automatischer Versand über PHP/Node.js Server</p>
+            </div>
+
             <div class="actions">
-                <button type="button" class="btn" onclick="emailReport()">
-                    📧 Per E-Mail versenden
+                <button type="button" class="btn" onclick="exportAsPDF()">
+                    📄 Als PDF exportieren
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="downloadReport()">
+                <button type="button" class="btn btn-secondary" onclick="shareReport()">
+                    📱 Teilen (iOS/Safari)
+                </button>
+                <button type="button" class="btn" onclick="downloadAsZIP()">
                     💾 Als ZIP herunterladen
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="saveToCloud()">
+                    ☁️ In Cloud speichern
+                </button>
+                <button type="button" class="btn" onclick="emailViaServer()">
+                    📧 Per Server versenden
                 </button>
             </div>
         </div>
@@ -822,19 +879,25 @@
             // Collect questions and answers
             const questions = document.querySelectorAll('.question-item');
             auditData.questions = {};
+            let hasContent = false;
             
             questions.forEach((question) => {
                 const questionId = question.getAttribute('data-question');
                 const textarea = question.querySelector('textarea');
                 const text = textarea.value.trim();
                 
-                if (text) {
-                    auditData.questions[questionId] = text;
+                // Ein Thema gilt als ausgefüllt wenn Text ODER Fotos vorhanden sind
+                const hasText = text.length > 0;
+                const hasImages = auditData.images[questionId] && auditData.images[questionId].length > 0;
+                
+                if (hasText || hasImages) {
+                    auditData.questions[questionId] = text; // Text kann auch leer sein wenn Foto vorhanden
+                    hasContent = true;
                 }
             });
 
-            if (Object.keys(auditData.questions).length === 0) {
-                alert('Bitte füllen Sie mindestens ein Thema aus.');
+            if (!hasContent) {
+                alert('Bitte füllen Sie mindestens ein Thema aus (Text oder Foto).');
                 return;
             }
 
@@ -858,7 +921,7 @@
             document.getElementById('reportDate').textContent = `${formattedDate} um ${formattedTime}`;
             document.getElementById('reportLocation').innerHTML = `
                 <strong>Besucher:</strong> ${auditorName}<br>
-                <strong>Standort:</strong> ${location} (${locationType === 'own' ? 'Eigenes Geschäft' : 'Wettbewerb'})
+                <strong>Standort:</strong> ${location} (${locationType === 'own' ? 'Budni Filiale' : 'Wettbewerb'})
             `;
 
             const reportContent = document.getElementById('reportContent');
@@ -900,6 +963,266 @@
             document.getElementById('auditForm').style.display = 'block';
         }
 
+        // Export Functions - Multiple Approaches for Testing
+
+        // 1. PDF Export using jsPDF
+        async function exportAsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                
+                // Add title
+                pdf.setFontSize(20);
+                pdf.text('Budni Besuchsfeedback', 20, 30);
+                
+                // Add metadata
+                const auditorName = document.getElementById('auditorName').value;
+                const date = document.getElementById('reportDate').textContent;
+                const location = document.querySelector('#reportLocation strong').nextSibling.textContent;
+                
+                pdf.setFontSize(12);
+                pdf.text(`Besucher: ${auditorName}`, 20, 50);
+                pdf.text(`Datum: ${date}`, 20, 60);
+                pdf.text(`Standort: ${location}`, 20, 70);
+                
+                let yPosition = 90;
+                
+                // Add content for each theme
+                Object.keys(auditData.questions).forEach((questionId, index) => {
+                    if (yPosition > 250) {
+                        pdf.addPage();
+                        yPosition = 30;
+                    }
+                    
+                    pdf.setFontSize(14);
+                    pdf.text(`Thema ${index + 1}`, 20, yPosition);
+                    yPosition += 10;
+                    
+                    // Add text content
+                    if (auditData.questions[questionId]) {
+                        pdf.setFontSize(10);
+                        const lines = pdf.splitTextToSize(auditData.questions[questionId], 170);
+                        pdf.text(lines, 20, yPosition);
+                        yPosition += lines.length * 5 + 10;
+                    }
+                    
+                    // Add images (simplified - just note about images)
+                    if (auditData.images[questionId] && auditData.images[questionId].length > 0) {
+                        pdf.setFontSize(9);
+                        pdf.text(`[${auditData.images[questionId].length} Bild(er) angehängt]`, 20, yPosition);
+                        yPosition += 15;
+                    }
+                    
+                    yPosition += 10;
+                });
+                
+                // Download PDF
+                pdf.save(`Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.pdf`);
+                
+                // Also trigger native share if available
+                if (navigator.share && pdf.output) {
+                    const pdfBlob = pdf.output('blob');
+                    shareFile(pdfBlob, 'application/pdf', `Budni-Besuchsfeedback-${auditorName}.pdf`);
+                }
+                
+            } catch (error) {
+                console.error('PDF Error:', error);
+                alert('PDF-Export ist nicht verfügbar. Bitte verwenden Sie eine andere Export-Option.');
+            }
+        }
+
+        // 2. Native Share API (iOS/Safari optimized)
+        async function shareReport() {
+            if (!navigator.share) {
+                alert('Teilen-Funktion ist in diesem Browser nicht verfügbar. Bitte verwenden Sie Safari auf iOS/macOS.');
+                return;
+            }
+            
+            try {
+                // Create HTML content
+                const htmlContent = generateReportHTML();
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                
+                // Try to share
+                await shareFile(blob, 'text/html', `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`);
+                
+            } catch (error) {
+                console.error('Share Error:', error);
+                // Fallback to mailto
+                emailReport();
+            }
+        }
+
+        async function shareFile(blob, mimeType, filename) {
+            if (navigator.share && navigator.canShare) {
+                const file = new File([blob], filename, { type: mimeType });
+                
+                if (navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Budni Besuchsfeedback',
+                            text: 'Besuchsfeedback aus der Budni App',
+                            files: [file]
+                        });
+                        return;
+                    } catch (shareError) {
+                        console.log('Share cancelled or failed:', shareError);
+                    }
+                }
+            }
+            
+            // Fallback: Download file
+            downloadBlob(blob, filename);
+        }
+
+        // 3. ZIP Download with HTML + Images
+        async function downloadAsZIP() {
+            try {
+                const zip = new JSZip();
+                
+                // Add HTML report
+                const htmlContent = generateReportHTML();
+                zip.file('besuchsfeedback.html', htmlContent);
+                
+                // Add images
+                const imageFolder = zip.folder('bilder');
+                let imageCounter = 1;
+                
+                Object.keys(auditData.images).forEach(questionId => {
+                    if (auditData.images[questionId]) {
+                        auditData.images[questionId].forEach((image, index) => {
+                            const imageData = image.data.split(',')[1]; // Remove data:image/jpeg;base64,
+                            imageFolder.file(`thema-${questionId}-bild-${index + 1}.jpg`, imageData, { base64: true });
+                        });
+                    }
+                });
+                
+                // Create and download ZIP
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const auditorName = document.getElementById('auditorName').value;
+                const filename = `Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.zip`;
+                
+                downloadBlob(zipBlob, filename);
+                
+            } catch (error) {
+                console.error('ZIP Error:', error);
+                alert('ZIP-Export ist nicht verfügbar. Bitte verwenden Sie eine andere Export-Option.');
+            }
+        }
+
+        // 4. Cloud Integration (Dropbox/Google Drive)
+        async function saveToCloud() {
+            const cloudOptions = [
+                {
+                    name: 'Dropbox',
+                    action: () => saveToDropbox()
+                },
+                {
+                    name: 'Google Drive',
+                    action: () => saveToGoogleDrive()
+                },
+                {
+                    name: 'iCloud (Safari)',
+                    action: () => saveToICloud()
+                }
+            ];
+            
+            // Show options
+            const choice = prompt(`Wählen Sie einen Cloud-Service:\n${cloudOptions.map((opt, i) => `${i + 1}. ${opt.name}`).join('\n')}\n\nGeben Sie die Nummer ein (1-${cloudOptions.length}):`);
+            
+            const index = parseInt(choice) - 1;
+            if (index >= 0 && index < cloudOptions.length) {
+                cloudOptions[index].action();
+            } else {
+                alert('Ungültige Auswahl.');
+            }
+        }
+
+        function saveToDropbox() {
+            // Generate Dropbox share link
+            const htmlContent = encodeURIComponent(generateReportHTML());
+            const filename = `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`;
+            
+            // This would typically require Dropbox API integration
+            alert('Dropbox-Integration würde hier implementiert. Aktuell: Bitte HTML-Content manuell in Dropbox speichern.');
+            
+            // For now, download the file
+            const blob = new Blob([generateReportHTML()], { type: 'text/html' });
+            downloadBlob(blob, filename);
+        }
+
+        function saveToGoogleDrive() {
+            alert('Google Drive-Integration würde hier implementiert. Aktuell: Bitte ZIP-Download verwenden und manuell hochladen.');
+            downloadAsZIP();
+        }
+
+        function saveToICloud() {
+            // Safari specific - try to trigger iCloud save
+            if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+                const blob = new Blob([generateReportHTML()], { type: 'text/html' });
+                const filename = `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`;
+                downloadBlob(blob, filename);
+                alert('Datei wurde heruntergeladen. In Safari: Datei öffnen und "In Dateien speichern" wählen für iCloud.');
+            } else {
+                alert('iCloud-Speicherung ist nur in Safari verfügbar.');
+            }
+        }
+
+        // 5. Server-Backend Email (requires backend)
+        async function emailViaServer() {
+            const serverUrl = prompt('Server-Endpoint URL eingeben (leer lassen für Demo):');
+            
+            if (!serverUrl) {
+                alert('Server-Integration Demo:\n\nDies würde an einen PHP/Node.js Server senden:\n- Feedback-Daten als JSON\n- Bilder als Base64\n- Server erstellt PDF und versendet E-Mail\n\nAktuell: Bitte anderen Export verwenden.');
+                return;
+            }
+            
+            try {
+                const feedbackData = {
+                    auditor: document.getElementById('auditorName').value,
+                    date: document.getElementById('auditDate').value,
+                    time: document.getElementById('auditTime').value,
+                    location: document.getElementById('locationType').value === 'own' 
+                        ? document.getElementById('ownBusiness').value 
+                        : document.getElementById('competitor').value,
+                    locationType: document.getElementById('locationType').value,
+                    questions: auditData.questions,
+                    images: auditData.images
+                };
+                
+                const response = await fetch(serverUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
+                
+                if (response.ok) {
+                    alert('Feedback erfolgreich versendet!');
+                } else {
+                    throw new Error('Server-Fehler');
+                }
+                
+            } catch (error) {
+                console.error('Server Error:', error);
+                alert('Server-Versand fehlgeschlagen. Bitte anderen Export verwenden.');
+            }
+        }
+
+        // Helper function for downloads
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Legacy functions (keep for compatibility)
         function emailReport() {
             const reportHTML = generateReportHTML();
             const auditorName = document.getElementById('auditorName').value;
@@ -912,14 +1235,13 @@
             // Create mailto link
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
-            // For a complete solution, you would typically send this to a server
-            alert('E-Mail-Funktion würde hier implementiert. Das Feedback ist bereit zum Versenden.');
+            alert('Mailto-Link wird geöffnet. Feedback-Datei muss separat angehängt werden.');
             window.open(mailtoLink);
         }
 
         function downloadReport() {
-            // Create ZIP with HTML report and images
-            alert('Download-Funktion würde hier implementiert. Das Besuchsfeedback würde als ZIP-Datei heruntergeladen.');
+            // Fallback to ZIP download
+            downloadAsZIP();
         }
 
         function generateReportHTML() {
@@ -932,7 +1254,7 @@
                     <title>Besuchsfeedback</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 40px; }
-                        .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #4facfe; padding-bottom: 20px; }
+                        .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #3f51b5; padding-bottom: 20px; }
                         .report-section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
                         .report-images { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
                         .report-image { border-radius: 4px; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 150px; max-height: 400px; }
@@ -955,7 +1277,19 @@
             
             document.getElementById('auditDate').value = today;
             document.getElementById('auditTime').value = currentTime;
+            
+            // Check available features
+            checkExportFeatures();
         });
+
+        function checkExportFeatures() {
+            console.log('🔍 Checking Export Features:');
+            console.log('📄 jsPDF:', typeof window.jspdf !== 'undefined' ? '✅ Available' : '❌ Not loaded');
+            console.log('💾 JSZip:', typeof JSZip !== 'undefined' ? '✅ Available' : '❌ Not loaded');
+            console.log('📱 Share API:', navigator.share ? '✅ Available' : '❌ Not supported');
+            console.log('🌐 Browser:', navigator.userAgent.includes('Safari') ? 'Safari' : 'Other');
+            console.log('📱 Platform:', navigator.platform);
+        }
     </script>
 </body>
 </html>
