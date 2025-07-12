@@ -846,7 +846,7 @@
             </div>
 
             <div class="success-message" id="successMessage">
-                ✅ PDF erfolgreich erstellt und heruntergeladen!
+                ✅ PDF erfolgreich erstellt!
             </div>
 
             <div class="actions">
@@ -877,6 +877,14 @@
 
         const now = new Date();
         const APP_VERSION = `v${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}-${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        // iOS Safari Detection für PDF-Handling
+        function isIOSSafari() {
+            const userAgent = navigator.userAgent;
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+            const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS/.test(userAgent);
+            return isIOS && isSafari;
+        }
 
         document.getElementById('visitDate').valueAsDate = new Date();
         document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
@@ -1599,7 +1607,36 @@
                 const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
                 const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
                 
-                pdf.save(fileName);
+                // iOS Safari Fix: PDF in neuem Tab öffnen statt Download
+                if (isIOSSafari()) {
+                    const pdfDataUrl = pdf.output('dataurlstring');
+                    const newWindow = window.open();
+                    newWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>${fileName}</title>
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <style>
+                                    body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+                                    .header { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+                                    .share-btn { background: #007AFF; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; margin: 10px; }
+                                    iframe { width: 100%; height: 70vh; border: none; border-radius: 8px; }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="header">
+                                    <h3>📄 ${fileName}</h3>
+                                    <p>Tippen Sie auf den Share-Button ↗️ in Safari um das PDF zu teilen oder zu speichern</p>
+                                </div>
+                                <iframe src="${pdfDataUrl}"></iframe>
+                            </body>
+                        </html>
+                    `);
+                    newWindow.document.title = fileName;
+                } else {
+                    // Normale Browser: Direkter Download
+                    pdf.save(fileName);
+                }
                 
                 successEl.style.display = 'block';
                 scrollToElement(successEl);
@@ -1610,7 +1647,9 @@
                 
                 setTimeout(() => {
                     successEl.style.display = 'none';
-                }, 4000);
+                    // Message zurücksetzen für nächsten Aufruf
+                    successEl.innerHTML = '✅ PDF erfolgreich erstellt!';
+                }, isIOSSafari() ? 6000 : 4000); // Längere Anzeige für iOS
                 
             } catch (error) {
                 alert('Fehler beim Erstellen des PDFs: ' + error.message);
@@ -1677,7 +1716,7 @@
                     
                     setTimeout(() => {
                         successEl.style.display = 'none';
-                        successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
+                        successEl.innerHTML = '✅ PDF erfolgreich erstellt!';
                     }, 2000);
                     
                 }, 100);
