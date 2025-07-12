@@ -534,6 +534,24 @@
             padding: 20px 0;
         }
 
+        .add-question-section {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .add-question-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e1e8ed, transparent);
+        }
+
         @media (max-width: 768px) {
             .rating-item {
                 padding: 15px;
@@ -1167,6 +1185,13 @@
                 </div>
             </div>
 
+            <!-- Add Question Button zwischen Freitext und Rating -->
+            <div class="add-question-section">
+                <button type="button" class="btn btn-secondary" onclick="addQuestion()">
+                    ➕ Weiteres Thema hinzufügen
+                </button>
+            </div>
+
             <!-- Rating Section -->
             <div class="rating-section">
                 <h3>⭐ Bewertung der Bereiche</h3>
@@ -1390,9 +1415,6 @@
             </div>
 
             <div class="actions">
-                <button type="button" class="btn btn-secondary" onclick="addQuestion()">
-                    ➕ Weiteres Thema hinzufügen
-                </button>
                 <button type="button" class="btn btn-success" onclick="generateReport()">
                     📊 Feedback erstellen
                 </button>
