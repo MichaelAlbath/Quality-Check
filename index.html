@@ -134,6 +134,13 @@
             padding-right: 40px;
         }
 
+        .competitor-option {
+            background-repeat: no-repeat;
+            background-position: left 12px center;
+            background-size: 20px 20px;
+            padding-left: 40px;
+        }
+
         .validation-error {
             border-color: #e74c3c !important;
             box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15) !important;
@@ -278,6 +285,20 @@
             color: #667eea;
         }
 
+        .image-upload-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .image-upload-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
         .image-preview {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -314,6 +335,7 @@
             transform: scale(0.98);
         }
 
+        /* Lightbox für Bildvergrößerung */
         .lightbox {
             display: none;
             position: fixed;
@@ -382,6 +404,27 @@
             color: white;
             padding: 20px;
             text-align: center;
+        }
+
+        /* Mobile Lightbox Optimierungen */
+        @media (max-width: 768px) {
+            .lightbox-content {
+                max-width: 95%;
+                max-height: 95%;
+            }
+            
+            .lightbox-close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+            
+            .lightbox-info {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
         }
 
         .image-remove {
@@ -500,64 +543,151 @@
             font-size: 1rem;
         }
 
-        /* Responsive Design */
-        @media (max-width: 375px) {
-            body { padding: 4px; }
-            .content { padding: 12px; }
-            .visit-info { padding: 12px; gap: 12px; }
-            .entry-item { padding: 12px; }
-            .header { padding: 16px 12px; }
-            .header h1 { font-size: 1.3rem; }
-            .budni-logo { width: 50px; height: 32px; }
-            .header-content { gap: 8px; }
-            .image-upload { width: 32px; height: 32px; }
-            .image-upload-icon { font-size: 14px; }
-            .delete-btn { width: 32px; height: 32px; font-size: 14px; }
-            .image-preview { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
-        }
-
-        @media (min-width: 414px) {
-            .container { max-width: 95%; }
-            .image-preview { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
-        }
-
-        @media (min-width: 768px) {
-            body { padding: 16px; }
-            .container { max-width: 600px; }
-            .visit-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-            .actions { flex-direction: row; }
-            .content { padding: 24px; }
-        }
-
-        @media (min-width: 1024px) {
-            body { padding: 20px; }
-            .container { max-width: 800px; }
-            .content { padding: 30px; }
-            .header { padding: 30px; }
-            .header h1 { font-size: 2rem; }
-            .header p { font-size: 1.1rem; }
-            .budni-logo { width: 80px; height: 52px; }
-            .header-content { gap: 16px; }
-        }
-
-        /* Mobile Safari Fixes */
+        /* iPhone Safari spezifische Fixes */
         @supports (-webkit-touch-callout: none) {
-            .input-group input, .input-group select, .text-area {
-                font-size: 16px;
-                transform: translateZ(0);
+            .input-group input,
+            .input-group select,
+            .text-area {
+                font-size: 16px; /* Verhindert Zoom beim Fokus */
+                transform: translateZ(0); /* Hardware-Beschleunigung */
             }
-            .container { -webkit-transform: translateZ(0); }
+            
+            .container {
+                -webkit-transform: translateZ(0);
+            }
         }
 
-        /* Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            .container { background: #1a1a1a; color: #ffffff; }
-            .visit-info { background: #2d2d2d; }
-            .entry-item { background: #2d2d2d; border-color: #404040; }
-            .input-group input, .input-group select, .text-area {
-                background: #2d2d2d; border-color: #404040; color: #ffffff;
+        /* iPhone SE und kleine Bildschirme */
+        @media (max-width: 375px) {
+            body {
+                padding: 4px;
             }
-            .image-upload { background: #2d2d2d; border-color: #404040; }
+            
+            .content {
+                padding: 12px;
+            }
+            
+            .visit-info {
+                padding: 12px;
+                gap: 12px;
+            }
+            
+            .entry-item {
+                padding: 12px;
+            }
+            
+            .header {
+                padding: 16px 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .budni-logo {
+                width: 50px;
+                height: 32px;
+            }
+            
+            .header-content {
+                gap: 8px;
+            }
+            
+            .entry-header-left {
+                gap: 8px;
+            }
+            
+            .image-upload {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .image-upload-icon {
+                font-size: 14px;
+            }
+            
+            .delete-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        /* iPhone Pro Max und große Bildschirme */
+        @media (min-width: 414px) {
+            .container {
+                max-width: 95%;
+            }
+            
+            .image-preview {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+        }
+
+        /* Tablet Portrait */
+        @media (min-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .container {
+                max-width: 600px;
+            }
+            
+            .visit-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            
+            .actions {
+                flex-direction: row;
+            }
+            
+            .content {
+                padding: 24px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 800px;
+            }
+            
+            .content {
+                padding: 30px;
+            }
+            
+            .header {
+                padding: 30px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .budni-logo {
+                width: 80px;
+                height: 52px;
+            }
+            
+            .header-content {
+                gap: 16px;
+            }
         }
 
         /* Accessibility */
@@ -568,6 +698,52 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: #1a1a1a;
+                color: #ffffff;
+            }
+            
+            .visit-info {
+                background: #2d2d2d;
+            }
+            
+            .entry-item {
+                background: #2d2d2d;
+                border-color: #404040;
+            }
+            
+            .input-group input,
+            .input-group select,
+            .text-area {
+                background: #2d2d2d;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            
+            .image-upload {
+                background: #2d2d2d;
+                border-color: #404040;
+            }
+        }
+
+        /* App Version Anzeige */
+        .app-version {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            z-index: 100;
+            opacity: 0.6;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -575,10 +751,15 @@
         <div class="header">
             <div class="header-content">
                 <svg class="budni-logo" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Türkis/Cyan Kreis links hinten -->
                     <circle cx="45" cy="45" r="35" fill="#00BCD4"/>
+                    <!-- Orange/Koralle Kreis rechts hinten -->
                     <circle cx="95" cy="45" r="35" fill="#FF6B6B"/>
+                    <!-- Hauptkreis dunkelblau vorne (überlappt beide) -->
                     <circle cx="70" cy="45" r="35" fill="#2E4BC6"/>
+                    <!-- budni Text in weiß -->
                     <text x="70" y="52" font-family="Arial, sans-serif" font-size="16" font-weight="300" fill="white" text-anchor="middle">budni</text>
+                    <!-- Punkt nach dem i -->
                     <circle cx="88" cy="39" r="1.8" fill="white"/>
                 </svg>
                 <div class="header-text">
@@ -799,10 +980,10 @@
                     <label for="competitorName">🏢 Wettbewerber:</label>
                     <select id="competitorName">
                         <option value="">Wettbewerber auswählen...</option>
-                        <option value="DM">DM-Drogerie Markt</option>
-                        <option value="ROSSMANN">ROSSMANN</option>
-                        <option value="MÜLLER">MÜLLER Drogeriemarkt</option>
-                        <option value="EDEKA">EDEKA</option>
+                        <option value="DM" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNzVCRSIvPgo8dGV4dCB4PSIxMiIgeT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5kbTwvdGV4dD4KPC9zdmc+'); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">DM-Drogerie Markt</option>
+                        <option value="ROSSMANN" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0REMDAzMSIvPgo8dGV4dCB4PSIxMiIgeT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ST1NTPC90ZXh0Pgo8L3N2Zz4='); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">ROSSMANN</option>
+                        <option value="MÜLLER" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0ZGNzUwMCIvPgo8dGV4dCB4PSIxMiIgeT0iMTciIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0Pgo8L3N2Zz4='); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">MÜLLER Drogeriemarkt</option>
+                        <option value="EDEKA" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNjZBQSIvPgo8dGV4dCB4PSIxMiIgeT0iMTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRjMwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RURFS0E8L3RleHQ+CjwvcG9seWdvbj4KPC9zdmc+'); background-size: 20px; background-repeat: no-repeat; background-position: 12px center; padding-left: 40px;">EDEKA</option>
                     </select>
                 </div>
                 <div class="selection-info">
@@ -846,7 +1027,7 @@
             </div>
 
             <div class="success-message" id="successMessage">
-                ✅ PDF erfolgreich erstellt!
+                ✅ PDF erfolgreich erstellt und heruntergeladen!
             </div>
 
             <div class="actions">
@@ -860,6 +1041,7 @@
         </div>
     </div>
 
+    <!-- Lightbox für Bildvergrößerung -->
     <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
         <div class="lightbox-content">
             <button class="lightbox-close" onclick="closeLightbox()" aria-label="Bild schließen">×</button>
@@ -868,6 +1050,9 @@
         </div>
     </div>
 
+    <!-- Versionsnummer -->
+    <div class="app-version" id="appVersion" title="App-Version mit Zeitstempel"></div>
+
     <script>
         let entryCounter = 1;
         let imageData = {};
@@ -875,82 +1060,17 @@
         let userLocation = null;
         let isLocationDetected = false;
 
+        // Versionsnummer - automatisch basierend auf aktuellem Datum und Uhrzeit
         const now = new Date();
         const APP_VERSION = `v${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}-${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-        // iOS Safari Detection für PDF-Handling
-        function isIOSSafari() {
-            const userAgent = navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/.test(userAgent);
-            const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS/.test(userAgent);
-            return isIOS && isSafari;
-        }
-
-        // Fallback Download Modal für iOS
-        function showDownloadModal(pdfDataUri, fileName) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            `;
-            
-            modal.innerHTML = `
-                <div style="
-                    background: white;
-                    border-radius: 12px;
-                    padding: 30px;
-                    max-width: 90%;
-                    text-align: center;
-                    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                ">
-                    <h3 style="margin: 0 0 20px 0; color: #333;">📄 PDF bereit</h3>
-                    <p style="margin: 10px 0; color: #666; line-height: 1.4;">
-                        Tippen Sie auf den Download-Button und dann auf "Fertig" oder "Öffnen in..."
-                    </p>
-                    <a href="${pdfDataUri}" download="${fileName}" style="
-                        display: inline-block;
-                        background: #007AFF;
-                        color: white;
-                        padding: 15px 30px;
-                        border-radius: 8px;
-                        text-decoration: none;
-                        font-weight: 600;
-                        margin: 15px 0;
-                    ">📥 ${fileName} herunterladen</a>
-                    <br>
-                    <button onclick="this.parentElement.parentElement.remove()" style="
-                        background: #f1f1f1;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 6px;
-                        color: #333;
-                        margin-top: 10px;
-                    ">Schließen</button>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Modal nach 30 Sekunden automatisch schließen
-            setTimeout(() => {
-                if (document.body.contains(modal)) {
-                    document.body.removeChild(modal);
-                }
-            }, 30000);
-        }
-
+        // Datum auf heute setzen
         document.getElementById('visitDate').valueAsDate = new Date();
+        
+        // Aktuelle Zeit setzen
         document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
 
+        // Standort-basierte Filialvorschläge
         const filialLocations = {
             'Hamburg': {
                 lat: 53.5511,
@@ -999,6 +1119,7 @@
             }
         };
 
+        // Lightbox Funktionen
         function openLightbox(imgSrc, imgName) {
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightboxImg');
@@ -1008,6 +1129,7 @@
             lightboxInfo.textContent = imgName;
             lightbox.classList.add('active');
             
+            // Körper-Scroll verhindern
             document.body.style.overflow = 'hidden';
         }
 
@@ -1019,11 +1141,14 @@
             const lightbox = document.getElementById('lightbox');
             lightbox.classList.remove('active');
             
+            // Körper-Scroll wieder aktivieren
             document.body.style.overflow = '';
         }
 
+        // Geolocation initialisieren
         function initGeolocation() {
             if (navigator.geolocation) {
+                // Subtile Standort-Anfrage
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         userLocation = {
@@ -1033,22 +1158,25 @@
                         sortFilialsByLocation();
                         isLocationDetected = true;
                         
+                        // Dezenter Hinweis
                         showLocationHint('📍 Filialen nach Nähe sortiert');
                     },
                     function(error) {
+                        // Fehler stillschweigend ignorieren - kein störender Alert
                         console.log('Standort nicht verfügbar:', error.message);
                     },
                     {
                         enableHighAccuracy: false,
                         timeout: 5000,
-                        maximumAge: 300000
+                        maximumAge: 300000 // 5 Minuten Cache
                     }
                 );
             }
         }
 
+        // Distanz zwischen zwei Koordinaten berechnen (Haversine Formel)
         function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371;
+            const R = 6371; // Erdradius in km
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLng = (lng2 - lng1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -1058,6 +1186,7 @@
             return R * c;
         }
 
+        // Nächste Region finden
         function findNearestRegion() {
             if (!userLocation) return null;
             
@@ -1079,15 +1208,17 @@
             return nearestRegion;
         }
 
+        // Filialen nach Standort sortieren
         function sortFilialsByLocation() {
             const select = document.getElementById('branchName');
-            const options = Array.from(select.options).slice(1);
+            const options = Array.from(select.options).slice(1); // Erste Option ("Filiale auswählen") ausschließen
             
             const nearestRegion = findNearestRegion();
             if (!nearestRegion) return;
             
             const regionKeywords = filialLocations[nearestRegion].keywords;
             
+            // Sortiere Optionen: Nahe Filialen zuerst
             options.sort((a, b) => {
                 const aIsNear = regionKeywords.some(keyword => 
                     a.value.toLowerCase().includes(keyword.toLowerCase())
@@ -1098,11 +1229,13 @@
                 
                 if (aIsNear && !bIsNear) return -1;
                 if (!aIsNear && bIsNear) return 1;
-                return 0;
+                return 0; // Ursprüngliche Reihenfolge beibehalten
             });
             
+            // Dropdown neu aufbauen
             select.innerHTML = '<option value="">📍 Filiale auswählen...</option>';
             
+            // Gruppierung mit Trennlinie
             let nearOptionsAdded = false;
             options.forEach(option => {
                 const isNear = regionKeywords.some(keyword => 
@@ -1120,20 +1253,23 @@
                     separator.disabled = true;
                     separator.textContent = '──── 🏢 Weitere Filialen ────';
                     select.appendChild(separator);
-                    nearOptionsAdded = false;
+                    nearOptionsAdded = false; // Reset für weitere Gruppierungen
                 }
                 
                 select.appendChild(option);
             });
         }
 
+        // Audit-Stil Bildzeile mit verbesserter Fehlerbehandlung
         async function renderAuditImageRow(pdf, images, yPos, spacing) {
-            let currentX = 25;
+            const margin = 20;
+            let currentX = margin;
             
             for (let i = 0; i < images.length; i++) {
                 const image = images[i];
                 
                 if (image.error) {
+                    // Audit-Stil Fehler-Box
                     pdf.setFillColor(248, 249, 250);
                     pdf.rect(currentX, yPos, image.width, image.height, 'F');
                     pdf.setDrawColor(220, 53, 69);
@@ -1148,12 +1284,15 @@
                     pdf.setTextColor(0, 0, 0);
                 } else {
                     try {
+                        // Audit-Stil: Schwarzer Rahmen um Bilder
                         pdf.setDrawColor(31, 41, 55);
                         pdf.setLineWidth(1);
                         pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
                         
+                        // Bild einfügen (bereits orientierungskorrigiert)
                         pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
                         
+                        // Bildnummer unten rechts
                         pdf.setFillColor(31, 41, 55);
                         pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
                         pdf.setTextColor(255, 255, 255);
@@ -1164,6 +1303,7 @@
                         
                     } catch (error) {
                         console.log('Fehler beim Rendern des Bildes:', error);
+                        // Fallback Fehler-Darstellung
                         pdf.setFillColor(248, 249, 250);
                         pdf.rect(currentX, yPos, image.width, image.height, 'F');
                         pdf.setDrawColor(220, 53, 69);
@@ -1183,6 +1323,7 @@
             }
         }
 
+        // Dezenter Standort-Hinweis
         function showLocationHint(message) {
             const label = document.querySelector('label[for="branchName"]');
             const originalText = label.textContent;
@@ -1196,14 +1337,134 @@
             }, 3000);
         }
 
+        // Fallback-Funktion für Kompatibilität
         async function renderImageRow(pdf, images, yPos, spacing) {
             return await renderAuditImageRow(pdf, images, yPos, spacing);
         }
 
+        // Verbesserte EXIF-Orientierung auslesen
+        function getImageOrientation(arrayBuffer) {
+            const view = new DataView(arrayBuffer);
+            if (view.getUint16(0, false) !== 0xFFD8) {
+                return 1; // Nicht JPEG
+            }
+            const length = view.byteLength;
+            let offset = 2;
+            while (offset < length) {
+                const marker = view.getUint16(offset, false);
+                offset += 2;
+                if (marker === 0xFFE1) {
+                    const exifSize = view.getUint16(offset, false);
+                    offset += 2;
+                    if (view.getUint32(offset, false) !== 0x45786966) {
+                        offset += exifSize - 2;
+                        continue;
+                    }
+                    offset += 6;
+                    const little = view.getUint16(offset, false) === 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    const tags = view.getUint16(offset, little);
+                    offset += 2;
+                    for (let i = 0; i < tags; i++) {
+                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
+                            return view.getUint16(offset + (i * 12) + 8, little);
+                        }
+                    }
+                } else if ((marker & 0xFF00) !== 0xFF00) {
+                    break;
+                } else {
+                    offset += view.getUint16(offset, false);
+                }
+            }
+            return 1;
+        }
+
+        // Bildrotation basierend auf EXIF-Orientierung
+        function getRotationFromOrientation(orientation) {
+            switch (orientation) {
+                case 1: return 0;    // Normal
+                case 3: return 180;  // 180° gedreht
+                case 6: return 90;   // 90° CW (war 270° CCW)
+                case 8: return 270;  // 270° CW (war 90° CCW)
+                default: return 0;
+            }
+        }
+
+        // Korrekte Bildverarbeitung mit EXIF-Orientierung
+        async function processImageWithOrientation(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // EXIF-Orientierung aus Datei lesen
+                    const orientation = getImageOrientation(e.target.result);
+                    const rotation = getRotationFromOrientation(orientation);
+                    
+                    // Bild laden
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        let { width, height } = img;
+                        
+                        // Canvas-Dimensionen je nach Rotation anpassen
+                        if (rotation === 90 || rotation === 270) {
+                            canvas.width = height;
+                            canvas.height = width;
+                        } else {
+                            canvas.width = width;
+                            canvas.height = height;
+                        }
+                        
+                        // Canvas-Transformation für Rotation
+                        ctx.save();
+                        
+                        if (rotation === 90) {
+                            ctx.translate(canvas.width, 0);
+                            ctx.rotate(Math.PI / 2);
+                        } else if (rotation === 180) {
+                            ctx.translate(canvas.width, canvas.height);
+                            ctx.rotate(Math.PI);
+                        } else if (rotation === 270) {
+                            ctx.translate(0, canvas.height);
+                            ctx.rotate(-Math.PI / 2);
+                        }
+                        
+                        // Bild mit korrekter Orientierung zeichnen
+                        ctx.drawImage(img, 0, 0, width, height);
+                        ctx.restore();
+                        
+                        resolve({
+                            canvas: canvas,
+                            width: canvas.width,
+                            height: canvas.height,
+                            dataUrl: canvas.toDataURL('image/jpeg', 0.9),
+                            rotation: rotation
+                        });
+                    };
+                    
+                    // Verwende FileReader für das Bild (damit EXIF erhalten bleibt)
+                    const imageReader = new FileReader();
+                    imageReader.onload = function(imgEvent) {
+                        img.src = imgEvent.target.result;
+                    };
+                    imageReader.readAsDataURL(file);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // Fallback-Funktionen für Kompatibilität - MÜSSEN VOR generatePDF definiert sein
+        async function renderProfessionalImageRow(pdf, images, yPos, spacing) {
+            return await renderAuditImageRow(pdf, images, yPos, spacing);
+        }
+
+        // Namen aus vorherigen Eingaben wiederverwenden
         document.getElementById('visitorName').addEventListener('blur', function() {
             savedVisitorName = this.value;
         });
 
+        // Wettbewerber/Filial-Auswahl Management
         function setupCompetitorBranchLogic() {
             const branchSelect = document.getElementById('branchName');
             const competitorSelect = document.getElementById('competitorName');
@@ -1229,6 +1490,7 @@
             });
         }
 
+        // Validierungsfehler entfernen
         function clearValidationErrors() {
             const errorEl = document.getElementById('validationError');
             const branchSelect = document.getElementById('branchName');
@@ -1242,6 +1504,7 @@
             competitorSelect.classList.remove('validation-error');
         }
 
+        // Validierung vor PDF-Export
         function validateSelection() {
             const branchValue = document.getElementById('branchName').value;
             const competitorValue = document.getElementById('competitorName').value;
@@ -1255,19 +1518,23 @@
             return true;
         }
 
+        // Validierungsfehler anzeigen
         function showValidationError(message) {
             const branchSelect = document.getElementById('branchName');
             const competitorSelect = document.getElementById('competitorName');
             
+            // Felder rot markieren
             branchSelect.classList.add('validation-error');
             competitorSelect.classList.add('validation-error');
             
+            // Fehlermeldung erstellen oder aktualisieren
             let errorEl = document.getElementById('validationError');
             if (!errorEl) {
                 errorEl = document.createElement('div');
                 errorEl.id = 'validationError';
                 errorEl.className = 'error-message';
                 
+                // Nach der selection-info einfügen
                 const selectionInfo = document.querySelector('.selection-info');
                 selectionInfo.parentNode.insertBefore(errorEl, selectionInfo.nextSibling);
             }
@@ -1275,17 +1542,21 @@
             errorEl.textContent = `⚠️ ${message}`;
             errorEl.style.display = 'block';
             
+            // Zum Fehler scrollen
             scrollToElement(errorEl);
             
+            // Haptic Feedback für iOS
             if (window.navigator && window.navigator.vibrate) {
                 window.navigator.vibrate([100, 100, 100]);
             }
         }
 
+        // Verbessertes Touch-Feedback für alle Buttons
         function addTouchFeedback() {
             const buttons = document.querySelectorAll('button, .image-upload, .btn');
             
             buttons.forEach(button => {
+                // Entferne alte Event Listener um Duplikate zu vermeiden
                 button.removeEventListener('touchstart', handleTouchStart);
                 button.removeEventListener('touchend', handleTouchEnd);
                 button.removeEventListener('touchcancel', handleTouchCancel);
@@ -1311,6 +1582,7 @@
             this.style.transform = 'scale(1)';
         }
 
+        // Mobile-optimierte Scroll-Funktion
         function scrollToElement(element) {
             if (element) {
                 element.scrollIntoView({
@@ -1347,24 +1619,32 @@
             
             container.appendChild(entryDiv);
             
+            // Mobile-optimierte Initialisierung
             setupDragAndDrop(entryDiv.querySelector('.image-upload'), entryCounter);
             addTouchFeedback();
             updateDeleteButtons();
             
+            // Sanft zum neuen Element scrollen
             setTimeout(() => {
                 scrollToElement(entryDiv);
             }, 100);
         }
 
+        // Mobile-optimierte Initialisierung
         document.addEventListener('DOMContentLoaded', function() {
             setupDragAndDrop(document.querySelector('.image-upload'), 1);
             addTouchFeedback();
             setupCompetitorBranchLogic();
             
+            // Versionsnummer anzeigen
+            document.getElementById('appVersion').textContent = APP_VERSION;
+            
+            // Standort-basierte Filialvorschläge initialisieren
             setTimeout(() => {
                 initGeolocation();
-            }, 1000);
+            }, 1000); // Kurze Verzögerung für bessere UX
             
+            // Viewport-Meta für mobile Optimierung prüfen
             if (!document.querySelector('meta[name="viewport"]')) {
                 const viewport = document.createElement('meta');
                 viewport.name = 'viewport';
@@ -1372,6 +1652,7 @@
                 document.head.appendChild(viewport);
             }
             
+            // iOS Safari Scrolling-Verbesserung
             if (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile')) {
                 document.body.style.webkitOverflowScrolling = 'touch';
             }
@@ -1381,6 +1662,7 @@
             const entry = button.closest('.entry-item');
             const entryNumber = entry.getAttribute('data-entry');
             
+            // Bilder aus imageData entfernen
             delete imageData[entryNumber];
             
             entry.remove();
@@ -1417,19 +1699,38 @@
                 imageData[entryNumber] = [];
             }
             
-            Array.from(files).forEach(file => {
+            Array.from(files).forEach(async file => {
                 if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
+                    try {
+                        // Verwende die neue EXIF-bewusste Bildverarbeitung
+                        const processedImage = await processImageWithOrientation(file);
+                        
                         const imageInfo = {
-                            src: e.target.result,
-                            name: file.name
+                            src: processedImage.dataUrl,
+                            name: file.name,
+                            rotation: processedImage.rotation
                         };
                         
                         imageData[entryNumber].push(imageInfo);
                         displayImage(entryNumber, imageInfo, imageData[entryNumber].length - 1);
-                    };
-                    reader.readAsDataURL(file);
+                        
+                    } catch (error) {
+                        console.error('Fehler beim Verarbeiten des Bildes:', error);
+                        
+                        // Fallback: Normaler FileReader
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imageInfo = {
+                                src: e.target.result,
+                                name: file.name,
+                                rotation: 0
+                            };
+                            
+                            imageData[entryNumber].push(imageInfo);
+                            displayImage(entryNumber, imageInfo, imageData[entryNumber].length - 1);
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 }
             });
         }
@@ -1481,12 +1782,19 @@
                 
                 const files = e.dataTransfer.files;
                 const input = document.getElementById(`imageInput-${entryNumber}`);
-                input.files = files;
+                
+                // Simuliere File Input Update für handleImageUpload
+                Object.defineProperty(input, 'files', {
+                    value: files,
+                    writable: false,
+                });
+                
                 handleImageUpload(input, entryNumber);
             });
         }
 
         async function generatePDF() {
+            // Validierung vor PDF-Erstellung
             if (!validateSelection()) {
                 return;
             }
@@ -1499,9 +1807,18 @@
             
             loadingEl.style.display = 'block';
             
+            // Mobile: Scroll zum Loading-Indikator
             scrollToElement(loadingEl);
             
             try {
+                // PDF-Seitenkonfiguration
+                const pageHeight = pdf.internal.pageSize.height; // ~297mm = 842pt
+                const pageWidth = pdf.internal.pageSize.width;   // ~210mm = 595pt
+                const margin = 20;
+                const maxContentHeight = pageHeight - 40; // Oberer und unterer Rand
+                const maxContentWidth = pageWidth - 40;   // Linker und rechter Rand
+                
+                // Header auf erster Seite
                 pdf.setFontSize(18);
                 pdf.setFont(undefined, 'bold');
                 
@@ -1511,8 +1828,9 @@
                     `Wettbewerber-Besuch: ${competitorValue}` : 
                     'Filialbesuch Dokumentation';
                 
-                pdf.text(documentTitle, 20, 25);
+                pdf.text(documentTitle, margin, 25);
                 
+                // Besuchsinformationen
                 pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 const visitDate = document.getElementById('visitDate').value;
@@ -1520,20 +1838,48 @@
                 const visitTime = document.getElementById('visitTime').value;
                 
                 let yPos = 40;
-                pdf.text(`Datum: ${visitDate}`, 20, yPos);
+                pdf.text(`Datum: ${visitDate}`, margin, yPos);
                 pdf.text(`Uhrzeit: ${visitTime}`, 110, yPos);
                 yPos += 8;
                 
                 if (branchValue) {
-                    pdf.text(`Eigene Filiale: ${branchValue}`, 20, yPos);
+                    const branchText = `Eigene Filiale: ${branchValue}`;
+                    const splitBranch = pdf.splitTextToSize(branchText, maxContentWidth);
+                    pdf.text(splitBranch, margin, yPos);
+                    yPos += splitBranch.length * 5;
                 } else if (competitorValue) {
-                    pdf.text(`Wettbewerber: ${competitorValue}`, 20, yPos);
+                    pdf.text(`Wettbewerber: ${competitorValue}`, margin, yPos);
+                    yPos += 5;
                 }
-                yPos += 8;
-                pdf.text(`Besucher: ${visitorName}`, 20, yPos);
+                yPos += 3;
+                pdf.text(`Besucher: ${visitorName}`, margin, yPos);
                 
                 yPos += 15;
                 
+                // Funktion für neue Seite mit Header
+                function addNewPageWithHeader() {
+                    pdf.addPage();
+                    yPos = margin;
+                    
+                    // Mini-Header auf Folgeseiten
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(documentTitle, margin, yPos);
+                    yPos += 15;
+                    pdf.setFont(undefined, 'normal');
+                    pdf.setFontSize(10);
+                }
+                
+                // Prüfung ob neue Seite benötigt wird
+                function checkPageBreak(requiredHeight) {
+                    if (yPos + requiredHeight > maxContentHeight) {
+                        addNewPageWithHeader();
+                        return true;
+                    }
+                    return false;
+                }
+                
+                // Einträge verarbeiten
                 const entries = document.querySelectorAll('.entry-item');
                 
                 for (let i = 0; i < entries.length; i++) {
@@ -1541,32 +1887,46 @@
                     const entryNumber = entry.getAttribute('data-entry');
                     const text = entry.querySelector('.text-area').value;
                     
-                    if (yPos > 260) {
-                        pdf.addPage();
-                        yPos = 20;
+                    // Schätze benötigte Höhe für diesen Eintrag
+                    let estimatedHeight = 20; // Für Header
+                    
+                    if (text) {
+                        const splitText = pdf.splitTextToSize(text, maxContentWidth - 20);
+                        estimatedHeight += splitText.length * 5 + 10;
+                    } else {
+                        estimatedHeight += 15;
                     }
                     
+                    // Bilderhöhe schätzen
+                    if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
+                        estimatedHeight += 60; // Geschätzte Bilderhöhe
+                    }
+                    
+                    // Neue Seite wenn nötig
+                    checkPageBreak(estimatedHeight);
+                    
+                    // Punkt-Header
                     pdf.setFontSize(12);
                     pdf.setFont(undefined, 'bold');
-                    pdf.text(`Punkt ${i + 1}:`, 20, yPos);
-                    yPos += 8;
+                    pdf.text(`Punkt ${i + 1}:`, margin, yPos);
+                    yPos += 10;
                     
+                    // Text
                     pdf.setFontSize(10);
                     pdf.setFont(undefined, 'normal');
                     if (text) {
-                        const splitText = pdf.splitTextToSize(text, 170);
-                        pdf.text(splitText, 20, yPos);
-                        yPos += splitText.length * 5;
+                        const splitText = pdf.splitTextToSize(text, maxContentWidth - 20);
+                        pdf.text(splitText, margin, yPos);
+                        yPos += splitText.length * 5 + 5;
                     } else {
-                        pdf.text('(Keine Notizen)', 20, yPos);
-                        yPos += 5;
+                        pdf.text('(Keine Notizen)', margin, yPos);
+                        yPos += 10;
                     }
                     
+                    // Bilder verarbeiten
                     if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
-                        yPos += 5;
-                        
                         const images = imageData[entryNumber];
-                        const maxRowWidth = 170;
+                        const maxRowWidth = maxContentWidth - 20;
                         const imageSpacing = 5;
                         
                         let currentRowImages = [];
@@ -1576,6 +1936,7 @@
                             const image = images[j];
                             
                             try {
+                                // Temporäres Image-Element erstellen
                                 const tempImg = new Image();
                                 tempImg.src = image.src;
                                 
@@ -1591,8 +1952,8 @@
                                 const originalWidth = tempImg.naturalWidth || tempImg.width;
                                 const originalHeight = tempImg.naturalHeight || tempImg.height;
                                 
-                                const maxImgWidth = 60;
-                                const maxImgHeight = 45;
+                                const maxImgWidth = 80;  // Etwas größer für bessere Sichtbarkeit
+                                const maxImgHeight = 60;
                                 
                                 let imgWidth = maxImgWidth;
                                 let imgHeight = maxImgHeight;
@@ -1603,7 +1964,6 @@
                                     if (aspectRatio > 1) {
                                         imgWidth = maxImgWidth;
                                         imgHeight = maxImgWidth / aspectRatio;
-                                        
                                         if (imgHeight > maxImgHeight) {
                                             imgHeight = maxImgHeight;
                                             imgWidth = maxImgHeight * aspectRatio;
@@ -1611,7 +1971,6 @@
                                     } else {
                                         imgHeight = maxImgHeight;
                                         imgWidth = maxImgHeight * aspectRatio;
-                                        
                                         if (imgWidth > maxImgWidth) {
                                             imgWidth = maxImgWidth;
                                             imgHeight = maxImgWidth / aspectRatio;
@@ -1622,16 +1981,17 @@
                                 const neededWidth = currentRowWidth + (currentRowImages.length > 0 ? imageSpacing : 0) + imgWidth;
                                 
                                 if (neededWidth > maxRowWidth && currentRowImages.length > 0) {
+                                    // Prüfe ob Platz für Bilder auf aktueller Seite
+                                    const maxRowHeight = Math.max(...currentRowImages.map(img => img.height));
+                                    if (checkPageBreak(maxRowHeight + 20)) {
+                                        // Neue Seite wurde erstellt
+                                    }
+                                    
                                     await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                                    yPos += Math.max(...currentRowImages.map(img => img.height)) + 15;
+                                    yPos += maxRowHeight + 20;
                                     
                                     currentRowImages = [];
                                     currentRowWidth = 0;
-                                    
-                                    if (yPos + imgHeight > 260) {
-                                        pdf.addPage();
-                                        yPos = 20;
-                                    }
                                 }
                                 
                                 currentRowImages.push({
@@ -1647,21 +2007,26 @@
                                 currentRowImages.push({
                                     error: true,
                                     name: image.name,
-                                    width: 50,
-                                    height: 10
+                                    width: 60,
+                                    height: 20
                                 });
                             }
                         }
                         
+                        // Letzte Bildzeile rendern
                         if (currentRowImages.length > 0) {
+                            const maxRowHeight = Math.max(...currentRowImages.map(img => img.height));
+                            checkPageBreak(maxRowHeight + 20);
+                            
                             await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                            yPos += Math.max(...currentRowImages.map(img => img.height)) + 15;
+                            yPos += maxRowHeight + 20;
                         }
                     }
                     
-                    yPos += 10;
+                    yPos += 15; // Abstand zwischen Einträgen
                 }
                 
+                // PDF herunterladen
                 const date = visitDate || new Date().toISOString().split('T')[0];
                 const safeName = competitorValue ? 
                     competitorValue.replace(/[^\w\s-]/g, '') : 
@@ -1669,106 +2034,9 @@
                 const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
                 const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
                 
-                // iOS Safari Fix: PDF als Download-Link bereitstellen
-                if (isIOSSafari()) {
-                    const pdfOutput = pdf.output('blob');
-                    const pdfUrl = URL.createObjectURL(pdfOutput);
-                    
-                    // Download-Link erstellen
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = pdfUrl;
-                    downloadLink.download = fileName;
-                    downloadLink.style.display = 'none';
-                    document.body.appendChild(downloadLink);
-                    
-                    // Alternative: PDF in neuem Fenster öffnen
-                    const pdfDataUri = pdf.output('datauristring');
-                    const newWindow = window.open('', '_blank');
-                    
-                    if (newWindow) {
-                        newWindow.document.write(`
-                            <!DOCTYPE html>
-                            <html>
-                                <head>
-                                    <title>${fileName}</title>
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                    <style>
-                                        body { 
-                                            margin: 0; 
-                                            padding: 15px; 
-                                            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-                                            background: #f2f2f7;
-                                        }
-                                        .container {
-                                            background: white;
-                                            border-radius: 12px;
-                                            padding: 20px;
-                                            margin-bottom: 15px;
-                                            text-align: center;
-                                        }
-                                        .download-btn {
-                                            background: #007AFF;
-                                            color: white;
-                                            border: none;
-                                            padding: 15px 30px;
-                                            border-radius: 10px;
-                                            font-size: 16px;
-                                            font-weight: 600;
-                                            margin: 10px;
-                                            text-decoration: none;
-                                            display: inline-block;
-                                        }
-                                        .download-btn:active {
-                                            background: #0056CC;
-                                        }
-                                        .instructions {
-                                            color: #666;
-                                            font-size: 14px;
-                                            line-height: 1.4;
-                                            margin: 10px 0;
-                                        }
-                                        .pdf-viewer {
-                                            width: 100%;
-                                            height: 60vh;
-                                            border: none;
-                                            border-radius: 8px;
-                                            background: white;
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="container">
-                                        <h2>📄 ${fileName}</h2>
-                                        <a href="${pdfDataUri}" download="${fileName}" class="download-btn">
-                                            📥 PDF herunterladen
-                                        </a>
-                                        <div class="instructions">
-                                            <strong>Alternative:</strong><br>
-                                            1. Halten Sie das PDF unten gedrückt<br>
-                                            2. Wählen Sie "Teilen" oder "In Dateien sichern"
-                                        </div>
-                                    </div>
-                                    <embed src="${pdfDataUri}" type="application/pdf" class="pdf-viewer">
-                                </body>
-                            </html>
-                        `);
-                        newWindow.document.close();
-                    } else {
-                        // Fallback: Download-Link im aktuellen Fenster anzeigen
-                        showDownloadModal(pdfDataUri, fileName);
-                    }
-                    
-                    // Cleanup
-                    setTimeout(() => {
-                        document.body.removeChild(downloadLink);
-                        URL.revokeObjectURL(pdfUrl);
-                    }, 1000);
-                    
-                } else {
-                    // Normale Browser: Direkter Download
-                    pdf.save(fileName);
-                }
+                pdf.save(fileName);
                 
+                // Erfolgsmeldung
                 successEl.style.display = 'block';
                 scrollToElement(successEl);
                 
@@ -1778,9 +2046,7 @@
                 
                 setTimeout(() => {
                     successEl.style.display = 'none';
-                    // Message zurücksetzen für nächsten Aufruf
-                    successEl.innerHTML = '✅ PDF erfolgreich erstellt!';
-                }, isIOSSafari() ? 6000 : 4000); // Längere Anzeige für iOS
+                }, 4000);
                 
             } catch (error) {
                 alert('Fehler beim Erstellen des PDFs: ' + error.message);
@@ -1791,19 +2057,23 @@
         }
 
         function resetForm() {
+            // Mobile-optimierte Bestätigung
             const confirmMessage = 'Möchten Sie wirklich alle Eingaben zurücksetzen?\n\nDies kann nicht rückgängig gemacht werden.';
             
             if (confirm(confirmMessage)) {
+                // Loading-Indikator für mobile UX
                 const loadingEl = document.getElementById('loading');
                 loadingEl.innerHTML = '🔄 Formular wird zurückgesetzt...';
                 loadingEl.style.display = 'block';
                 
                 setTimeout(() => {
+                    // Alle Einträge außer dem ersten entfernen
                     const entries = document.querySelectorAll('.entry-item');
                     for (let i = entries.length - 1; i > 0; i--) {
                         entries[i].remove();
                     }
                     
+                    // Ersten Eintrag zurücksetzen
                     const firstEntry = document.querySelector('.entry-item');
                     const textarea = firstEntry.querySelector('.text-area');
                     const imagePreview = firstEntry.querySelector('.image-preview');
@@ -1811,46 +2081,58 @@
                     textarea.value = '';
                     imagePreview.innerHTML = '';
                     
+                    // Besuchsinformationen zurücksetzen
                     document.getElementById('branchName').selectedIndex = 0;
                     document.getElementById('competitorName').selectedIndex = 0;
                     
+                    // Dropdown-Opacity zurücksetzen
                     document.getElementById('branchName').style.opacity = '1';
                     document.getElementById('competitorName').style.opacity = '1';
                     
+                    // Namen aus Session wiederverwenden, falls vorhanden
                     document.getElementById('visitorName').value = savedVisitorName;
                     
+                    // Datum und Zeit auf heute/jetzt setzen
                     document.getElementById('visitDate').valueAsDate = new Date();
                     const now = new Date();
                     document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
                     
+                    // Validierungsfehler entfernen
                     clearValidationErrors();
                     
+                    // Image Data zurücksetzen
                     imageData = {};
                     entryCounter = 1;
                     
+                    // Delete-Buttons aktualisieren
                     updateDeleteButtons();
                     
+                    // Touch-Feedback neu initialisieren
                     addTouchFeedback();
                     
+                    // Zum Anfang scrollen
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     
+                    // Loading ausblenden
                     loadingEl.style.display = 'none';
                     loadingEl.innerHTML = '📄 PDF wird erstellt...';
                     
+                    // Haptic Feedback für iOS
                     if (window.navigator && window.navigator.vibrate) {
                         window.navigator.vibrate(100);
                     }
                     
+                    // Erfolg anzeigen
                     const successEl = document.getElementById('successMessage');
                     successEl.innerHTML = '✅ Formular erfolgreich zurückgesetzt!';
                     successEl.style.display = 'block';
                     
                     setTimeout(() => {
                         successEl.style.display = 'none';
-                        successEl.innerHTML = '✅ PDF erfolgreich erstellt!';
+                        successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
                     }, 2000);
                     
-                }, 100);
+                }, 100); // Kurze Verzögerung für bessere UX
             }
         }
     </script>
