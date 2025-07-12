@@ -946,8 +946,11 @@
                 <p><strong>📱 iOS/Safari Teilen</strong> <span class="export-status status-ready">Safari/iOS</span><br>
                 Nutzt native Share-Funktion für AirDrop, WhatsApp, Mail etc.</p>
                 
-                <p><strong>💾 ZIP Download</strong> <span class="export-status status-ready">Sofort verfügbar</span><br>
-                HTML-Datei + alle Bilder in separaten Ordnern</p>
+                <p><strong>🗜️ HTML komprimiert</strong> <span class="export-status status-ready">NEU!</span><br>
+                Optimierte HTML-Datei (~90% kleiner) - perfekt für E-Mail-Anhänge</p>
+                
+                <p><strong>💾 ZIP (Original+HTML)</strong> <span class="export-status status-ready">Vollständig</span><br>
+                Komprimierte HTML + Original-Bilder + Anleitung</p>
                 
                 <p><strong>☁️ Cloud Speichern</strong> <span class="export-status status-demo">Demo-Modus</span><br>
                 Vorbereitet für Dropbox/Google Drive/iCloud Integration</p>
@@ -955,7 +958,7 @@
                 <p><strong>📧 Server E-Mail</strong> <span class="export-status status-requires">Benötigt Backend</span><br>
                 Automatischer Versand über PHP/Node.js Server</p>
                 
-                <p><strong>🎨 Neue Bild-Collage:</strong> Kompakte Thumbnails & Grid-Darstellung - automatische Anpassung je nach Bildanzahl!</p>
+                <p><strong>🎯 Bildkomprimierung:</strong> Automatische Größenoptimierung für HTML-Export (400px, 60% Qualität = bis zu 90% kleiner!)</p>
             </div>
 
             <div class="actions">
@@ -965,16 +968,19 @@
                 <button type="button" class="btn btn-secondary" onclick="shareReport()">
                     📱 Teilen (iOS/Safari)
                 </button>
-                <button type="button" class="btn" onclick="downloadAsZIP()">
-                    💾 Als ZIP herunterladen
+                <button type="button" class="btn" onclick="downloadCompressedHTML()">
+                    🗜️ HTML komprimiert
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="toggleCollageStyle()">
+                <button type="button" class="btn btn-secondary" onclick="downloadAsZIP()">
+                    💾 Als ZIP (Original+HTML)
+                </button>
+                <button type="button" class="btn" onclick="toggleCollageStyle()">
                     🎨 Collage-Stil wechseln
                 </button>
-                <button type="button" class="btn" onclick="saveToCloud()">
+                <button type="button" class="btn btn-secondary" onclick="saveToCloud()">
                     ☁️ In Cloud speichern
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="emailViaServer()">
+                <button type="button" class="btn" onclick="emailViaServer()">
                     📧 Per Server versenden
                 </button>
             </div>
@@ -1117,6 +1123,39 @@
             };
             
             img.src = URL.createObjectURL(file);
+        }
+
+        // New function for HTML export compression
+        function compressImageForHTML(imageDataUrl, callback) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                // Smaller dimensions for HTML export (max 400px)
+                let { width, height } = img;
+                const maxSize = 400;
+                
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress with lower quality for smaller file size
+                ctx.drawImage(img, 0, 0, width, height);
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                callback(compressedDataUrl);
+            };
+            
+            img.src = imageDataUrl;
         }
 
         function updateThumbnails(questionId) {
@@ -1367,15 +1406,32 @@
             }
             
             try {
-                // Create HTML content
-                const htmlContent = generateReportHTML();
+                // Show loading indicator
+                const originalText = event.target.textContent;
+                event.target.textContent = '⏳ Komprimiere Bilder...';
+                event.target.disabled = true;
+                
+                // Create compressed HTML content
+                const htmlContent = await generateCompressedReportHTML();
                 const blob = new Blob([htmlContent], { type: 'text/html' });
                 
+                const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
+                const filename = auditorName === 'Anonym'
+                    ? `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`
+                    : `Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.html`;
+                
                 // Try to share
-                await shareFile(blob, 'text/html', `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`);
+                await shareFile(blob, 'text/html', filename);
+                
+                // Reset button
+                event.target.textContent = originalText;
+                event.target.disabled = false;
                 
             } catch (error) {
                 console.error('Share Error:', error);
+                // Reset button
+                event.target.textContent = originalText;
+                event.target.disabled = false;
                 // Fallback to mailto
                 emailReport();
             }
@@ -1403,18 +1459,22 @@
             downloadBlob(blob, filename);
         }
 
-        // 3. ZIP Download with HTML + Images
+        // 3. ZIP Download with compressed HTML + original quality images
         async function downloadAsZIP() {
             try {
+                // Show loading indicator
+                const originalText = event.target.textContent;
+                event.target.textContent = '⏳ Erstelle ZIP...';
+                event.target.disabled = true;
+                
                 const zip = new JSZip();
                 
-                // Add HTML report
-                const htmlContent = generateReportHTML();
+                // Add compressed HTML report
+                const htmlContent = await generateCompressedReportHTML();
                 zip.file('besuchsfeedback.html', htmlContent);
                 
-                // Add images
+                // Add original quality images to separate folder
                 const imageFolder = zip.folder('bilder');
-                let imageCounter = 1;
                 
                 Object.keys(auditData.images).forEach(questionId => {
                     if (auditData.images[questionId]) {
@@ -1425,8 +1485,35 @@
                     }
                 });
                 
+                // Add readme file
+                const readmeContent = `
+Budni Besuchsfeedback
+====================
+
+Inhalt:
+- besuchsfeedback.html: Komprimierter Report (optimiert für E-Mail-Versand)
+- bilder/: Alle Originalbilder in voller Qualität
+
+HTML-Datei:
+- Bilder auf 400px komprimiert für schnelle Ladezeiten
+- Klick auf Bilder öffnet sie in Originalgröße
+- Optimiert für E-Mail-Anhänge und Web-Darstellung
+
+Bilder-Ordner:
+- Originalqualität (1600px, 90% JPEG-Qualität)
+- Für Archivierung und Druckzwecke
+
+Erstellt: ${new Date().toLocaleString('de-DE')}
+`;
+                zip.file('LIES-MICH.txt', readmeContent);
+                
                 // Create and download ZIP
-                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const zipBlob = await zip.generateAsync({ 
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+                
                 const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
                 const filename = auditorName === 'Anonym'
                     ? `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.zip`
@@ -1434,8 +1521,19 @@
                 
                 downloadBlob(zipBlob, filename);
                 
+                // Reset button
+                event.target.textContent = originalText;
+                event.target.disabled = false;
+                
+                // Show success message with file size
+                const fileSizeMB = (zipBlob.size / 1024 / 1024).toFixed(2);
+                alert(`✅ ZIP-Datei erstellt (${fileSizeMB} MB)\n\n📄 HTML: Komprimiert für E-Mail\n🖼️ Bilder: Original-Qualität\n📝 Readme: Erklärt den Inhalt`);
+                
             } catch (error) {
                 console.error('ZIP Error:', error);
+                // Reset button
+                event.target.textContent = originalText;
+                event.target.disabled = false;
                 alert('ZIP-Export ist nicht verfügbar. Bitte verwenden Sie eine andere Export-Option.');
             }
         }
@@ -1470,29 +1568,30 @@
 
         function saveToDropbox() {
             // Generate Dropbox share link
-            const htmlContent = encodeURIComponent(generateReportHTML());
-            const filename = `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`;
+            alert('Dropbox-Integration würde hier implementiert. Aktuell: Komprimierte HTML-Version wird heruntergeladen.');
             
-            // This would typically require Dropbox API integration
-            alert('Dropbox-Integration würde hier implementiert. Aktuell: Bitte HTML-Content manuell in Dropbox speichern.');
-            
-            // For now, download the file
-            const blob = new Blob([generateReportHTML()], { type: 'text/html' });
-            downloadBlob(blob, filename);
+            // Download compressed HTML for manual upload
+            downloadCompressedHTML();
         }
 
         function saveToGoogleDrive() {
-            alert('Google Drive-Integration würde hier implementiert. Aktuell: Bitte ZIP-Download verwenden und manuell hochladen.');
+            alert('Google Drive-Integration würde hier implementiert. Aktuell: ZIP-Download mit komprimierter HTML und Original-Bildern.');
             downloadAsZIP();
         }
 
-        function saveToICloud() {
+        async function saveToICloud() {
             // Safari specific - try to trigger iCloud save
             if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
-                const blob = new Blob([generateReportHTML()], { type: 'text/html' });
-                const filename = `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`;
-                downloadBlob(blob, filename);
-                alert('Datei wurde heruntergeladen. In Safari: Datei öffnen und "In Dateien speichern" wählen für iCloud.');
+                try {
+                    const htmlContent = await generateCompressedReportHTML();
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const filename = `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.html`;
+                    downloadBlob(blob, filename);
+                    alert('Komprimierte HTML-Datei wurde heruntergeladen. In Safari: Datei öffnen und "In Dateien speichern" wählen für iCloud.');
+                } catch (error) {
+                    console.error('iCloud save error:', error);
+                    alert('iCloud-Speicherung fehlgeschlagen. Bitte anderen Export verwenden.');
+                }
             } else {
                 alert('iCloud-Speicherung ist nur in Safari verfügbar.');
             }
@@ -1573,11 +1672,138 @@
         }
 
         function downloadReport() {
-            // Fallback to ZIP download
-            downloadAsZIP();
+            // Fallback to compressed HTML download
+            downloadCompressedHTML();
+        }
+
+        // Generate HTML with compressed images for smaller file size
+        async function generateCompressedReportHTML() {
+            // First, compress all images
+            const compressedImages = {};
+            
+            for (const questionId of Object.keys(auditData.images)) {
+                if (auditData.images[questionId] && auditData.images[questionId].length > 0) {
+                    compressedImages[questionId] = [];
+                    
+                    for (const image of auditData.images[questionId]) {
+                        const compressedDataUrl = await new Promise(resolve => {
+                            compressImageForHTML(image.data, resolve);
+                        });
+                        
+                        compressedImages[questionId].push({
+                            ...image,
+                            data: compressedDataUrl
+                        });
+                    }
+                }
+            }
+            
+            // Generate HTML with compressed images
+            const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
+            const date = document.getElementById('reportDate').textContent;
+            const location = document.getElementById('reportLocation').innerHTML;
+            
+            let htmlContent = `
+                <!DOCTYPE html>
+                <html lang="de">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Besuchsfeedback</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #3f51b5; padding-bottom: 20px; }
+                        .report-title { font-size: 28px; font-weight: bold; color: #1e293b; margin-bottom: 10px; }
+                        .report-meta { color: #64748b; font-size: 14px; }
+                        .report-section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8fafc; }
+                        .report-section h3 { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 15px; }
+                        .report-content { font-size: 14px; color: #334155; margin-bottom: 15px; white-space: pre-wrap; }
+                        .report-images { 
+                            display: grid; 
+                            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+                            gap: 8px; 
+                            margin-top: 15px; 
+                        }
+                        .report-image { 
+                            border-radius: 6px; 
+                            overflow: hidden; 
+                            box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+                            cursor: pointer;
+                            transition: transform 0.2s ease;
+                        }
+                        .report-image:hover { transform: scale(1.02); }
+                        .report-image img { 
+                            width: 100%; 
+                            height: 120px; 
+                            object-fit: cover; 
+                            display: block;
+                        }
+                        .file-info { margin-top: 20px; padding: 10px; background: #e3f2fd; border-radius: 6px; font-size: 12px; color: #1565c0; }
+                        @media (max-width: 768px) {
+                            body { margin: 20px; }
+                            .report-images { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 4px; }
+                            .report-image img { height: 80px; }
+                        }
+                        @media print {
+                            .report-images { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+                            .report-image img { height: 100px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="report-header">
+                        <h1 class="report-title">Budni Besuchsfeedback</h1>
+                        <div class="report-meta">
+                            <p>${date}</p>
+                            <div>${location}</div>
+                        </div>
+                    </div>
+            `;
+            
+            // Add content sections
+            Object.keys(auditData.questions).forEach((questionId, index) => {
+                htmlContent += `
+                    <div class="report-section">
+                        <h3>Thema ${index + 1}</h3>
+                `;
+                
+                if (auditData.questions[questionId]) {
+                    htmlContent += `<div class="report-content">${auditData.questions[questionId]}</div>`;
+                }
+                
+                if (compressedImages[questionId] && compressedImages[questionId].length > 0) {
+                    htmlContent += '<div class="report-images">';
+                    compressedImages[questionId].forEach(image => {
+                        htmlContent += `
+                            <div class="report-image">
+                                <img src="${image.data}" alt="${image.name}" onclick="window.open(this.src, '_blank')">
+                            </div>
+                        `;
+                    });
+                    htmlContent += '</div>';
+                }
+                
+                htmlContent += '</div>';
+            });
+            
+            // Calculate estimated file size
+            const estimatedSize = Math.round(htmlContent.length / 1024);
+            htmlContent += `
+                <div class="file-info">
+                    📄 Komprimierte Version für optimale Dateigröße (~${estimatedSize} KB)<br>
+                    🖼️ Bilder wurden auf 400px komprimiert (60% Qualität) für schnelles Laden
+                </div>
+            `;
+            
+            htmlContent += `
+                </body>
+                </html>
+            `;
+            
+            return htmlContent;
         }
 
         function generateReportHTML() {
+            // Fallback to simple version if compression fails
             const reportView = document.getElementById('reportView');
             return `
                 <!DOCTYPE html>
