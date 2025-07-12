@@ -37,6 +37,19 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .budni-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            position: relative;
+        }
+
+        .budni-logo svg {
+            width: 100%;
+            height: 100%;
         }
 
         .header h1 {
@@ -512,26 +525,44 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏪 Filialbesuch Feedback</h1>
-            <p>Professionelle Geschäfts- und Wettbewerbsanalyse</p>
+            <div class="budni-logo">
+                <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Türkiser Kreis links hinten -->
+                    <circle cx="90" cy="90" r="70" fill="#00bcd4"/>
+                    
+                    <!-- Oranger Kreis rechts hinten -->
+                    <circle cx="210" cy="90" r="65" fill="#ff6b6b"/>
+                    
+                    <!-- Dunkelblaues Zentrum vorne - größer -->
+                    <circle cx="150" cy="90" r="85" fill="#3f51b5"/>
+                    
+                    <!-- budni text -->
+                    <text x="150" y="103" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="white" text-anchor="middle">budni</text>
+                    
+                    <!-- Punkt über dem i -->
+                    <circle cx="195" cy="75" r="3" fill="white"/>
+                </svg>
+            </div>
+            <h1>Filialbesuch Feedback</h1>
         </div>
 
         <div id="auditForm" class="form-section">
             <!-- Audit Details Section -->
             <div class="location-section">
                 <div class="form-group">
-                    <label for="auditorName">👤 Name des Besuchers:</label>
-                    <input type="text" id="auditorName" placeholder="Ihr vollständiger Name">
+                    <label for="auditorName">👤 Name des Besuchers (optional):</label>
+                    <input type="text" id="auditorName" placeholder="Ihr vollständiger Name (optional)">
                 </div>
                 
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label for="auditDate">📅 Datum:</label>
-                        <input type="date" id="auditDate">
-                    </div>
-                    <div class="form-group" style="flex: 1; min-width: 200px;">
-                        <label for="auditTime">🕐 Uhrzeit:</label>
-                        <input type="time" id="auditTime">
+                <div class="form-group">
+                    <label>📅 Datum und Uhrzeit:</label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <input type="date" id="auditDate">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <input type="time" id="auditTime">
+                        </div>
                     </div>
                 </div>
                 
@@ -548,14 +579,197 @@
                     <label for="ownBusiness">🏢 Budni Filiale:</label>
                     <select id="ownBusiness">
                         <option value="">Filiale auswählen...</option>
-                        <option value="Budni Hamburg Hauptbahnhof">Budni Hamburg Hauptbahnhof</option>
-                        <option value="Budni Hamburg Altona">Budni Hamburg Altona</option>
-                        <option value="Budni Hamburg Wandsbek">Budni Hamburg Wandsbek</option>
-                        <option value="Budni Hamburg Eimsbüttel">Budni Hamburg Eimsbüttel</option>
-                        <option value="Budni Kiel">Budni Kiel</option>
-                        <option value="Budni Lübeck">Budni Lübeck</option>
-                        <option value="Budni Neumünster">Budni Neumünster</option>
-                        <option value="Budni Schleswig">Budni Schleswig</option>
+                        <option value="Ahrensburg / Hamburger Str. 4-8">Ahrensburg / Hamburger Str. 4-8</option>
+                        <option value="Ahrensburg / Rathausplatz 15">Ahrensburg / Rathausplatz 15</option>
+                        <option value="Alsterdorf / Alsterdorfer Str. 206">Alsterdorf / Alsterdorfer Str. 206</option>
+                        <option value="Altona-Altstadt / Holstenstraße 111">Altona-Altstadt / Holstenstraße 111</option>
+                        <option value="Altona-Altstadt / Neue Große Bergstraße 18">Altona-Altstadt / Neue Große Bergstraße 18</option>
+                        <option value="Altstadt / Bergstrasse 16">Altstadt / Bergstrasse 16</option>
+                        <option value="Ammersbek / Hamburger Straße 101">Ammersbek / Hamburger Straße 101</option>
+                        <option value="Apensen / Beckdorfer Straße 18">Apensen / Beckdorfer Straße 18</option>
+                        <option value="Bad Oldesloe / Lübecker Straße 23-25">Bad Oldesloe / Lübecker Straße 23-25</option>
+                        <option value="Bad Segeberg / Ziegelstrasse 105-107">Bad Segeberg / Ziegelstrasse 105-107</option>
+                        <option value="Bahrenfeld / Gasstraße 6b">Bahrenfeld / Gasstraße 6b</option>
+                        <option value="Bahrenfeld / Osdorfer Weg 106">Bahrenfeld / Osdorfer Weg 106</option>
+                        <option value="Barendorf / Im Stadtkamp 1">Barendorf / Im Stadtkamp 1</option>
+                        <option value="Bargteheide / Rathausstraße 13-15">Bargteheide / Rathausstraße 13-15</option>
+                        <option value="Barmbek-Nord / Alter Güterbahnhof 2">Barmbek-Nord / Alter Güterbahnhof 2</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Str. 107-109">Barmbek-Nord / Fuhlsbüttler Str. 107-109</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 164">Barmbek-Nord / Fuhlsbüttler Straße 164</option>
+                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 401">Barmbek-Nord / Fuhlsbüttler Straße 401</option>
+                        <option value="Barmbek-Süd / Hamburger Str. 47-49">Barmbek-Süd / Hamburger Str. 47-49</option>
+                        <option value="Barmbek-Süd / Mozartstraße 16">Barmbek-Süd / Mozartstraße 16</option>
+                        <option value="Barsbüttel / Am Akku 9">Barsbüttel / Am Akku 9</option>
+                        <option value="Bergedorf / Bergedorfer Str. 133">Bergedorf / Bergedorfer Str. 133</option>
+                        <option value="Bergedorf / Friedrich-Frank-Bogen 166">Bergedorf / Friedrich-Frank-Bogen 166</option>
+                        <option value="Bergedorf / Kupferhof 7">Bergedorf / Kupferhof 7</option>
+                        <option value="Bergstedt / Wohldorfer Damm 1- 1a">Bergstedt / Wohldorfer Damm 1- 1a</option>
+                        <option value="Berlin / Bundesalle 86/89">Berlin / Bundesalle 86/89</option>
+                        <option value="Berlin / Frankfurter Allee 35-37">Berlin / Frankfurter Allee 35-37</option>
+                        <option value="Berlin / Friedenstraße 90">Berlin / Friedenstraße 90</option>
+                        <option value="Berlin / Friedrichstraße 149">Berlin / Friedrichstraße 149</option>
+                        <option value="Berlin / Güntzelstraße 48">Berlin / Güntzelstraße 48</option>
+                        <option value="Berlin / Martin-Luther Str. 48">Berlin / Martin-Luther Str. 48</option>
+                        <option value="Berlin / Rankestraße 33-34">Berlin / Rankestraße 33-34</option>
+                        <option value="Berlin / Revaler Straße 33">Berlin / Revaler Straße 33</option>
+                        <option value="Berlin / Schönhauser Allee 12">Berlin / Schönhauser Allee 12</option>
+                        <option value="Berlin / Schönhauser Allee 120">Berlin / Schönhauser Allee 120</option>
+                        <option value="Berlin / Wilmersdorfer Straße 60">Berlin / Wilmersdorfer Straße 60</option>
+                        <option value="Billstedt / Billstedter Platz 2">Billstedt / Billstedter Platz 2</option>
+                        <option value="Blankenese / Propst-Paulsen-Str. 2">Blankenese / Propst-Paulsen-Str. 2</option>
+                        <option value="Blankenese / Sülldorfer Kirchenweg 1-3">Blankenese / Sülldorfer Kirchenweg 1-3</option>
+                        <option value="Börnsen / Hermann-Wöhlke-Weg 2">Börnsen / Hermann-Wöhlke-Weg 2</option>
+                        <option value="Bramfeld / Bramfelder Chaussee 230">Bramfeld / Bramfelder Chaussee 230</option>
+                        <option value="Bramfeld / Pezolddamm 147">Bramfeld / Pezolddamm 147</option>
+                        <option value="Büchen / Schlickweg 2">Büchen / Schlickweg 2</option>
+                        <option value="Buchholz / Breite Str. 5">Buchholz / Breite Str. 5</option>
+                        <option value="Buchholz / Soltauer Straße 93">Buchholz / Soltauer Straße 93</option>
+                        <option value="Buxtehude / Stader Straße 2">Buxtehude / Stader Straße 2</option>
+                        <option value="Buxtehude / Zwischen den Brücken 1">Buxtehude / Zwischen den Brücken 1</option>
+                        <option value="Dollern / Am Buschteich 26">Dollern / Am Buschteich 26</option>
+                        <option value="Duvenstedt / Poppenbüttler Chaussee 36">Duvenstedt / Poppenbüttler Chaussee 36</option>
+                        <option value="Eidelstedt / Eidelstedter Platz 1">Eidelstedt / Eidelstedter Platz 1</option>
+                        <option value="Eilbek / Conventstraße 8-10">Eilbek / Conventstraße 8-10</option>
+                        <option value="Eilbek / Landwehr 34">Eilbek / Landwehr 34</option>
+                        <option value="Eimsbüttel / Eimsbütteler Chaussee 85">Eimsbüttel / Eimsbütteler Chaussee 85</option>
+                        <option value="Eimsbüttel / Müggenkampstraße 4">Eimsbüttel / Müggenkampstraße 4</option>
+                        <option value="Eimsbüttel / Osterstr. 1">Eimsbüttel / Osterstr. 1</option>
+                        <option value="Eimsbüttel / Osterstr. 95">Eimsbüttel / Osterstr. 95</option>
+                        <option value="Eppendorf / Eppendorfer Baum 39">Eppendorf / Eppendorfer Baum 39</option>
+                        <option value="Eppendorf / Eppendorfer Landstr. 67">Eppendorf / Eppendorfer Landstr. 67</option>
+                        <option value="Eppendorf / Eppendorfer Landstrasse 77">Eppendorf / Eppendorfer Landstrasse 77</option>
+                        <option value="Eppendorf / Martinistraße 64">Eppendorf / Martinistraße 64</option>
+                        <option value="Farmsen-Berne / Berner Heerweg 173-175">Farmsen-Berne / Berner Heerweg 173-175</option>
+                        <option value="Finkenwerder / Steendiek 43">Finkenwerder / Steendiek 43</option>
+                        <option value="Fuhlsbüttel / Erdkampsweg 47-49">Fuhlsbüttel / Erdkampsweg 47-49</option>
+                        <option value="Geesthacht / Norderstraße 16">Geesthacht / Norderstraße 16</option>
+                        <option value="Glinde / Markt 3">Glinde / Markt 3</option>
+                        <option value="Groß Borstel / Borsteler Chaussee 111-113">Groß Borstel / Borsteler Chaussee 111-113</option>
+                        <option value="Gross Flottbek / Waitzstrasse 29">Gross Flottbek / Waitzstrasse 29</option>
+                        <option value="Grosshansdorf / Eilbergweg 11">Grosshansdorf / Eilbergweg 11</option>
+                        <option value="HafenCity / Überseeboulevard 7">HafenCity / Überseeboulevard 7</option>
+                        <option value="Halstenbek / Seestrasse 250">Halstenbek / Seestrasse 250</option>
+                        <option value="Hamm / Hammer Landstraße 84">Hamm / Hammer Landstraße 84</option>
+                        <option value="Hamm-Mitte / Droopweg 25">Hamm-Mitte / Droopweg 25</option>
+                        <option value="Hamm-Nord / Hammer Steindamm 72-74">Hamm-Nord / Hammer Steindamm 72-74</option>
+                        <option value="Hammerbrook / Sonninstraße 1-5">Hammerbrook / Sonninstraße 1-5</option>
+                        <option value="Hanstedt / Winsener Straße 1-3">Hanstedt / Winsener Straße 1-3</option>
+                        <option value="Harburg / Hannoversche Straße 86">Harburg / Hannoversche Straße 86</option>
+                        <option value="Harburg / Lüneburger Str. 39">Harburg / Lüneburger Str. 39</option>
+                        <option value="Harburg / Sand 10">Harburg / Sand 10</option>
+                        <option value="Harsefeld / Buxtehuder Str. 11">Harsefeld / Buxtehuder Str. 11</option>
+                        <option value="Harvestehude / Grindelberg 7">Harvestehude / Grindelberg 7</option>
+                        <option value="Heimfeld / Heimfelder Str. 46">Heimfeld / Heimfelder Str. 46</option>
+                        <option value="Heimfeld / Stader Straße 136">Heimfeld / Stader Straße 136</option>
+                        <option value="Henstedt-Ulzburg / Dammstücken 29-33">Henstedt-Ulzburg / Dammstücken 29-33</option>
+                        <option value="Hittfeld / Kirchstrasse 26">Hittfeld / Kirchstrasse 26</option>
+                        <option value="Hoheluft-Ost / Hoheluftchaussee 52">Hoheluft-Ost / Hoheluftchaussee 52</option>
+                        <option value="Horn / Graßmannweg 6-13">Horn / Graßmannweg 6-13</option>
+                        <option value="Horn / Rennbahnstr. 30-38">Horn / Rennbahnstr. 30-38</option>
+                        <option value="Hummelsbüttel / Hummelsbüttler Hauptstr. 62">Hummelsbüttel / Hummelsbüttler Hauptstr. 62</option>
+                        <option value="Jesteburg / Brückenstraße 11">Jesteburg / Brückenstraße 11</option>
+                        <option value="Kaltenkirchen / Am Bahnhof 2-12">Kaltenkirchen / Am Bahnhof 2-12</option>
+                        <option value="Langenhorn / Krohnstieg 41-43">Langenhorn / Krohnstieg 41-43</option>
+                        <option value="Langenhorn / Langenhorner Chaussee 666">Langenhorn / Langenhorner Chaussee 666</option>
+                        <option value="Lohbrügge / Am Beckerkamp 17">Lohbrügge / Am Beckerkamp 17</option>
+                        <option value="Lohbrügge / Heidhorst 4">Lohbrügge / Heidhorst 4</option>
+                        <option value="Lokstedt / Vogt-Wells-Straße 6">Lokstedt / Vogt-Wells-Straße 6</option>
+                        <option value="Lübeck / Heiligen-Geist-Kamp 4">Lübeck / Heiligen-Geist-Kamp 4</option>
+                        <option value="Lübeck / Mühlenstraße 22-24">Lübeck / Mühlenstraße 22-24</option>
+                        <option value="Lüneburg / Am Sande 50">Lüneburg / Am Sande 50</option>
+                        <option value="Lüneburg / Bei der Keulahütte 1">Lüneburg / Bei der Keulahütte 1</option>
+                        <option value="Lüneburg / Feldstrasse 1">Lüneburg / Feldstrasse 1</option>
+                        <option value="Lurup / Elbgaustrasse 128">Lurup / Elbgaustrasse 128</option>
+                        <option value="Lurup / Luruper Hauptstraße 272a">Lurup / Luruper Hauptstraße 272a</option>
+                        <option value="Marienthal / Rennbahnstrasse 135">Marienthal / Rennbahnstrasse 135</option>
+                        <option value="Marmstorf / Ernst-Bergeest-Weg 57 a">Marmstorf / Ernst-Bergeest-Weg 57 a</option>
+                        <option value="Maschen / Schulstraße 38">Maschen / Schulstraße 38</option>
+                        <option value="Meckelfeld / Am Saal 20">Meckelfeld / Am Saal 20</option>
+                        <option value="Mölln / Grambeker Weg 91-93">Mölln / Grambeker Weg 91-93</option>
+                        <option value="Mundsburg Center / Hamburger Straße 1-15">Mundsburg Center / Hamburger Straße 1-15</option>
+                        <option value="Nahe / Segeberger Strasse 30">Nahe / Segeberger Strasse 30</option>
+                        <option value="Neu Wulmstorf / Wulmstorfer Wiesen 2a">Neu Wulmstorf / Wulmstorfer Wiesen 2a</option>
+                        <option value="Neuengamme / Heinrich-Stubbe-Weg 13-15">Neuengamme / Heinrich-Stubbe-Weg 13-15</option>
+                        <option value="Neugraben-Fischbek / Lütt Enn 3">Neugraben-Fischbek / Lütt Enn 3</option>
+                        <option value="Neustadt / Dammtorstr. 33-35">Neustadt / Dammtorstr. 33-35</option>
+                        <option value="Neustadt / Wexstr. 25">Neustadt / Wexstr. 25</option>
+                        <option value="Neuwiedenthal / Rehrstieg 28">Neuwiedenthal / Rehrstieg 28</option>
+                        <option value="Niedermarschacht / Elbuferstrasse 116">Niedermarschacht / Elbuferstrasse 116</option>
+                        <option value="Niendorf / Paul-Sorge-Str. 8">Niendorf / Paul-Sorge-Str. 8</option>
+                        <option value="Niendorf / Wagrier Weg 2-8">Niendorf / Wagrier Weg 2-8</option>
+                        <option value="Nienstedten / Nienstedtener Straße 2e">Nienstedten / Nienstedtener Straße 2e</option>
+                        <option value="Norderstedt / Berliner Allee 42">Norderstedt / Berliner Allee 42</option>
+                        <option value="Norderstedt / Rathausallee 31a/33a">Norderstedt / Rathausallee 31a/33a</option>
+                        <option value="Norderstedt / Schmuggelstieg 6">Norderstedt / Schmuggelstieg 6</option>
+                        <option value="Norderstedt / Ulzburger Strasse 360">Norderstedt / Ulzburger Strasse 360</option>
+                        <option value="Osdorf / Osdorfer Landstrasse 131-135">Osdorf / Osdorfer Landstrasse 131-135</option>
+                        <option value="Osdorf / Rugenbarg 18">Osdorf / Rugenbarg 18</option>
+                        <option value="Oststeinbek / Möllner Landstrasse 30">Oststeinbek / Möllner Landstrasse 30</option>
+                        <option value="Othmarschen / Jürgen-Töpfer-Straße 18">Othmarschen / Jürgen-Töpfer-Straße 18</option>
+                        <option value="Ottensen / Bahrenfelder Straße 134">Ottensen / Bahrenfelder Straße 134</option>
+                        <option value="Ottensen / Ottenser Hauptstraße 10">Ottensen / Ottenser Hauptstraße 10</option>
+                        <option value="Pinneberg / Richard-Köhn-Str. 1">Pinneberg / Richard-Köhn-Str. 1</option>
+                        <option value="Poppenbüttel / Heegbarg 31">Poppenbüttel / Heegbarg 31</option>
+                        <option value="Poppenbüttel / Moorhof 7a">Poppenbüttel / Moorhof 7a</option>
+                        <option value="Poppenbüttel / Poppenbütteler Bogen 98">Poppenbüttel / Poppenbütteler Bogen 98</option>
+                        <option value="Quickborn / Bahnhofstraße 104">Quickborn / Bahnhofstraße 104</option>
+                        <option value="Rahlstedt / Bargteheider Straße 20-22">Rahlstedt / Bargteheider Straße 20-22</option>
+                        <option value="Rahlstedt / Meiendorfer Strasse 89">Rahlstedt / Meiendorfer Strasse 89</option>
+                        <option value="Rahlstedt / Rahlstedter Bahnhofstrasse 17">Rahlstedt / Rahlstedter Bahnhofstrasse 17</option>
+                        <option value="Rahlstedt / Scharbeutzer Straße 102a-c">Rahlstedt / Scharbeutzer Straße 102a-c</option>
+                        <option value="Rahlstedt / Schweriner Strasse 8-12">Rahlstedt / Schweriner Strasse 8-12</option>
+                        <option value="Reinbek / Am Ladenzentrum 7">Reinbek / Am Ladenzentrum 7</option>
+                        <option value="Reinbek / Sachsenwaldstr. 20">Reinbek / Sachsenwaldstr. 20</option>
+                        <option value="Rellingen / Hauptstrasse 105">Rellingen / Hauptstrasse 105</option>
+                        <option value="Rissen / Wedeler Landstraße 56">Rissen / Wedeler Landstraße 56</option>
+                        <option value="Rothenburgsort / Lindleystraße 2">Rothenburgsort / Lindleystraße 2</option>
+                        <option value="Rotherbaum / Grindelallee 110-114">Rotherbaum / Grindelallee 110-114</option>
+                        <option value="Rotherbaum / Milchstraße 1">Rotherbaum / Milchstraße 1</option>
+                        <option value="Sasel / Saseler Markt 14a">Sasel / Saseler Markt 14a</option>
+                        <option value="Schenefeld / Industriestraße 1">Schenefeld / Industriestraße 1</option>
+                        <option value="Schnelsen / Frohmestraße 48">Schnelsen / Frohmestraße 48</option>
+                        <option value="Schwarzenbek / Compestrasse 1">Schwarzenbek / Compestrasse 1</option>
+                        <option value="St. Pauli / Clemens-Schultz-Strasse 38">St. Pauli / Clemens-Schultz-Strasse 38</option>
+                        <option value="St. Pauli / Neuer Kamp 31">St. Pauli / Neuer Kamp 31</option>
+                        <option value="St. Pauli / Talstraße 36">St. Pauli / Talstraße 36</option>
+                        <option value="St.Georg / Lange Reihe 104-106">St.Georg / Lange Reihe 104-106</option>
+                        <option value="St.Georg / Lange Reihe 18-20">St.Georg / Lange Reihe 18-20</option>
+                        <option value="St.Georg / Steindamm 55">St.Georg / Steindamm 55</option>
+                        <option value="Stade / Steile Straße 1">Stade / Steile Straße 1</option>
+                        <option value="Steilshoop / Steilshooper Str. 281">Steilshoop / Steilshooper Str. 281</option>
+                        <option value="Stelle / Harburger Straße 25 c">Stelle / Harburger Straße 25 c</option>
+                        <option value="Stellingen / Kieler Str. 561-573">Stellingen / Kieler Str. 561-573</option>
+                        <option value="Stellingen / Langenfelder Damm 62">Stellingen / Langenfelder Damm 62</option>
+                        <option value="Sternschanze / Schanzenstraße 55">Sternschanze / Schanzenstraße 55</option>
+                        <option value="Sternschanze / Schulterblatt 135">Sternschanze / Schulterblatt 135</option>
+                        <option value="Sternschanze / Schulterblatt 45">Sternschanze / Schulterblatt 45</option>
+                        <option value="Tangstedt / Eichholzkoppel 1">Tangstedt / Eichholzkoppel 1</option>
+                        <option value="Timmendorfer STrand / Strandallee 81">Timmendorfer STrand / Strandallee 81</option>
+                        <option value="Tonndorf / Ahrensburger Strasse 150-152">Tonndorf / Ahrensburger Strasse 150-152</option>
+                        <option value="Tornesch / Ohlenhoff 4">Tornesch / Ohlenhoff 4</option>
+                        <option value="Tostedt / Unter den Linden 5">Tostedt / Unter den Linden 5</option>
+                        <option value="Tostedt / Zinnhütte 12">Tostedt / Zinnhütte 12</option>
+                        <option value="Trittau / Poststraße 27-29">Trittau / Poststraße 27-29</option>
+                        <option value="Uhlenhorst / Hofweg 46-48">Uhlenhorst / Hofweg 46-48</option>
+                        <option value="Volksdorf / Claus-Ferck-Straße 8">Volksdorf / Claus-Ferck-Straße 8</option>
+                        <option value="Volksdorf / Weiße Rose 8">Volksdorf / Weiße Rose 8</option>
+                        <option value="Wandsbek / Friedrich-Ebert-Damm 79-85">Wandsbek / Friedrich-Ebert-Damm 79-85</option>
+                        <option value="Wandsbek / Wandsbeker Marktstraße 103-107">Wandsbek / Wandsbeker Marktstraße 103-107</option>
+                        <option value="Wandsbek / Wandsbeker Marktstraße 2">Wandsbek / Wandsbeker Marktstraße 2</option>
+                        <option value="Wedel / Am Marienhof 1, 3">Wedel / Am Marienhof 1, 3</option>
+                        <option value="Wedel / Bahnhofstraße 31">Wedel / Bahnhofstraße 31</option>
+                        <option value="Wedel / Rissener Straße 125">Wedel / Rissener Straße 125</option>
+                        <option value="Wellingsbüttel / Wellingsbüttler Weg 125">Wellingsbüttel / Wellingsbüttler Weg 125</option>
+                        <option value="Wenningstedt/Sylt / Osterweg 2">Wenningstedt/Sylt / Osterweg 2</option>
+                        <option value="Wentorf / Berliner Landstraße 4-6">Wentorf / Berliner Landstraße 4-6</option>
+                        <option value="Wilhelmsburg / Vogelhüttendeich 48">Wilhelmsburg / Vogelhüttendeich 48</option>
+                        <option value="Wilhelmsburg / Wilhelm-Strauß-Weg 2b">Wilhelmsburg / Wilhelm-Strauß-Weg 2b</option>
+                        <option value="Winsen / Löhnfeld 10">Winsen / Löhnfeld 10</option>
+                        <option value="Winsen / Rathausstraße 33">Winsen / Rathausstraße 33</option>
+                        <option value="Winterhude / Gertigstraße 24">Winterhude / Gertigstraße 24</option>
+                        <option value="Winterhude / Hudtwalckerstr. 19-21">Winterhude / Hudtwalckerstr. 19-21</option>
+                        <option value="Winterhude / Jarrestr. 47">Winterhude / Jarrestr. 47</option>
+                        <option value="Winterhude / Mühlenkamp 43">Winterhude / Mühlenkamp 43</option>
                     </select>
                 </div>
 
@@ -847,7 +1061,7 @@
 
         function generateReport() {
             // Collect form data
-            const auditorName = document.getElementById('auditorName').value.trim();
+            const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
             const auditDate = document.getElementById('auditDate').value;
             const auditTime = document.getElementById('auditTime').value;
             const locationType = document.getElementById('locationType').value;
@@ -855,12 +1069,7 @@
                 ? document.getElementById('ownBusiness').value 
                 : document.getElementById('competitor').value;
             
-            // Validation
-            if (!auditorName) {
-                alert('Bitte geben Sie Ihren Namen ein.');
-                return;
-            }
-            
+            // Validation (Name ist optional)
             if (!auditDate) {
                 alert('Bitte wählen Sie ein Datum aus.');
                 return;
@@ -976,7 +1185,7 @@
                 pdf.text('Budni Besuchsfeedback', 20, 30);
                 
                 // Add metadata
-                const auditorName = document.getElementById('auditorName').value;
+                const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
                 const date = document.getElementById('reportDate').textContent;
                 const location = document.querySelector('#reportLocation strong').nextSibling.textContent;
                 
@@ -1017,12 +1226,16 @@
                 });
                 
                 // Download PDF
-                pdf.save(`Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.pdf`);
+                const filename = auditorName === 'Anonym' 
+                    ? `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.pdf`
+                    : `Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.pdf`;
+                
+                pdf.save(filename);
                 
                 // Also trigger native share if available
                 if (navigator.share && pdf.output) {
                     const pdfBlob = pdf.output('blob');
-                    shareFile(pdfBlob, 'application/pdf', `Budni-Besuchsfeedback-${auditorName}.pdf`);
+                    shareFile(pdfBlob, 'application/pdf', filename);
                 }
                 
             } catch (error) {
@@ -1099,8 +1312,10 @@
                 
                 // Create and download ZIP
                 const zipBlob = await zip.generateAsync({ type: 'blob' });
-                const auditorName = document.getElementById('auditorName').value;
-                const filename = `Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.zip`;
+                const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
+                const filename = auditorName === 'Anonym'
+                    ? `Budni-Besuchsfeedback-${new Date().toISOString().split('T')[0]}.zip`
+                    : `Budni-Besuchsfeedback-${auditorName}-${new Date().toISOString().split('T')[0]}.zip`;
                 
                 downloadBlob(zipBlob, filename);
                 
@@ -1178,8 +1393,9 @@
             }
             
             try {
+                const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
                 const feedbackData = {
-                    auditor: document.getElementById('auditorName').value,
+                    auditor: auditorName,
                     date: document.getElementById('auditDate').value,
                     time: document.getElementById('auditTime').value,
                     location: document.getElementById('locationType').value === 'own' 
@@ -1225,11 +1441,13 @@
         // Legacy functions (keep for compatibility)
         function emailReport() {
             const reportHTML = generateReportHTML();
-            const auditorName = document.getElementById('auditorName').value;
+            const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
             const location = document.getElementById('reportLocation').textContent;
             const date = document.getElementById('reportDate').textContent;
             
-            const subject = `Besuchsfeedback - ${auditorName} - ${date}`;
+            const subject = auditorName === 'Anonym' 
+                ? `Besuchsfeedback - ${date}`
+                : `Besuchsfeedback - ${auditorName} - ${date}`;
             const body = `Bitte finden Sie das Besuchsfeedback im Anhang.\n\nBesucher: ${auditorName}\n${location}\nDatum: ${date}`;
             
             // Create mailto link
