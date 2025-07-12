@@ -456,14 +456,15 @@
             user-select: none;
         }
 
-        .star:hover,
-        .star.active {
+        .star:hover {
             color: #ffd700;
             transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
-        .star:hover {
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        .star.active {
+            color: #ffd700;
+            transform: scale(1.05);
         }
 
         .rating-value {
@@ -1129,11 +1130,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('aussenbereich')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="aussenbereich">
-                            <span class="star" data-value="1" onclick="setRating('aussenbereich', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('aussenbereich', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('aussenbereich', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('aussenbereich', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('aussenbereich', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('aussenbereich', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('aussenbereich', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('aussenbereich', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('aussenbereich', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('aussenbereich', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-aussenbereich">Noch nicht bewertet</div>
                     </div>
@@ -1147,11 +1148,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('aktionszone')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="aktionszone">
-                            <span class="star" data-value="1" onclick="setRating('aktionszone', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('aktionszone', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('aktionszone', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('aktionszone', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('aktionszone', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('aktionszone', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('aktionszone', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('aktionszone', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('aktionszone', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('aktionszone', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-aktionszone">Noch nicht bewertet</div>
                     </div>
@@ -1165,11 +1166,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('dekorative-kosmetik')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="dekorative-kosmetik">
-                            <span class="star" data-value="1" onclick="setRating('dekorative-kosmetik', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('dekorative-kosmetik', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('dekorative-kosmetik', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('dekorative-kosmetik', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('dekorative-kosmetik', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('dekorative-kosmetik', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('dekorative-kosmetik', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('dekorative-kosmetik', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('dekorative-kosmetik', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('dekorative-kosmetik', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-dekorative-kosmetik">Noch nicht bewertet</div>
                     </div>
@@ -1183,11 +1184,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('regalbild')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="regalbild">
-                            <span class="star" data-value="1" onclick="setRating('regalbild', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('regalbild', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('regalbild', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('regalbild', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('regalbild', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('regalbild', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('regalbild', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('regalbild', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('regalbild', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('regalbild', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-regalbild">Noch nicht bewertet</div>
                     </div>
@@ -1201,11 +1202,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('mopro')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="mopro">
-                            <span class="star" data-value="1" onclick="setRating('mopro', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('mopro', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('mopro', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('mopro', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('mopro', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('mopro', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('mopro', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('mopro', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('mopro', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('mopro', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-mopro">Noch nicht bewertet</div>
                     </div>
@@ -1219,11 +1220,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('marketingmittel')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="marketingmittel">
-                            <span class="star" data-value="1" onclick="setRating('marketingmittel', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('marketingmittel', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('marketingmittel', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('marketingmittel', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('marketingmittel', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('marketingmittel', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('marketingmittel', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('marketingmittel', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('marketingmittel', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('marketingmittel', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-marketingmittel">Noch nicht bewertet</div>
                     </div>
@@ -1237,11 +1238,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('sauberkeit')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="sauberkeit">
-                            <span class="star" data-value="1" onclick="setRating('sauberkeit', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('sauberkeit', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('sauberkeit', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('sauberkeit', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('sauberkeit', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('sauberkeit', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('sauberkeit', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('sauberkeit', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('sauberkeit', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('sauberkeit', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-sauberkeit">Noch nicht bewertet</div>
                     </div>
@@ -1255,11 +1256,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('ordnung-kasse')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="ordnung-kasse">
-                            <span class="star" data-value="1" onclick="setRating('ordnung-kasse', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('ordnung-kasse', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('ordnung-kasse', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('ordnung-kasse', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('ordnung-kasse', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('ordnung-kasse', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('ordnung-kasse', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('ordnung-kasse', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('ordnung-kasse', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('ordnung-kasse', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-ordnung-kasse">Noch nicht bewertet</div>
                     </div>
@@ -1273,11 +1274,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('pausenraum')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="pausenraum">
-                            <span class="star" data-value="1" onclick="setRating('pausenraum', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('pausenraum', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('pausenraum', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('pausenraum', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('pausenraum', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('pausenraum', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('pausenraum', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('pausenraum', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('pausenraum', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('pausenraum', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-pausenraum">Noch nicht bewertet</div>
                     </div>
@@ -1291,11 +1292,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('lager')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="lager">
-                            <span class="star" data-value="1" onclick="setRating('lager', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('lager', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('lager', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('lager', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('lager', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('lager', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('lager', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('lager', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('lager', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('lager', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-lager">Noch nicht bewertet</div>
                     </div>
@@ -1309,11 +1310,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('packtische')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="packtische">
-                            <span class="star" data-value="1" onclick="setRating('packtische', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('packtische', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('packtische', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('packtische', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('packtische', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('packtische', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('packtische', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('packtische', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('packtische', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('packtische', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-packtische">Noch nicht bewertet</div>
                     </div>
@@ -1327,11 +1328,11 @@
                             <button type="button" class="rating-delete" onclick="deleteRating('displayzustand')">✕ Entfernen</button>
                         </div>
                         <div class="star-rating" data-rating-id="displayzustand">
-                            <span class="star" data-value="1" onclick="setRating('displayzustand', 1)">⭐</span>
-                            <span class="star" data-value="2" onclick="setRating('displayzustand', 2)">⭐</span>
-                            <span class="star" data-value="3" onclick="setRating('displayzustand', 3)">⭐</span>
-                            <span class="star" data-value="4" onclick="setRating('displayzustand', 4)">⭐</span>
-                            <span class="star" data-value="5" onclick="setRating('displayzustand', 5)">⭐</span>
+                            <span class="star" data-value="1" onclick="setRating('displayzustand', 1)">☆</span>
+                            <span class="star" data-value="2" onclick="setRating('displayzustand', 2)">☆</span>
+                            <span class="star" data-value="3" onclick="setRating('displayzustand', 3)">☆</span>
+                            <span class="star" data-value="4" onclick="setRating('displayzustand', 4)">☆</span>
+                            <span class="star" data-value="5" onclick="setRating('displayzustand', 5)">☆</span>
                         </div>
                         <div class="rating-value" id="rating-displayzustand">Noch nicht bewertet</div>
                     </div>
@@ -1477,8 +1478,10 @@
             stars.forEach((star, index) => {
                 if (index < value) {
                     star.classList.add('active');
+                    star.textContent = '⭐'; // Gefüllter Stern
                 } else {
                     star.classList.remove('active');
+                    star.textContent = '☆'; // Leerer Stern
                 }
             });
             
@@ -1954,7 +1957,10 @@
             allRatingItems.forEach(item => {
                 // Sterne zurücksetzen
                 const stars = item.querySelectorAll('.star');
-                stars.forEach(star => star.classList.remove('active'));
+                stars.forEach(star => {
+                    star.classList.remove('active');
+                    star.textContent = '☆'; // Leere Sterne
+                });
                 
                 // Text zurücksetzen
                 const ratingValue = item.querySelector('.rating-value');
@@ -2015,11 +2021,11 @@
                                 <button type="button" class="rating-delete" onclick="deleteRating('${ratingId}')">✕ Entfernen</button>
                             </div>
                             <div class="star-rating" data-rating-id="${ratingId}">
-                                <span class="star" data-value="1" onclick="setRating('${ratingId}', 1)">⭐</span>
-                                <span class="star" data-value="2" onclick="setRating('${ratingId}', 2)">⭐</span>
-                                <span class="star" data-value="3" onclick="setRating('${ratingId}', 3)">⭐</span>
-                                <span class="star" data-value="4" onclick="setRating('${ratingId}', 4)">⭐</span>
-                                <span class="star" data-value="5" onclick="setRating('${ratingId}', 5)">⭐</span>
+                                <span class="star" data-value="1" onclick="setRating('${ratingId}', 1)">☆</span>
+                                <span class="star" data-value="2" onclick="setRating('${ratingId}', 2)">☆</span>
+                                <span class="star" data-value="3" onclick="setRating('${ratingId}', 3)">☆</span>
+                                <span class="star" data-value="4" onclick="setRating('${ratingId}', 4)">☆</span>
+                                <span class="star" data-value="5" onclick="setRating('${ratingId}', 5)">☆</span>
                             </div>
                             <div class="rating-value" id="rating-${ratingId}">Noch nicht bewertet</div>
                         </div>
