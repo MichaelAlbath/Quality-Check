@@ -2,2167 +2,842 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filialbesuch Dokumentation</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Auditing App</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 8px;
-            -webkit-overflow-scrolling: touch;
-            -webkit-text-size-adjust: 100%;
+            padding: 20px;
         }
 
         .container {
-            width: 100%;
-            max-width: 100%;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
-            padding: 20px 16px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .budni-logo {
-            width: 60px;
-            height: 40px;
-            flex-shrink: 0;
-        }
-
-        .header-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 30px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 6px;
+            font-size: 28px;
             font-weight: 600;
-            line-height: 1.2;
+            margin-bottom: 10px;
         }
 
         .header p {
             opacity: 0.9;
-            font-size: 0.9rem;
-            line-height: 1.3;
+            font-size: 16px;
         }
 
-        .content {
-            padding: 16px;
+        .form-section {
+            padding: 30px;
         }
 
-        .visit-info {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+        .form-group {
+            margin-bottom: 25px;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-group label {
+        label {
+            display: block;
             font-weight: 600;
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 8px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 16px;
         }
 
-        .input-group input,
-        .input-group select {
+        select, input[type="text"], input[type="date"], input[type="time"], textarea {
             width: 100%;
-            padding: 14px 12px;
+            padding: 15px;
             border: 2px solid #e1e8ed;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background: white;
-            appearance: none;
-            -webkit-appearance: none;
-            min-height: 50px;
+            background: #f8fafc;
         }
 
-        .input-group input:focus,
-        .input-group select:focus {
+        select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            border-color: #4facfe;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15);
         }
 
-        .input-group select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 18px;
-            padding-right: 40px;
+        .location-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
         }
 
-        .competitor-option {
-            background-repeat: no-repeat;
-            background-position: left 12px center;
-            background-size: 20px 20px;
-            padding-left: 40px;
-        }
-
-        .validation-error {
-            border-color: #e74c3c !important;
-            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15) !important;
-        }
-
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin: 16px 0;
-            text-align: center;
-            display: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: 1px solid #f5c6cb;
-        }
-
-        .selection-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 10px 16px;
-            border-radius: 8px;
-            margin: 12px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            border: 1px solid #bee5eb;
-        }
-
-        .entry-item {
-            background: #fff;
+        .question-item {
+            background: white;
             border: 2px solid #e1e8ed;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
             position: relative;
             transition: all 0.3s ease;
         }
 
-        .entry-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        .question-item:hover {
+            border-color: #4facfe;
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.1);
         }
 
-        .entry-header {
+        .question-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 8px;
+            margin-bottom: 20px;
         }
 
-        .entry-header-left {
+        .question-header-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
-        .entry-number {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .question-number {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 0.9rem;
-            flex-shrink: 0;
+            font-size: 14px;
         }
 
-        .delete-btn {
-            background: #e74c3c;
+        .camera-icon {
+            background: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+        .camera-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(66, 230, 149, 0.3);
+        }
+
+        .delete-question {
+            background: #ff4757;
             color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
-        .delete-btn:hover,
-        .delete-btn:active {
-            background: #c0392b;
-            transform: scale(0.95);
-        }
-
-        .text-area {
-            width: 100%;
-            min-height: 120px;
-            padding: 14px;
-            border: 2px solid #e1e8ed;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 16px;
-            resize: vertical;
-            transition: all 0.3s ease;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
-        .text-area:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-        }
-
-        .image-upload {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border: 2px solid #bdc3c7;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .image-upload:hover,
-        .image-upload:active {
-            border-color: #667eea;
-            background: #f0f4ff;
-            transform: scale(1.05);
-        }
-
-        .image-upload.drag-over {
-            border-color: #667eea;
-            background: #e8f2ff;
-            transform: scale(1.1);
-        }
-
-        .image-upload-icon {
-            font-size: 20px;
-            color: #667eea;
-        }
-
-        .image-preview {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .image-item {
-            position: relative;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-            aspect-ratio: 1;
-        }
-
-        .image-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-        }
-
-        .image-item img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .image-item img:active {
-            transform: scale(0.98);
-        }
-
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox-content {
-            position: relative;
-            max-width: 90%;
-            max-height: 90%;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .lightbox-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .lightbox-close:hover {
-            background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
-        }
-
-        .lightbox-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .lightbox-content {
-                max-width: 95%;
-                max-height: 95%;
-            }
-            
-            .lightbox-close {
-                top: 10px;
-                right: 10px;
-                width: 35px;
-                height: 35px;
-                font-size: 18px;
-            }
-            
-            .lightbox-info {
-                padding: 15px;
-                font-size: 0.9rem;
-            }
-        }
-
-        .image-remove {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
             font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
-        .image-remove:hover,
-        .image-remove:active {
-            background: #c0392b;
+        .delete-question:hover {
+            background: #ff3742;
             transform: scale(1.05);
         }
 
-        .add-entry-btn {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .thumbnail {
+            position: relative;
+            max-width: 150px;
+            min-height: 100px;
+            max-height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .thumbnail img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .thumbnail-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff4757;
             color: white;
             border: none;
-            padding: 16px 24px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail-delete:hover {
+            background: #ff3742;
+            transform: scale(1.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            margin-bottom: 24px;
-            min-height: 54px;
+            gap: 10px;
         }
 
-        .add-entry-btn:hover,
-        .add-entry-btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            color: #333;
         }
 
         .actions {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            gap: 15px;
+            flex-wrap: wrap;
             justify-content: center;
+            margin-top: 30px;
+            padding: 20px 0;
         }
 
-        .btn {
-            padding: 16px 24px;
-            border: none;
+        .report {
+            display: none;
+            padding: 40px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4facfe;
+        }
+
+        .report-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .report-meta {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .report-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 1.1rem;
+            background: #f8fafc;
+        }
+
+        .report-section h3 {
+            font-size: 20px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 54px;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .report-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #334155;
+            margin-bottom: 20px;
+        }
+
+        .report-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .report-image {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            min-height: 150px;
+            max-height: 400px;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+        .report-image img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
         }
 
-        .btn-success {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
-            color: white;
+        .back-to-form {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
         }
 
-        .btn-secondary {
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-            color: white;
-        }
-
-        .btn:hover,
-        .btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px 16px;
-            color: #667eea;
-            font-weight: 600;
-            font-size: 1rem;
-            background: #f0f4ff;
-            border-radius: 12px;
-            margin: 16px 0;
-        }
-
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 16px;
-            border-radius: 12px;
-            margin: 16px 0;
-            text-align: center;
-            display: none;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        @supports (-webkit-touch-callout: none) {
-            .input-group input,
-            .input-group select,
-            .text-area {
-                font-size: 16px;
-                transform: translateZ(0);
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
             }
             
             .container {
-                -webkit-transform: translateZ(0);
-            }
-        }
-
-        @media (max-width: 375px) {
-            body {
-                padding: 4px;
+                border-radius: 15px;
             }
             
-            .content {
-                padding: 12px;
-            }
-            
-            .visit-info {
-                padding: 12px;
-                gap: 12px;
-            }
-            
-            .entry-item {
-                padding: 12px;
-            }
-            
-            .header {
-                padding: 16px 12px;
-            }
-            
-            .header h1 {
-                font-size: 1.3rem;
-            }
-            
-            .budni-logo {
-                width: 50px;
-                height: 32px;
-            }
-            
-            .header-content {
-                gap: 8px;
-            }
-            
-            .entry-header-left {
-                gap: 8px;
-            }
-            
-            .image-upload {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .image-upload-icon {
-                font-size: 14px;
-            }
-            
-            .delete-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            
-            .image-preview {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                gap: 8px;
-            }
-        }
-
-        @media (min-width: 414px) {
-            .container {
-                max-width: 95%;
-            }
-            
-            .image-preview {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
-        }
-
-        @media (min-width: 768px) {
-            body {
-                padding: 16px;
-            }
-            
-            .container {
-                max-width: 600px;
-            }
-            
-            .visit-info {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 16px;
-            }
-            
-            .actions {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            
-            .content {
-                padding: 24px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            body {
+            .form-section {
                 padding: 20px;
             }
             
-            .container {
-                max-width: 800px;
+            .question-item {
+                padding: 20px;
             }
             
-            .content {
-                padding: 30px;
+            .thumbnails {
+                justify-content: center;
             }
             
-            .header {
-                padding: 30px;
+            .actions {
+                flex-direction: column;
+                align-items: center;
             }
             
-            .header h1 {
-                font-size: 2rem;
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
             
-            .header p {
-                font-size: 1.1rem;
-            }
-            
-            .budni-logo {
-                width: 80px;
-                height: 52px;
-            }
-            
-            .header-content {
-                gap: 16px;
+            .report-images {
+                grid-template-columns: 1fr;
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .container {
-                background: #1a1a1a;
-                color: #ffffff;
+        /* Safari specific optimizations */
+        @supports (-webkit-appearance: none) {
+            select, input, textarea {
+                -webkit-appearance: none;
+                border-radius: 12px;
             }
             
-            .visit-info {
-                background: #2d2d2d;
+            .file-upload-area {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
             }
-            
-            .entry-item {
-                background: #2d2d2d;
-                border-color: #404040;
-            }
-            
-            .input-group input,
-            .input-group select,
-            .text-area {
-                background: #2d2d2d;
-                border-color: #404040;
-                color: #ffffff;
-            }
-            
-            .image-upload {
-                background: #2d2d2d;
-                border-color: #404040;
-            }
-        }
-
-        .app-version {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-family: monospace;
-            z-index: 100;
-            opacity: 0.6;
-            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-content">
-                <svg class="budni-logo" viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="45" cy="45" r="35" fill="#00BCD4"/>
-                    <circle cx="95" cy="45" r="35" fill="#FF6B6B"/>
-                    <circle cx="70" cy="45" r="35" fill="#2E4BC6"/>
-                    <text x="70" y="52" font-family="Arial, sans-serif" font-size="16" font-weight="300" fill="white" text-anchor="middle">budni</text>
-                    <circle cx="88" cy="39" r="1.8" fill="white"/>
-                </svg>
-                <div class="header-text">
-                    <h1>Filialbesuch Dokumentation</h1>
-                    <p>Erfassen Sie Ihre Beobachtungen und Notizen strukturiert</p>
-                </div>
-            </div>
+            <h1>📋 Auditing App</h1>
+            <p>Professionelle Geschäfts- und Wettbewerbsanalyse</p>
         </div>
-        
-        <div class="content">
-            <div class="visit-info">
-                <div class="input-group">
-                    <label for="visitDate">📅 Besuchsdatum:</label>
-                    <input type="date" id="visitDate">
-                </div>
-                <div class="input-group">
-                    <label for="branchName">🏪 Filialname:</label>
-                    <select id="branchName">
-                        <option value="">Filiale auswählen...</option>
-                        <option value="Ahrensburg / Hamburger Str. 4-8 /(0727)">Ahrensburg / Hamburger Str. 4-8 /(0727)</option>
-                        <option value="Ahrensburg / Rathausplatz 15 /(0174)">Ahrensburg / Rathausplatz 15 /(0174)</option>
-                        <option value="Alsterdorf / Alsterdorfer Str. 206 /(0792)">Alsterdorf / Alsterdorfer Str. 206 /(0792)</option>
-                        <option value="Altona-Altstadt / Holstenstraße 111 /(0193)">Altona-Altstadt / Holstenstraße 111 /(0193)</option>
-                        <option value="Altona-Altstadt / Neue Große Bergstraße 18 /(0214)">Altona-Altstadt / Neue Große Bergstraße 18 /(0214)</option>
-                        <option value="Altstadt / Bergstrasse 16 /(0101)">Altstadt / Bergstrasse 16 /(0101)</option>
-                        <option value="Ammersbek / Hamburger Straße 101 /(0276)">Ammersbek / Hamburger Straße 101 /(0276)</option>
-                        <option value="Apensen / Beckdorfer Straße 18 /(0190)">Apensen / Beckdorfer Straße 18 /(0190)</option>
-                        <option value="Bad Oldesloe / Lübecker Straße 23-25 /(0230)">Bad Oldesloe / Lübecker Straße 23-25 /(0230)</option>
-                        <option value="Bad Segeberg / Ziegelstrasse 105-107 /(0138)">Bad Segeberg / Ziegelstrasse 105-107 /(0138)</option>
-                        <option value="Bahrenfeld / Gasstraße 6b /(0261)">Bahrenfeld / Gasstraße 6b /(0261)</option>
-                        <option value="Bahrenfeld / Osdorfer Weg 106 /(0148)">Bahrenfeld / Osdorfer Weg 106 /(0148)</option>
-                        <option value="Barendorf / Im Stadtkamp 1 /(0256)">Barendorf / Im Stadtkamp 1 /(0256)</option>
-                        <option value="Bargteheide / Rathausstraße 13-15 /(0717)">Bargteheide / Rathausstraße 13-15 /(0717)</option>
-                        <option value="Barmbek-Nord / Alter Güterbahnhof 2 /(0241)">Barmbek-Nord / Alter Güterbahnhof 2 /(0241)</option>
-                        <option value="Barmbek-Nord / Fuhlsbüttler Str. 107-109 /(0301)">Barmbek-Nord / Fuhlsbüttler Str. 107-109 /(0301)</option>
-                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 164 /(0181)">Barmbek-Nord / Fuhlsbüttler Straße 164 /(0181)</option>
-                        <option value="Barmbek-Nord / Fuhlsbüttler Straße 401 /(0164)">Barmbek-Nord / Fuhlsbüttler Straße 401 /(0164)</option>
-                        <option value="Barmbek-Süd / Hamburger Str. 47-49 /(0764)">Barmbek-Süd / Hamburger Str. 47-49 /(0764)</option>
-                        <option value="Barmbek-Süd / Mozartstraße 16 /(0168)">Barmbek-Süd / Mozartstraße 16 /(0168)</option>
-                        <option value="Barsbüttel / Am Akku 9 /(0234)">Barsbüttel / Am Akku 9 /(0234)</option>
-                        <option value="Bergedorf / Bergedorfer Str. 133 /(0407)">Bergedorf / Bergedorfer Str. 133 /(0407)</option>
-                        <option value="Bergedorf / Friedrich-Frank-Bogen 166 /(0250)">Bergedorf / Friedrich-Frank-Bogen 166 /(0250)</option>
-                        <option value="Bergedorf / Kupferhof 7 /(0757)">Bergedorf / Kupferhof 7 /(0757)</option>
-                        <option value="Bergstedt / Wohldorfer Damm 1- 1a /(0253)">Bergstedt / Wohldorfer Damm 1- 1a /(0253)</option>
-                        <option value="Berlin / Bundesalle 86/89 /0555">Berlin / Bundesalle 86/89 /0555</option>
-                        <option value="Berlin / Frankfurter Allee 35-37 /0552">Berlin / Frankfurter Allee 35-37 /0552</option>
-                        <option value="Berlin / Friedenstraße 90 /0556">Berlin / Friedenstraße 90 /0556</option>
-                        <option value="Berlin / Friedrichstraße 149 /0554">Berlin / Friedrichstraße 149 /0554</option>
-                        <option value="Berlin / Güntzelstraße 48 /0553">Berlin / Güntzelstraße 48 /0553</option>
-                        <option value="Berlin / Martin Luther Straße 48 /0560">Berlin / Martin Luther Straße 48 /0560</option>
-                        <option value="Berlin / Rankestraße 33-34 /0557">Berlin / Rankestraße 33-34 /0557</option>
-                        <option value="Berlin / Revaler Straße 33 /0561">Berlin / Revaler Straße 33 /0561</option>
-                        <option value="Berlin / Schönhauser Allee 12 /0551">Berlin / Schönhauser Allee 12 /0551</option>
-                        <option value="Berlin / Schönhauser Allee 120 /0550">Berlin / Schönhauser Allee 120 /0550</option>
-                        <option value="Berlin / Wilmersdorfer Straße 60 /0558">Berlin / Wilmersdorfer Straße 60 /0558</option>
-                        <option value="Billstedt / Billstedter Platz 2 /(0183)">Billstedt / Billstedter Platz 2 /(0183)</option>
-                        <option value="Blankenese / Propst-Paulsen-Str. 2 /(0208)">Blankenese / Propst-Paulsen-Str. 2 /(0208)</option>
-                        <option value="Blankenese / Sülldorfer Kirchenweg 1-3 /(0761)">Blankenese / Sülldorfer Kirchenweg 1-3 /(0761)</option>
-                        <option value="Börnsen / Hermann-Wöhlke-Weg 2 /(0191)">Börnsen / Hermann-Wöhlke-Weg 2 /(0191)</option>
-                        <option value="Bramfeld / Bramfelder Chaussee 230 /(0165)">Bramfeld / Bramfelder Chaussee 230 /(0165)</option>
-                        <option value="Bramfeld / Pezolddamm 147 /(0213)">Bramfeld / Pezolddamm 147 /(0213)</option>
-                        <option value="Büchen / Schlickweg 2 /(0287)">Büchen / Schlickweg 2 /(0287)</option>
-                        <option value="Buchholz / Breite Str. 5 /(0707)">Buchholz / Breite Str. 5 /(0707)</option>
-                        <option value="Buchholz / Soltauer Straße 93 /(0196)">Buchholz / Soltauer Straße 93 /(0196)</option>
-                        <option value="Buxtehude / Stader Straße 2 /(0788)">Buxtehude / Stader Straße 2 /(0788)</option>
-                        <option value="Buxtehude / Zwischen den Brücken 1 /(0748)">Buxtehude / Zwischen den Brücken 1 /(0748)</option>
-                        <option value="Dollern / Am Buschteich 26 /(0255)">Dollern / Am Buschteich 26 /(0255)</option>
-                        <option value="Duvenstedt / Poppenbüttler Chaussee 36 /(0155)">Duvenstedt / Poppenbüttler Chaussee 36 /(0155)</option>
-                        <option value="Eidelstedt / Eidelstedter Platz 1 /(0731)">Eidelstedt / Eidelstedter Platz 1 /(0731)</option>
-                        <option value="Eilbek / Conventstraße 8-10 /(0262)">Eilbek / Conventstraße 8-10 /(0262)</option>
-                        <option value="Eilbek / Landwehr 34 /(0713)">Eilbek / Landwehr 34 /(0713)</option>
-                        <option value="Eimsbüttel / Eimsbütteler Chaussee 85 /(0216)">Eimsbüttel / Eimsbütteler Chaussee 85 /(0216)</option>
-                        <option value="Eimsbüttel / Müggenkampstraße 4 /(0775)">Eimsbüttel / Müggenkampstraße 4 /(0775)</option>
-                        <option value="Eimsbüttel / Osterstr. 1 /(0122)">Eimsbüttel / Osterstr. 1 /(0122)</option>
-                        <option value="Eimsbüttel / Osterstr. 95 /(0203)">Eimsbüttel / Osterstr. 95 /(0203)</option>
-                        <option value="Eppendorf / Eppendorfer Baum 39 /(0602)">Eppendorf / Eppendorfer Baum 39 /(0602)</option>
-                        <option value="Eppendorf / Eppendorfer Landstr. 67 /(0711)">Eppendorf / Eppendorfer Landstr. 67 /(0711)</option>
-                        <option value="Eppendorf / Eppendorfer Landstrasse 77 /(0145)">Eppendorf / Eppendorfer Landstrasse 77 /(0145)</option>
-                        <option value="Eppendorf / Martinistraße 64 /(0200)">Eppendorf / Martinistraße 64 /(0200)</option>
-                        <option value="Farmsen-Berne / Berner Heerweg 173-175 /(0603)">Farmsen-Berne / Berner Heerweg 173-175 /(0603)</option>
-                        <option value="Finkenwerder / Steendiek 43 /(0708)">Finkenwerder / Steendiek 43 /(0708)</option>
-                        <option value="Fuhlsbüttel / Erdkampsweg 47-49 /(0755)">Fuhlsbüttel / Erdkampsweg 47-49 /(0755)</option>
-                        <option value="Geesthacht / Norderstraße 16 /(0270)">Geesthacht / Norderstraße 16 /(0270)</option>
-                        <option value="Glinde / Markt 3 /(0410)">Glinde / Markt 3 /(0410)</option>
-                        <option value="Groß Borstel / Borsteler Chaussee 111-113 /(0747)">Groß Borstel / Borsteler Chaussee 111-113 /(0747)</option>
-                        <option value="Gross Flottbek / Waitzstrasse 29 /(0140)">Gross Flottbek / Waitzstrasse 29 /(0140)</option>
-                        <option value="Grosshansdorf / Eilbergweg 11 /(0218)">Grosshansdorf / Eilbergweg 11 /(0218)</option>
-                        <option value="HafenCity / Überseeboulevard 7 /(0281)">HafenCity / Überseeboulevard 7 /(0281)</option>
-                        <option value="Halstenbek / Seestrasse 250 /(0147)">Halstenbek / Seestrasse 250 /(0147)</option>
-                        <option value="Hamm / Hammer Landstraße 84 /(0279)">Hamm / Hammer Landstraße 84 /(0279)</option>
-                        <option value="Hamm-Mitte / Droopweg 25 /(0152)">Hamm-Mitte / Droopweg 25 /(0152)</option>
-                        <option value="Hamm-Nord / Hammer Steindamm 72-74 /(0192)">Hamm-Nord / Hammer Steindamm 72-74 /(0192)</option>
-                        <option value="Hammerbrook / Sonninstraße 1-5 /(0278)">Hammerbrook / Sonninstraße 1-5 /(0278)</option>
-                        <option value="Hanstedt / Winsener Straße 1-3 /(0264)">Hanstedt / Winsener Straße 1-3 /(0264)</option>
-                        <option value="Harburg / Hannoversche Straße 86 /(0273)">Harburg / Hannoversche Straße 86 /(0273)</option>
-                        <option value="Harburg / Lüneburger Str. 39 /(0737)">Harburg / Lüneburger Str. 39 /(0737)</option>
-                        <option value="Harburg / Sand 10 /(0501)">Harburg / Sand 10 /(0501)</option>
-                        <option value="Harsefeld / Buxtehuder Str. 11 /(0735)">Harsefeld / Buxtehuder Str. 11 /(0735)</option>
-                        <option value="Harvestehude / Grindelberg 7 /(0151)">Harvestehude / Grindelberg 7 /(0151)</option>
-                        <option value="Heimfeld / Heimfelder Str. 46 /(0766)">Heimfeld / Heimfelder Str. 46 /(0766)</option>
-                        <option value="Heimfeld / Stader Straße 136 /(0231)">Heimfeld / Stader Straße 136 /(0231)</option>
-                        <option value="Henstedt-Ulzburg / Dammstücken 29-33 /(0274)">Henstedt-Ulzburg / Dammstücken 29-33 /(0274)</option>
-                        <option value="Hittfeld / Kirchstrasse 26 /(0172)">Hittfeld / Kirchstrasse 26 /(0172)</option>
-                        <option value="Hoheluft-Ost / Eppendorfer Baum 42 /(0804)">Hoheluft-Ost / Eppendorfer Baum 42 /(0804)</option>
-                        <option value="Hoheluft-Ost / Hoheluftchaussee 52 /(0212)">Hoheluft-Ost / Hoheluftchaussee 52 /(0212)</option>
-                        <option value="Horn / Graßmannweg 6-13 /(0219)">Horn / Graßmannweg 6-13 /(0219)</option>
-                        <option value="Horn / Rennbahnstr. 30-38 /(0723)">Horn / Rennbahnstr. 30-38 /(0723)</option>
-                        <option value="Hummelsbüttel / Hummelsbüttler Hauptstr. 62 /(0127)">Hummelsbüttel / Hummelsbüttler Hauptstr. 62 /(0127)</option>
-                        <option value="Jesteburg / Brückenstraße 11 /(0217)">Jesteburg / Brückenstraße 11 /(0217)</option>
-                        <option value="Kaltenkirchen / Am Bahnhof 2-12 /(0763)">Kaltenkirchen / Am Bahnhof 2-12 /(0763)</option>
-                        <option value="Keitum / Keitumer Landstraße 10a-c /(0801)">Keitum / Keitumer Landstraße 10a-c /(0801)</option>
-                        <option value="Langenhorn / Krohnstieg 41-43 /(0269)">Langenhorn / Krohnstieg 41-43 /(0269)</option>
-                        <option value="Langenhorn / Langenhorner Chaussee 666 /(0238)">Langenhorn / Langenhorner Chaussee 666 /(0238)</option>
-                        <option value="Lohbrügge / Am Beckerkamp 17 /(0291)">Lohbrügge / Am Beckerkamp 17 /(0291)</option>
-                        <option value="Lohbrügge / Heidhorst 4 /(0226)">Lohbrügge / Heidhorst 4 /(0226)</option>
-                        <option value="Lokstedt / Vogt-Wells-Straße 6 /(0229)">Lokstedt / Vogt-Wells-Straße 6 /(0229)</option>
-                        <option value="Lübeck / Heiligen-Geist-Kamp 4 /(0235)">Lübeck / Heiligen-Geist-Kamp 4 /(0235)</option>
-                        <option value="Lübeck / Mühlenstraße 22-24 /(0286)">Lübeck / Mühlenstraße 22-24 /(0286)</option>
-                        <option value="Lüneburg / Am Sande 50 /(0738)">Lüneburg / Am Sande 50 /(0738)</option>
-                        <option value="Lüneburg / Bei der Keulahütte 1 /(0793)">Lüneburg / Bei der Keulahütte 1 /(0793)</option>
-                        <option value="Lüneburg / Feldstrasse 1 /(0128)">Lüneburg / Feldstrasse 1 /(0128)</option>
-                        <option value="Lurup / Elbgaustrasse 128 /(0153)">Lurup / Elbgaustrasse 128 /(0153)</option>
-                        <option value="Lurup / Luruper Hauptstraße 272a /(0194)">Lurup / Luruper Hauptstraße 272a /(0194)</option>
-                        <option value="Marienthal / Rennbahnstrasse 135 /(0136)">Marienthal / Rennbahnstrasse 135 /(0136)</option>
-                        <option value="Marmstorf / Ernst-Bergeest-Weg 57 a /(0705)">Marmstorf / Ernst-Bergeest-Weg 57 a /(0705)</option>
-                        <option value="Maschen / Schulstraße 38 /(0237)">Maschen / Schulstraße 38 /(0237)</option>
-                        <option value="Meckelfeld / Am Saal 20 /(0123)">Meckelfeld / Am Saal 20 /(0123)</option>
-                        <option value="Mölln / Grambeker Weg 91-93 /(0124)">Mölln / Grambeker Weg 91-93 /(0124)</option>
-                        <option value="Mundsburg Center / Hamburger Straße 1-15 /(0179)">Mundsburg Center / Hamburger Straße 1-15 /(0179)</option>
-                        <option value="Nahe / Segeberger Strasse 30 /(0173)">Nahe / Segeberger Strasse 30 /(0173)</option>
-                        <option value="Neu Wulmstorf / Wulmstorfer Wiesen 2a /(0185)">Neu Wulmstorf / Wulmstorfer Wiesen 2a /(0185)</option>
-                        <option value="Neuengamme / Heinrich-Stubbe-Weg 13-15 /(0254)">Neuengamme / Heinrich-Stubbe-Weg 13-15 /(0254)</option>
-                        <option value="Neugraben-Fischbek / Lütt Enn 3 /(0505)">Neugraben-Fischbek / Lütt Enn 3 /(0505)</option>
-                        <option value="Neustadt / Dammtorstr. 33-35 /(0784)">Neustadt / Dammtorstr. 33-35 /(0784)</option>
-                        <option value="Neustadt / Wexstr. 25 /(0760)">Neustadt / Wexstr. 25 /(0760)</option>
-                        <option value="Neuwiedenthal / Rehrstieg 28 /(0225)">Neuwiedenthal / Rehrstieg 28 /(0225)</option>
-                        <option value="Niedermarschacht / Elbuferstrasse 116 /(0159)">Niedermarschacht / Elbuferstrasse 116 /(0159)</option>
-                        <option value="Niendorf / Paul-Sorge-Str. 8 /(0730)">Niendorf / Paul-Sorge-Str. 8 /(0730)</option>
-                        <option value="Niendorf / Wagrier Weg 2-8 /(0149)">Niendorf / Wagrier Weg 2-8 /(0149)</option>
-                        <option value="Nienstedten / Nienstedtener Straße 2e /(0215)">Nienstedten / Nienstedtener Straße 2e /(0215)</option>
-                        <option value="Norderstedt / Berliner Allee 42 /(0753)">Norderstedt / Berliner Allee 42 /(0753)</option>
-                        <option value="Norderstedt / Rathausallee 31a/33a /(0252)">Norderstedt / Rathausallee 31a/33a /(0252)</option>
-                        <option value="Norderstedt / Schmuggelstieg 6 /(0309)">Norderstedt / Schmuggelstieg 6 /(0309)</option>
-                        <option value="Norderstedt / Ulzburger Strasse 360 /(0150)">Norderstedt / Ulzburger Strasse 360 /(0150)</option>
-                        <option value="Osdorf / Osdorfer Landstrasse 131-135 /(0129)">Osdorf / Osdorfer Landstrasse 131-135 /(0129)</option>
-                        <option value="Osdorf / Rugenbarg 18 /(0239)">Osdorf / Rugenbarg 18 /(0239)</option>
-                        <option value="Oststeinbek / Möllner Landstrasse 30 /(0144)">Oststeinbek / Möllner Landstrasse 30 /(0144)</option>
-                        <option value="Othmarschen / Jürgen-Töpfer-Straße 18 /(0224)">Othmarschen / Jürgen-Töpfer-Straße 18 /(0224)</option>
-                        <option value="Ottensen / Bahrenfelder Straße 134 /(0266)">Ottensen / Bahrenfelder Straße 134 /(0266)</option>
-                        <option value="Ottensen / Ottenser Hauptstraße 10 /(0187)">Ottensen / Ottenser Hauptstraße 10 /(0187)</option>
-                        <option value="Pinneberg / Richard-Köhn-Str. 1 /(0796)">Pinneberg / Richard-Köhn-Str. 1 /(0796)</option>
-                        <option value="Poppenbüttel / Heegbarg 31 /(0762)">Poppenbüttel / Heegbarg 31 /(0762)</option>
-                        <option value="Poppenbüttel / Moorhof 7a /(0781)">Poppenbüttel / Moorhof 7a /(0781)</option>
-                        <option value="Poppenbüttel / Poppenbütteler Bogen 98 /(0289)">Poppenbüttel / Poppenbütteler Bogen 98 /(0289)</option>
-                        <option value="Quickborn / Bahnhofstraße 104 /(0746)">Quickborn / Bahnhofstraße 104 /(0746)</option>
-                        <option value="Rahlstedt / Bargteheider Straße 20-22 /(0220)">Rahlstedt / Bargteheider Straße 20-22 /(0220)</option>
-                        <option value="Rahlstedt / Meiendorfer Strasse 89 /(0135)">Rahlstedt / Meiendorfer Strasse 89 /(0135)</option>
-                        <option value="Rahlstedt / Rahlstedter Bahnhofstrasse 17 /(0176)">Rahlstedt / Rahlstedter Bahnhofstrasse 17 /(0176)</option>
-                        <option value="Rahlstedt / Scharbeutzer Straße 102a-c /(0236)">Rahlstedt / Scharbeutzer Straße 102a-c /(0236)</option>
-                        <option value="Rahlstedt / Schweriner Strasse 8-12 /(0141)">Rahlstedt / Schweriner Strasse 8-12 /(0141)</option>
-                        <option value="Reinbek / Am Ladenzentrum 7 /(0126)">Reinbek / Am Ladenzentrum 7 /(0126)</option>
-                        <option value="Reinbek / Sachsenwaldstr. 20 /(0791)">Reinbek / Sachsenwaldstr. 20 /(0791)</option>
-                        <option value="Rellingen / Hauptstrasse 105 /(0133)">Rellingen / Hauptstrasse 105 /(0133)</option>
-                        <option value="Rissen / Wedeler Landstraße 56 /(0242)">Rissen / Wedeler Landstraße 56 /(0242)</option>
-                        <option value="Rothenburgsort / Lindleystraße 2 /(0782)">Rothenburgsort / Lindleystraße 2 /(0782)</option>
-                        <option value="Rotherbaum / Grindelallee 110-114 /(0201)">Rotherbaum / Grindelallee 110-114 /(0201)</option>
-                        <option value="Rotherbaum / Milchstraße 1 /(0785)">Rotherbaum / Milchstraße 1 /(0785)</option>
-                        <option value="Rotherbaum / Mittelweg 126 /(0805)">Rotherbaum / Mittelweg 126 /(0805)</option>
-                        <option value="Sasel / Saseler Markt 14a /(0228)">Sasel / Saseler Markt 14a /(0228)</option>
-                        <option value="Schenefeld / Industriestraße 1 /(0188)">Schenefeld / Industriestraße 1 /(0188)</option>
-                        <option value="Schnelsen / Frohmestraße 48 /(0198)">Schnelsen / Frohmestraße 48 /(0198)</option>
-                        <option value="Schwarzenbek / Compestrasse 1 /(0146)">Schwarzenbek / Compestrasse 1 /(0146)</option>
-                        <option value="St. Georg / Schmilinskystraße 15 /(0802)">St. Georg / Schmilinskystraße 15 /(0802)</option>
-                        <option value="St. Pauli / Clemens-Schultz-Strasse 38 /(0104)">St. Pauli / Clemens-Schultz-Strasse 38 /(0104)</option>
-                        <option value="St. Pauli / Neuer Kamp 31 /(0233)">St. Pauli / Neuer Kamp 31 /(0233)</option>
-                        <option value="St. Pauli / Talstraße 36 /(0774)">St. Pauli / Talstraße 36 /(0774)</option>
-                        <option value="St.Georg / Lange Reihe 104-106 /(0175)">St.Georg / Lange Reihe 104-106 /(0175)</option>
-                        <option value="St.Georg / Lange Reihe 18-20 /(0178)">St.Georg / Lange Reihe 18-20 /(0178)</option>
-                        <option value="St.Georg / Steindamm 55 /(0282)">St.Georg / Steindamm 55 /(0282)</option>
-                        <option value="Stade / Steile Straße 1 /(0248)">Stade / Steile Straße 1 /(0248)</option>
-                        <option value="Steilshoop / Steilshooper Str. 281 /(0773)">Steilshoop / Steilshooper Str. 281 /(0773)</option>
-                        <option value="Stelle / Harburger Straße 25 c /(0772)">Stelle / Harburger Straße 25 c /(0772)</option>
-                        <option value="Stellingen / Kieler Str. 561-573 /(0745)">Stellingen / Kieler Str. 561-573 /(0745)</option>
-                        <option value="Stellingen / Langenfelder Damm 62 /(0767)">Stellingen / Langenfelder Damm 62 /(0767)</option>
-                        <option value="Sternschanze / Schanzenstraße 55 /(0768)">Sternschanze / Schanzenstraße 55 /(0768)</option>
-                        <option value="Sternschanze / Schulterblatt 135 /(0268)">Sternschanze / Schulterblatt 135 /(0268)</option>
-                        <option value="Sternschanze / Schulterblatt 45 /(0105)">Sternschanze / Schulterblatt 45 /(0105)</option>
-                        <option value="Tangstedt / Eichholzkoppel 1 /(0267)">Tangstedt / Eichholzkoppel 1 /(0267)</option>
-                        <option value="Timmendorfer STrand / Strandallee 81 /(0290)">Timmendorfer STrand / Strandallee 81 /(0290)</option>
-                        <option value="Tonndorf / Ahrensburger Strasse 150-152 /(0131)">Tonndorf / Ahrensburger Strasse 150-152 /(0131)</option>
-                        <option value="Tornesch / Ohlenhoff 4 /(0184)">Tornesch / Ohlenhoff 4 /(0184)</option>
-                        <option value="Tostedt / Unter den Linden 5 /(0758)">Tostedt / Unter den Linden 5 /(0758)</option>
-                        <option value="Tostedt / Zinnhütte 12 /(0280)">Tostedt / Zinnhütte 12 /(0280)</option>
-                        <option value="Trittau / Poststraße 27-29 /(0245)">Trittau / Poststraße 27-29 /(0245)</option>
-                        <option value="Uhlenhorst / Hofweg 46-48 /(0180)">Uhlenhorst / Hofweg 46-48 /(0180)</option>
-                        <option value="Volksdorf / Claus-Ferck-Straße 8 /(0186)">Volksdorf / Claus-Ferck-Straße 8 /(0186)</option>
-                        <option value="Volksdorf / Weiße Rose 8 /(0795)">Volksdorf / Weiße Rose 8 /(0795)</option>
-                        <option value="Wandsbek / Friedrich-Ebert-Damm 79-85 /(0221)">Wandsbek / Friedrich-Ebert-Damm 79-85 /(0221)</option>
-                        <option value="Wandsbek / Wandsbeker Marktstraße 103-107 /(0272)">Wandsbek / Wandsbeker Marktstraße 103-107 /(0272)</option>
-                        <option value="Wandsbek / Wandsbeker Marktstraße 2 /(0288)">Wandsbek / Wandsbeker Marktstraße 2 /(0288)</option>
-                        <option value="Wedel / Am Marienhof 1, 3 /(0263)">Wedel / Am Marienhof 1, 3 /(0263)</option>
-                        <option value="Wedel / Bahnhofstraße 31 /(0776)">Wedel / Bahnhofstraße 31 /(0776)</option>
-                        <option value="Wedel / Rissener Straße 125 /(0257)">Wedel / Rissener Straße 125 /(0257)</option>
-                        <option value="Wellingsbüttel / Wellingsbüttler Weg 125 /(0177)">Wellingsbüttel / Wellingsbüttler Weg 125 /(0177)</option>
-                        <option value="Wenningstedt/Sylt / Osterweg 2 /(0771)">Wenningstedt/Sylt / Osterweg 2 /(0771)</option>
-                        <option value="Wentorf / Berliner Landstraße 4-6 /(0249)">Wentorf / Berliner Landstraße 4-6 /(0249)</option>
-                        <option value="Wilhelmsburg / Vogelhüttendeich 48 /(0756)">Wilhelmsburg / Vogelhüttendeich 48 /(0756)</option>
-                        <option value="Wilhelmsburg / Wilhelm-Strauß-Weg 2b /(0736)">Wilhelmsburg / Wilhelm-Strauß-Weg 2b /(0736)</option>
-                        <option value="Winsen / Löhnfeld 10 /(0740)">Winsen / Löhnfeld 10 /(0740)</option>
-                        <option value="Winsen / Rathausstraße 33 /(0197)">Winsen / Rathausstraße 33 /(0197)</option>
-                        <option value="Winterhude / Gertigstraße 24 /(0275)">Winterhude / Gertigstraße 24 /(0275)</option>
-                        <option value="Winterhude / Hudtwalckerstr. 19-21 /(0304)">Winterhude / Hudtwalckerstr. 19-21 /(0304)</option>
-                        <option value="Winterhude / Jarrestr. 47 /(0749)">Winterhude / Jarrestr. 47 /(0749)</option>
-                        <option value="Winterhude / Mühlenkamp 43 /(0305)">Winterhude / Mühlenkamp 43 /(0305)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="competitorName">🏢 Wettbewerber:</label>
-                    <select id="competitorName">
-                        <option value="">Wettbewerber auswählen...</option>
-                        <option value="DM">DM-Drogerie Markt</option>
-                        <option value="ROSSMANN">ROSSMANN</option>
-                        <option value="MÜLLER">MÜLLER Drogeriemarkt</option>
-                        <option value="EDEKA">EDEKA</option>
-                    </select>
-                </div>
-                <div class="selection-info">
-                    ℹ️ Wählen Sie entweder eine eigene Filiale ODER einen Wettbewerber aus
-                </div>
-                <div class="input-group">
-                    <label for="visitorName">👤 Besucher:</label>
-                    <input type="text" id="visitorName" placeholder="Ihr Name (wird für Session gespeichert)">
-                </div>
-                <div class="input-group">
-                    <label for="visitTime">⏰ Uhrzeit:</label>
-                    <input type="time" id="visitTime">
-                </div>
-            </div>
 
-            <div id="entriesContainer">
-                <div class="entry-item" data-entry="1">
-                    <div class="entry-header">
-                        <div class="entry-header-left">
-                            <span class="entry-number">Punkt 1</span>
-                            <div class="image-upload" onclick="document.getElementById('imageInput-1').click()" role="button" tabindex="0" aria-label="Bilder für ersten Punkt hinzufügen" title="Bilder hinzufügen">
-                                <span class="image-upload-icon">📷</span>
-                                <input type="file" id="imageInput-1" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, 1)" aria-label="Bilddateien auswählen">
-                            </div>
-                        </div>
-                        <button class="delete-btn hidden" onclick="deleteEntry(this)" aria-label="Punkt 1 löschen" title="Punkt löschen">🗑️</button>
+        <div id="auditForm" class="form-section">
+            <!-- Audit Details Section -->
+            <div class="location-section">
+                <div class="form-group">
+                    <label for="auditorName">👤 Name des Auditors:</label>
+                    <input type="text" id="auditorName" placeholder="Ihr vollständiger Name">
+                </div>
+                
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="auditDate">📅 Datum:</label>
+                        <input type="date" id="auditDate">
                     </div>
-                    
-                    <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt 1"></textarea>
-                    
-                    <div class="image-preview" id="imagePreview-1" aria-live="polite"></div>
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="auditTime">🕐 Uhrzeit:</label>
+                        <input type="time" id="auditTime">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="locationType">📍 Standort-Typ:</label>
+                    <select id="locationType" onchange="toggleLocationDetails()">
+                        <option value="">Bitte auswählen...</option>
+                        <option value="own">Eigenes Geschäft</option>
+                        <option value="competitor">Wettbewerb</option>
+                    </select>
+                </div>
+
+                <div id="ownBusinessSection" class="form-group" style="display: none;">
+                    <label for="ownBusiness">🏢 Eigenes Geschäft:</label>
+                    <select id="ownBusiness">
+                        <option value="">Geschäft auswählen...</option>
+                        <option value="Hauptfiliale München">Hauptfiliale München</option>
+                        <option value="Filiale Hamburg">Filiale Hamburg</option>
+                        <option value="Filiale Berlin">Filiale Berlin</option>
+                        <option value="Filiale Köln">Filiale Köln</option>
+                        <option value="Filiale Frankfurt">Filiale Frankfurt</option>
+                    </select>
+                </div>
+
+                <div id="competitorSection" class="form-group" style="display: none;">
+                    <label for="competitor">🏪 Wettbewerb:</label>
+                    <select id="competitor">
+                        <option value="">Wettbewerber auswählen...</option>
+                        <option value="dm">dm</option>
+                        <option value="Rossmann">Rossmann</option>
+                        <option value="Müller">Müller</option>
+                        <option value="Andere">Andere</option>
+                    </select>
                 </div>
             </div>
 
-            <button class="add-entry-btn" onclick="addEntry()" aria-label="Neuen Dokumentationspunkt hinzufügen">
-                ➕ Weiteren Punkt hinzufügen
-            </button>
-
-            <div class="loading" id="loading">
-                📄 PDF wird erstellt...
-            </div>
-
-            <div class="success-message" id="successMessage">
-                ✅ PDF erfolgreich erstellt und heruntergeladen!
+            <!-- Questions Section -->
+            <div id="questionsContainer">
+                <div class="question-item" data-question="1">
+                    <div class="question-header">
+                        <div class="question-header-left">
+                            <span class="question-number">Thema 1</span>
+                            <button type="button" class="camera-icon" onclick="triggerFileInput(1)" title="Fotos hinzufügen">📷</button>
+                        </div>
+                        <button type="button" class="delete-question" onclick="deleteQuestion(1)" style="display: none;">✕ Löschen</button>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Ihre Beobachtung:</label>
+                        <textarea placeholder="Beschreiben Sie hier Ihre Beobachtungen, Auffälligkeiten oder Verbesserungsvorschläge..."></textarea>
+                    </div>
+                    <input type="file" class="file-input" accept="image/*" multiple capture="environment" onchange="handleFileUpload(1, this)">
+                    <div class="thumbnails"></div>
+                </div>
             </div>
 
             <div class="actions">
-                <button class="btn btn-primary" onclick="generatePDF()" aria-label="PDF-Bericht erstellen und herunterladen">
-                    📄 PDF erstellen
+                <button type="button" class="btn btn-secondary" onclick="addQuestion()">
+                    ➕ Weiteres Thema hinzufügen
                 </button>
-                <button class="btn btn-success" onclick="generateHTMLReport()" aria-label="HTML-Bericht erstellen und herunterladen">
-                    📱 HTML-Bericht
+                <button type="button" class="btn btn-success" onclick="generateReport()">
+                    📊 Bericht erstellen
                 </button>
-                <button class="btn btn-secondary" onclick="resetForm()" aria-label="Alle Eingaben zurücksetzen">
-                    🔄 Zurücksetzen
+            </div>
+        </div>
+
+        <div id="reportView" class="report">
+            <button type="button" class="btn back-to-form" onclick="backToForm()">
+                ← Zurück zum Formular
+            </button>
+            
+            <div class="report-header">
+                <h1 class="report-title">Audit-Bericht</h1>
+                <div class="report-meta">
+                    <p id="reportDate"></p>
+                    <p id="reportLocation"></p>
+                </div>
+            </div>
+
+            <div id="reportContent"></div>
+
+            <div class="actions">
+                <button type="button" class="btn" onclick="emailReport()">
+                    📧 Per E-Mail versenden
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="downloadReport()">
+                    💾 Als ZIP herunterladen
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Lightbox für Bildvergrößerung -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-        <div class="lightbox-content">
-            <button class="lightbox-close" onclick="closeLightbox()" aria-label="Bild schließen">×</button>
-            <img class="lightbox-img" id="lightboxImg" src="" alt="">
-            <div class="lightbox-info" id="lightboxInfo"></div>
-        </div>
-    </div>
-
-    <!-- Versionsnummer -->
-    <div class="app-version" id="appVersion" title="App-Version mit Zeitstempel"></div>
-
     <script>
-        let entryCounter = 1;
-        let imageData = {};
-        let savedVisitorName = '';
-        let userLocation = null;
-        let isLocationDetected = false;
-
-        // Versionsnummer - automatisch basierend auf aktuellem Datum und Uhrzeit
-        const now = new Date();
-        const APP_VERSION = `v${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}-${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-
-        // Datum auf heute setzen
-        document.getElementById('visitDate').valueAsDate = new Date();
-        
-        // Aktuelle Zeit setzen
-        document.getElementById('visitTime').value = now.toTimeString().slice(0,5);
-
-        // Standort-basierte Filialvorschläge
-        const filialLocations = {
-            'Hamburg': {
-                lat: 53.5511,
-                lng: 9.9937,
-                keywords: ['Ahrensburg', 'Alsterdorf', 'Altona', 'Altstadt', 'Ammersbek', 'Bahrenfeld', 'Bargteheide', 'Barmbek', 'Barsbüttel', 'Bergedorf', 'Bergstedt', 'Billstedt', 'Blankenese', 'Börnsen', 'Bramfeld', 'Duvenstedt', 'Eidelstedt', 'Eilbek', 'Eimsbüttel', 'Eppendorf', 'Farmsen', 'Finkenwerder', 'Fuhlsbüttel', 'Glinde', 'Groß Borstel', 'Gross Flottbek', 'Grosshansdorf', 'HafenCity', 'Halstenbek', 'Hamm', 'Hammerbrook', 'Harburg', 'Harvestehude', 'Heimfeld', 'Hittfeld', 'Hoheluft', 'Horn', 'Hummelsbüttel', 'Langenhorn', 'Lohbrügge', 'Lokstedt', 'Lurup', 'Marienthal', 'Marmstorf', 'Maschen', 'Meckelfeld', 'Mundsburg', 'Neu Wulmstorf', 'Neuengamme', 'Neugraben', 'Neustadt', 'Neuwiedenthal', 'Niedermarschacht', 'Niendorf', 'Nienstedten', 'Norderstedt', 'Osdorf', 'Oststeinbek', 'Othmarschen', 'Ottensen', 'Pinneberg', 'Poppenbüttel', 'Quickborn', 'Rahlstedt', 'Reinbek', 'Rellingen', 'Rissen', 'Rothenburgsort', 'Rotherbaum', 'Sasel', 'Schenefeld', 'Schnelsen', 'St. Georg', 'St. Pauli', 'Steilshoop', 'Stelle', 'Stellingen', 'Sternschanze', 'Tangstedt', 'Tonndorf', 'Tornesch', 'Trittau', 'Uhlenhorst', 'Volksdorf', 'Wandsbek', 'Wedel', 'Wellingsbüttel', 'Wentorf', 'Wilhelmsburg', 'Winterhude']
-            },
-            'Berlin': {
-                lat: 52.5200,
-                lng: 13.4050,
-                keywords: ['Berlin']
-            },
-            'Lübeck': {
-                lat: 53.8648,
-                lng: 10.6865,
-                keywords: ['Lübeck', 'Bad Oldesloe', 'Bad Segeberg', 'Büchen', 'Mölln', 'Schwarzenbek']
-            },
-            'Lüneburg': {
-                lat: 53.2493,
-                lng: 10.4070,
-                keywords: ['Lüneburg', 'Buchholz', 'Hanstedt', 'Jesteburg', 'Tostedt', 'Winsen']
-            },
-            'Buxtehude': {
-                lat: 53.4774,
-                lng: 9.6951,
-                keywords: ['Buxtehude', 'Apensen', 'Dollern', 'Harsefeld', 'Stade']
-            },
-            'Sylt': {
-                lat: 54.9079,
-                lng: 8.3147,
-                keywords: ['Wenningstedt', 'Sylt', 'Keitum']
-            },
-            'Timmendorfer Strand': {
-                lat: 54.0079,
-                lng: 10.7717,
-                keywords: ['Timmendorfer STrand']
-            },
-            'Geesthacht': {
-                lat: 53.4308,
-                lng: 10.3695,
-                keywords: ['Geesthacht']
-            },
-            'Kaltenkirchen': {
-                lat: 53.8386,
-                lng: 9.9717,
-                keywords: ['Kaltenkirchen', 'Henstedt-Ulzburg', 'Nahe']
-            }
+        let questionCounter = 1;
+        let auditData = {
+            questions: {},
+            images: {}
         };
 
-        // Lightbox Funktionen
-        function openLightbox(imgSrc, imgName) {
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightboxImg');
-            const lightboxInfo = document.getElementById('lightboxInfo');
-            
-            lightboxImg.src = imgSrc;
-            lightboxInfo.textContent = imgName;
-            lightbox.classList.add('active');
-            
-            // Körper-Scroll verhindern
-            document.body.style.overflow = 'hidden';
+        function toggleLocationDetails() {
+            const locationType = document.getElementById('locationType').value;
+            const ownSection = document.getElementById('ownBusinessSection');
+            const competitorSection = document.getElementById('competitorSection');
+
+            ownSection.style.display = locationType === 'own' ? 'block' : 'none';
+            competitorSection.style.display = locationType === 'competitor' ? 'block' : 'none';
         }
 
-        function closeLightbox(event) {
-            if (event && event.target !== event.currentTarget && !event.target.classList.contains('lightbox-close')) {
-                return;
-            }
+        function addQuestion() {
+            questionCounter++;
+            const container = document.getElementById('questionsContainer');
             
-            const lightbox = document.getElementById('lightbox');
-            lightbox.classList.remove('active');
-            
-            // Körper-Scroll wieder aktivieren
-            document.body.style.overflow = '';
-        }
-
-        // Geolocation initialisieren
-        function initGeolocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        sortFilialsByLocation();
-                        isLocationDetected = true;
-                        showLocationHint('📍 Filialen nach Nähe sortiert');
-                    },
-                    function(error) {
-                        console.log('Standort nicht verfügbar:', error.message);
-                    },
-                    {
-                        enableHighAccuracy: false,
-                        timeout: 5000,
-                        maximumAge: 300000
-                    }
-                );
-            }
-        }
-
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLng = (lng2 - lng1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLng/2) * Math.sin(dLng/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        function findNearestRegion() {
-            if (!userLocation) return null;
-            
-            let nearestRegion = null;
-            let minDistance = Infinity;
-            
-            for (const [region, data] of Object.entries(filialLocations)) {
-                const distance = calculateDistance(
-                    userLocation.lat, userLocation.lng,
-                    data.lat, data.lng
-                );
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestRegion = region;
-                }
-            }
-            
-            return nearestRegion;
-        }
-
-        function sortFilialsByLocation() {
-            const select = document.getElementById('branchName');
-            const options = Array.from(select.options).slice(1);
-            
-            const nearestRegion = findNearestRegion();
-            if (!nearestRegion) return;
-            
-            const regionKeywords = filialLocations[nearestRegion].keywords;
-            
-            options.sort((a, b) => {
-                const aIsNear = regionKeywords.some(keyword => 
-                    a.value.toLowerCase().includes(keyword.toLowerCase())
-                );
-                const bIsNear = regionKeywords.some(keyword => 
-                    b.value.toLowerCase().includes(keyword.toLowerCase())
-                );
-                
-                if (aIsNear && !bIsNear) return -1;
-                if (!aIsNear && bIsNear) return 1;
-                return 0;
-            });
-            
-            select.innerHTML = '<option value="">📍 Filiale auswählen...</option>';
-            
-            let nearOptionsAdded = false;
-            options.forEach(option => {
-                const isNear = regionKeywords.some(keyword => 
-                    option.value.toLowerCase().includes(keyword.toLowerCase())
-                );
-                
-                if (isNear && !nearOptionsAdded) {
-                    const separator = document.createElement('option');
-                    separator.disabled = true;
-                    separator.textContent = `──── 📍 Nahe ${nearestRegion} ────`;
-                    select.appendChild(separator);
-                    nearOptionsAdded = true;
-                } else if (!isNear && nearOptionsAdded) {
-                    const separator = document.createElement('option');
-                    separator.disabled = true;
-                    separator.textContent = '──── 🏢 Weitere Filialen ────';
-                    select.appendChild(separator);
-                    nearOptionsAdded = false;
-                }
-                
-                select.appendChild(option);
-            });
-        }
-
-        // Verbesserte EXIF-Orientierung auslesen
-        function getImageOrientation(arrayBuffer) {
-            const view = new DataView(arrayBuffer);
-            if (view.getUint16(0, false) !== 0xFFD8) {
-                return 1;
-            }
-            const length = view.byteLength;
-            let offset = 2;
-            while (offset < length) {
-                const marker = view.getUint16(offset, false);
-                offset += 2;
-                if (marker === 0xFFE1) {
-                    const exifSize = view.getUint16(offset, false);
-                    offset += 2;
-                    if (view.getUint32(offset, false) !== 0x45786966) {
-                        offset += exifSize - 2;
-                        continue;
-                    }
-                    offset += 6;
-                    const little = view.getUint16(offset, false) === 0x4949;
-                    offset += view.getUint32(offset + 4, little);
-                    const tags = view.getUint16(offset, little);
-                    offset += 2;
-                    for (let i = 0; i < tags; i++) {
-                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
-                            return view.getUint16(offset + (i * 12) + 8, little);
-                        }
-                    }
-                } else if ((marker & 0xFF00) !== 0xFF00) {
-                    break;
-                } else {
-                    offset += view.getUint16(offset, false);
-                }
-            }
-            return 1;
-        }
-
-        function getRotationFromOrientation(orientation) {
-            switch (orientation) {
-                case 1: return 0;
-                case 3: return 180;
-                case 6: return 90;
-                case 8: return 270;
-                default: return 0;
-            }
-        }
-
-        async function processImageWithOrientation(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const orientation = getImageOrientation(e.target.result);
-                    const rotation = getRotationFromOrientation(orientation);
-                    
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        let { width, height } = img;
-                        
-                        if (rotation === 90 || rotation === 270) {
-                            canvas.width = height;
-                            canvas.height = width;
-                        } else {
-                            canvas.width = width;
-                            canvas.height = height;
-                        }
-                        
-                        ctx.save();
-                        
-                        if (rotation === 90) {
-                            ctx.translate(canvas.width, 0);
-                            ctx.rotate(Math.PI / 2);
-                        } else if (rotation === 180) {
-                            ctx.translate(canvas.width, canvas.height);
-                            ctx.rotate(Math.PI);
-                        } else if (rotation === 270) {
-                            ctx.translate(0, canvas.height);
-                            ctx.rotate(-Math.PI / 2);
-                        }
-                        
-                        ctx.drawImage(img, 0, 0, width, height);
-                        ctx.restore();
-                        
-                        resolve({
-                            canvas: canvas,
-                            width: canvas.width,
-                            height: canvas.height,
-                            dataUrl: canvas.toDataURL('image/jpeg', 0.9),
-                            rotation: rotation
-                        });
-                    };
-                    
-                    const imageReader = new FileReader();
-                    imageReader.onload = function(imgEvent) {
-                        img.src = imgEvent.target.result;
-                    };
-                    imageReader.readAsDataURL(file);
-                };
-                reader.readAsArrayBuffer(file);
-            });
-        }
-
-        async function renderImageRow(pdf, images, yPos, spacing) {
-            const margin = 20;
-            let currentX = margin;
-            
-            for (let i = 0; i < images.length; i++) {
-                const image = images[i];
-                
-                if (image.error) {
-                    pdf.setFillColor(248, 249, 250);
-                    pdf.rect(currentX, yPos, image.width, image.height, 'F');
-                    pdf.setDrawColor(220, 53, 69);
-                    pdf.setLineWidth(1);
-                    pdf.rect(currentX, yPos, image.width, image.height, 'S');
-                    
-                    pdf.setTextColor(220, 53, 69);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(8);
-                    pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
-                    pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
-                    pdf.setTextColor(0, 0, 0);
-                } else {
-                    try {
-                        pdf.setDrawColor(31, 41, 55);
-                        pdf.setLineWidth(1);
-                        pdf.rect(currentX - 1, yPos - 1, image.width + 2, image.height + 2, 'S');
-                        
-                        pdf.addImage(image.src, 'JPEG', currentX, yPos, image.width, image.height);
-                        
-                        pdf.setFillColor(31, 41, 55);
-                        pdf.rect(currentX + image.width - 12, yPos + image.height - 8, 12, 8, 'F');
-                        pdf.setTextColor(255, 255, 255);
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.setFontSize(7);
-                        pdf.text(String(i + 1), currentX + image.width - 6, yPos + image.height - 3, { align: 'center' });
-                        pdf.setTextColor(0, 0, 0);
-                        
-                    } catch (error) {
-                        console.log('Fehler beim Rendern des Bildes:', error);
-                        pdf.setFillColor(248, 249, 250);
-                        pdf.rect(currentX, yPos, image.width, image.height, 'F');
-                        pdf.setDrawColor(220, 53, 69);
-                        pdf.setLineWidth(1);
-                        pdf.rect(currentX, yPos, image.width, image.height, 'S');
-                        
-                        pdf.setTextColor(220, 53, 69);
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.setFontSize(8);
-                        pdf.text('BILD', currentX + image.width/2, yPos + image.height/2 - 2, { align: 'center' });
-                        pdf.text('FEHLER', currentX + image.width/2, yPos + image.height/2 + 2, { align: 'center' });
-                        pdf.setTextColor(0, 0, 0);
-                    }
-                }
-                
-                currentX += image.width + spacing;
-            }
-        }
-
-        function showLocationHint(message) {
-            const label = document.querySelector('label[for="branchName"]');
-            const originalText = label.textContent;
-            
-            label.style.color = '#27ae60';
-            label.textContent = `🏪 ${message}`;
-            
-            setTimeout(() => {
-                label.style.color = '';
-                label.textContent = originalText;
-            }, 3000);
-        }
-
-        document.getElementById('visitorName').addEventListener('blur', function() {
-            savedVisitorName = this.value;
-        });
-
-        function setupCompetitorBranchLogic() {
-            const branchSelect = document.getElementById('branchName');
-            const competitorSelect = document.getElementById('competitorName');
-            
-            branchSelect.addEventListener('change', function() {
-                if (this.value) {
-                    competitorSelect.value = '';
-                    competitorSelect.style.opacity = '0.6';
-                    clearValidationErrors();
-                } else {
-                    competitorSelect.style.opacity = '1';
-                }
-            });
-            
-            competitorSelect.addEventListener('change', function() {
-                if (this.value) {
-                    branchSelect.value = '';
-                    branchSelect.style.opacity = '0.6';
-                    clearValidationErrors();
-                } else {
-                    branchSelect.style.opacity = '1';
-                }
-            });
-        }
-
-        function clearValidationErrors() {
-            const errorEl = document.getElementById('validationError');
-            const branchSelect = document.getElementById('branchName');
-            const competitorSelect = document.getElementById('competitorName');
-            
-            if (errorEl) {
-                errorEl.style.display = 'none';
-            }
-            
-            branchSelect.classList.remove('validation-error');
-            competitorSelect.classList.remove('validation-error');
-        }
-
-        function validateSelection() {
-            const branchValue = document.getElementById('branchName').value;
-            const competitorValue = document.getElementById('competitorName').value;
-            
-            if (!branchValue && !competitorValue) {
-                showValidationError('Bitte wählen Sie entweder eine Filiale ODER einen Wettbewerber aus!');
-                return false;
-            }
-            
-            clearValidationErrors();
-            return true;
-        }
-
-        function showValidationError(message) {
-            const branchSelect = document.getElementById('branchName');
-            const competitorSelect = document.getElementById('competitorName');
-            
-            branchSelect.classList.add('validation-error');
-            competitorSelect.classList.add('validation-error');
-            
-            let errorEl = document.getElementById('validationError');
-            if (!errorEl) {
-                errorEl = document.createElement('div');
-                errorEl.id = 'validationError';
-                errorEl.className = 'error-message';
-                
-                const selectionInfo = document.querySelector('.selection-info');
-                selectionInfo.parentNode.insertBefore(errorEl, selectionInfo.nextSibling);
-            }
-            
-            errorEl.textContent = `⚠️ ${message}`;
-            errorEl.style.display = 'block';
-            
-            scrollToElement(errorEl);
-            
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate([100, 100, 100]);
-            }
-        }
-
-        function addTouchFeedback() {
-            const buttons = document.querySelectorAll('button, .image-upload, .btn');
-            
-            buttons.forEach(button => {
-                button.removeEventListener('touchstart', handleTouchStart);
-                button.removeEventListener('touchend', handleTouchEnd);
-                button.removeEventListener('touchcancel', handleTouchCancel);
-                
-                button.addEventListener('touchstart', handleTouchStart, { passive: true });
-                button.addEventListener('touchend', handleTouchEnd, { passive: true });
-                button.addEventListener('touchcancel', handleTouchCancel, { passive: true });
-            });
-        }
-
-        function handleTouchStart(e) {
-            this.style.transform = 'scale(0.95)';
-            this.style.transition = 'transform 0.1s ease';
-        }
-
-        function handleTouchEnd(e) {
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 50);
-        }
-
-        function handleTouchCancel(e) {
-            this.style.transform = 'scale(1)';
-        }
-
-        function scrollToElement(element) {
-            if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }
-
-        function addEntry() {
-            entryCounter++;
-            const container = document.getElementById('entriesContainer');
-            
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'entry-item';
-            entryDiv.setAttribute('data-entry', entryCounter);
-            
-            entryDiv.innerHTML = `
-                <div class="entry-header">
-                    <div class="entry-header-left">
-                        <span class="entry-number">Punkt ${entryCounter}</span>
-                        <div class="image-upload" onclick="document.getElementById('imageInput-${entryCounter}').click()" role="button" tabindex="0" aria-label="Bilder für Punkt ${entryCounter} hinzufügen" title="Bilder hinzufügen">
-                            <span class="image-upload-icon">📷</span>
-                            <input type="file" id="imageInput-${entryCounter}" class="hidden" multiple accept="image/*" onchange="handleImageUpload(this, ${entryCounter})" aria-label="Bilddateien auswählen">
+            const questionHTML = `
+                <div class="question-item" data-question="${questionCounter}">
+                    <div class="question-header">
+                        <div class="question-header-left">
+                            <span class="question-number">Thema ${questionCounter}</span>
+                            <button type="button" class="camera-icon" onclick="triggerFileInput(${questionCounter})" title="Fotos hinzufügen">📷</button>
                         </div>
+                        <button type="button" class="delete-question" onclick="deleteQuestion(${questionCounter})">✕ Löschen</button>
                     </div>
-                    <button class="delete-btn" onclick="deleteEntry(this)" aria-label="Punkt ${entryCounter} löschen" title="Punkt löschen">🗑️</button>
+                    <div class="form-group">
+                        <label>📝 Ihre Beobachtung:</label>
+                        <textarea placeholder="Beschreiben Sie hier Ihre Beobachtungen, Auffälligkeiten oder Verbesserungsvorschläge..."></textarea>
+                    </div>
+                    <input type="file" class="file-input" accept="image/*" multiple capture="environment" onchange="handleFileUpload(${questionCounter}, this)">
+                    <div class="thumbnails"></div>
                 </div>
-                
-                <textarea class="text-area" placeholder="Beschreiben Sie hier Ihre Beobachtungen, Notizen oder Anmerkungen..." aria-label="Notizen für Punkt ${entryCounter}"></textarea>
-                
-                <div class="image-preview" id="imagePreview-${entryCounter}" aria-live="polite"></div>
             `;
             
-            container.appendChild(entryDiv);
+            container.insertAdjacentHTML('beforeend', questionHTML);
             
-            setupDragAndDrop(entryDiv.querySelector('.image-upload'), entryCounter);
-            addTouchFeedback();
+            // Update delete button visibility
             updateDeleteButtons();
             
-            setTimeout(() => {
-                scrollToElement(entryDiv);
-            }, 100);
+            // Scroll to new question
+            const newQuestion = container.lastElementChild;
+            newQuestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            setupDragAndDrop(document.querySelector('.image-upload'), 1);
-            addTouchFeedback();
-            setupCompetitorBranchLogic();
-            
-            document.getElementById('appVersion').textContent = APP_VERSION;
-            
-            setTimeout(() => {
-                initGeolocation();
-            }, 1000);
-            
-            if (!document.querySelector('meta[name="viewport"]')) {
-                const viewport = document.createElement('meta');
-                viewport.name = 'viewport';
-                viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
-                document.head.appendChild(viewport);
+        function deleteQuestion(questionId) {
+            const questionElement = document.querySelector(`[data-question="${questionId}"]`);
+            if (questionElement) {
+                questionElement.remove();
+                delete auditData.questions[questionId];
+                delete auditData.images[questionId];
+                updateDeleteButtons();
             }
-            
-            if (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile')) {
-                document.body.style.webkitOverflowScrolling = 'touch';
-            }
-        });
-
-        function deleteEntry(button) {
-            const entry = button.closest('.entry-item');
-            const entryNumber = entry.getAttribute('data-entry');
-            
-            delete imageData[entryNumber];
-            
-            entry.remove();
-            updateDeleteButtons();
-            renumberEntries();
         }
 
         function updateDeleteButtons() {
-            const entries = document.querySelectorAll('.entry-item');
-            entries.forEach((entry, index) => {
-                const deleteBtn = entry.querySelector('.delete-btn');
-                if (entries.length > 1) {
-                    deleteBtn.classList.remove('hidden');
-                } else {
-                    deleteBtn.classList.add('hidden');
-                }
+            const questions = document.querySelectorAll('.question-item');
+            questions.forEach((question, index) => {
+                const deleteBtn = question.querySelector('.delete-question');
+                deleteBtn.style.display = questions.length > 1 ? 'block' : 'none';
             });
         }
 
-        function renumberEntries() {
-            const entries = document.querySelectorAll('.entry-item');
-            entries.forEach((entry, index) => {
-                const number = index + 1;
-                entry.setAttribute('data-entry', number);
-                entry.querySelector('.entry-number').textContent = `Punkt ${number}`;
-            });
+        function triggerFileInput(questionId) {
+            const questionElement = document.querySelector(`[data-question="${questionId}"]`);
+            const fileInput = questionElement.querySelector('.file-input');
+            fileInput.click();
         }
 
-        function handleImageUpload(input, entryNumber) {
-            const files = input.files;
-            const preview = document.getElementById(`imagePreview-${entryNumber}`);
-            
-            if (!imageData[entryNumber]) {
-                imageData[entryNumber] = [];
+        function handleFileUpload(questionId, input) {
+            const files = Array.from(input.files);
+            if (!auditData.images[questionId]) {
+                auditData.images[questionId] = [];
             }
-            
-            Array.from(files).forEach(async file => {
-                if (file.type.startsWith('image/')) {
-                    try {
-                        const processedImage = await processImageWithOrientation(file);
-                        
-                        const imageInfo = {
-                            src: processedImage.dataUrl,
+
+            files.forEach(file => {
+                compressImage(file, (compressedFile) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        auditData.images[questionId].push({
                             name: file.name,
-                            rotation: processedImage.rotation
-                        };
-                        
-                        imageData[entryNumber].push(imageInfo);
-                        displayImage(entryNumber, imageInfo, imageData[entryNumber].length - 1);
-                        
-                    } catch (error) {
-                        console.error('Fehler beim Verarbeiten des Bildes:', error);
-                        
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const imageInfo = {
-                                src: e.target.result,
-                                name: file.name,
-                                rotation: 0
-                            };
-                            
-                            imageData[entryNumber].push(imageInfo);
-                            displayImage(entryNumber, imageInfo, imageData[entryNumber].length - 1);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                }
+                            data: e.target.result,
+                            size: compressedFile.size
+                        });
+                        updateThumbnails(questionId);
+                    };
+                    reader.readAsDataURL(compressedFile);
+                });
             });
+            
+            // Clear input for next upload
+            input.value = '';
         }
 
-        function displayImage(entryNumber, imageInfo, index) {
-            const preview = document.getElementById(`imagePreview-${entryNumber}`);
+        function compressImage(file, callback) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
             
-            const imageDiv = document.createElement('div');
-            imageDiv.className = 'image-item';
+            img.onload = function() {
+                // Calculate new dimensions (max 1600px width/height for better quality)
+                let { width, height } = img;
+                const maxSize = 1600;
+                
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress with higher quality (0.9 instead of 0.8)
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(callback, 'image/jpeg', 0.9);
+            };
             
-            imageDiv.innerHTML = `
-                <img src="${imageInfo.src}" alt="${imageInfo.name}" onclick="openLightbox('${imageInfo.src}', '${imageInfo.name}')">
-                <button class="image-remove" onclick="removeImage(${entryNumber}, ${index})">×</button>
+            img.src = URL.createObjectURL(file);
+        }
+
+        function updateThumbnails(questionId) {
+            const questionElement = document.querySelector(`[data-question="${questionId}"]`);
+            const thumbnailsContainer = questionElement.querySelector('.thumbnails');
+            
+            thumbnailsContainer.innerHTML = '';
+            
+            if (auditData.images[questionId]) {
+                auditData.images[questionId].forEach((image, index) => {
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'thumbnail';
+                    thumbnail.innerHTML = `
+                        <img src="${image.data}" alt="${image.name}">
+                        <button class="thumbnail-delete" onclick="deleteImage(${questionId}, ${index})">✕</button>
+                    `;
+                    thumbnailsContainer.appendChild(thumbnail);
+                });
+            }
+        }
+
+        function deleteImage(questionId, imageIndex) {
+            if (auditData.images[questionId]) {
+                auditData.images[questionId].splice(imageIndex, 1);
+                updateThumbnails(questionId);
+            }
+        }
+
+        function generateReport() {
+            // Collect form data
+            const auditorName = document.getElementById('auditorName').value.trim();
+            const auditDate = document.getElementById('auditDate').value;
+            const auditTime = document.getElementById('auditTime').value;
+            const locationType = document.getElementById('locationType').value;
+            const location = locationType === 'own' 
+                ? document.getElementById('ownBusiness').value 
+                : document.getElementById('competitor').value;
+            
+            // Validation
+            if (!auditorName) {
+                alert('Bitte geben Sie Ihren Namen ein.');
+                return;
+            }
+            
+            if (!auditDate) {
+                alert('Bitte wählen Sie ein Datum aus.');
+                return;
+            }
+            
+            if (!auditTime) {
+                alert('Bitte wählen Sie eine Uhrzeit aus.');
+                return;
+            }
+            
+            if (!locationType || !location) {
+                alert('Bitte wählen Sie einen Standort aus.');
+                return;
+            }
+
+            // Collect questions and answers
+            const questions = document.querySelectorAll('.question-item');
+            auditData.questions = {};
+            
+            questions.forEach((question) => {
+                const questionId = question.getAttribute('data-question');
+                const textarea = question.querySelector('textarea');
+                const text = textarea.value.trim();
+                
+                if (text) {
+                    auditData.questions[questionId] = text;
+                }
+            });
+
+            if (Object.keys(auditData.questions).length === 0) {
+                alert('Bitte füllen Sie mindestens ein Thema aus.');
+                return;
+            }
+
+            // Generate report
+            createReport(auditorName, auditDate, auditTime, locationType, location);
+            
+            // Show report view
+            document.getElementById('auditForm').style.display = 'none';
+            document.getElementById('reportView').style.display = 'block';
+        }
+
+        function createReport(auditorName, auditDate, auditTime, locationType, location) {
+            const formattedDate = new Date(auditDate).toLocaleDateString('de-DE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const formattedTime = auditTime;
+
+            document.getElementById('reportDate').textContent = `${formattedDate} um ${formattedTime}`;
+            document.getElementById('reportLocation').innerHTML = `
+                <strong>Auditor:</strong> ${auditorName}<br>
+                <strong>Standort:</strong> ${location} (${locationType === 'own' ? 'Eigenes Geschäft' : 'Wettbewerb'})
             `;
-            
-            preview.appendChild(imageDiv);
-        }
 
-        function removeImage(entryNumber, index) {
-            imageData[entryNumber].splice(index, 1);
-            refreshImagePreview(entryNumber);
-        }
+            const reportContent = document.getElementById('reportContent');
+            reportContent.innerHTML = '';
 
-        function refreshImagePreview(entryNumber) {
-            const preview = document.getElementById(`imagePreview-${entryNumber}`);
-            preview.innerHTML = '';
-            
-            if (imageData[entryNumber]) {
-                imageData[entryNumber].forEach((imageInfo, index) => {
-                    displayImage(entryNumber, imageInfo, index);
-                });
-            }
-        }
+            Object.keys(auditData.questions).forEach((questionId, index) => {
+                const section = document.createElement('div');
+                section.className = 'report-section';
+                
+                const title = document.createElement('h3');
+                title.textContent = `Thema ${index + 1}`;
+                section.appendChild(title);
 
-        function setupDragAndDrop(uploadDiv, entryNumber) {
-            uploadDiv.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadDiv.classList.add('drag-over');
-            });
-            
-            uploadDiv.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                uploadDiv.classList.remove('drag-over');
-            });
-            
-            uploadDiv.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadDiv.classList.remove('drag-over');
-                
-                const files = e.dataTransfer.files;
-                const input = document.getElementById(`imageInput-${entryNumber}`);
-                
-                Object.defineProperty(input, 'files', {
-                    value: files,
-                    writable: false,
-                });
-                
-                handleImageUpload(input, entryNumber);
+                const content = document.createElement('div');
+                content.className = 'report-content';
+                content.textContent = auditData.questions[questionId];
+                section.appendChild(content);
+
+                if (auditData.images[questionId] && auditData.images[questionId].length > 0) {
+                    const imagesContainer = document.createElement('div');
+                    imagesContainer.className = 'report-images';
+                    
+                    auditData.images[questionId].forEach(image => {
+                        const imageDiv = document.createElement('div');
+                        imageDiv.className = 'report-image';
+                        imageDiv.innerHTML = `<img src="${image.data}" alt="${image.name}">`;
+                        imagesContainer.appendChild(imageDiv);
+                    });
+                    
+                    section.appendChild(imagesContainer);
+                }
+
+                reportContent.appendChild(section);
             });
         }
 
-        async function generatePDF() {
-            if (!validateSelection()) {
-                return;
-            }
-            
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-            
-            const loadingEl = document.getElementById('loading');
-            const successEl = document.getElementById('successMessage');
-            
-            loadingEl.style.display = 'block';
-            scrollToElement(loadingEl);
-            
-            try {
-                const pageHeight = pdf.internal.pageSize.height;
-                const pageWidth = pdf.internal.pageSize.width;
-                const margin = 20;
-                const maxContentHeight = pageHeight - 40;
-                const maxContentWidth = pageWidth - 40;
-                
-                pdf.setFontSize(18);
-                pdf.setFont(undefined, 'bold');
-                
-                const branchValue = document.getElementById('branchName').value;
-                const competitorValue = document.getElementById('competitorName').value;
-                const documentTitle = competitorValue ? 
-                    `Wettbewerber-Besuch: ${competitorValue}` : 
-                    'Filialbesuch Dokumentation';
-                
-                pdf.text(documentTitle, margin, 25);
-                
-                pdf.setFontSize(11);
-                pdf.setFont(undefined, 'normal');
-                const visitDate = document.getElementById('visitDate').value;
-                const visitorName = document.getElementById('visitorName').value;
-                const visitTime = document.getElementById('visitTime').value;
-                
-                let yPos = 40;
-                pdf.text(`Datum: ${visitDate}`, margin, yPos);
-                pdf.text(`Uhrzeit: ${visitTime}`, 110, yPos);
-                yPos += 8;
-                
-                if (branchValue) {
-                    const branchText = `Eigene Filiale: ${branchValue}`;
-                    const splitBranch = pdf.splitTextToSize(branchText, maxContentWidth);
-                    pdf.text(splitBranch, margin, yPos);
-                    yPos += splitBranch.length * 5;
-                } else if (competitorValue) {
-                    pdf.text(`Wettbewerber: ${competitorValue}`, margin, yPos);
-                    yPos += 5;
-                }
-                yPos += 3;
-                pdf.text(`Besucher: ${visitorName}`, margin, yPos);
-                
-                yPos += 15;
-                
-                function addNewPageWithHeader() {
-                    pdf.addPage();
-                    yPos = margin;
-                    
-                    pdf.setFontSize(12);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(documentTitle, margin, yPos);
-                    yPos += 15;
-                    pdf.setFont(undefined, 'normal');
-                    pdf.setFontSize(10);
-                }
-                
-                function checkPageBreak(requiredHeight) {
-                    if (yPos + requiredHeight > maxContentHeight) {
-                        addNewPageWithHeader();
-                        return true;
-                    }
-                    return false;
-                }
-                
-                const entries = document.querySelectorAll('.entry-item');
-                
-                for (let i = 0; i < entries.length; i++) {
-                    const entry = entries[i];
-                    const entryNumber = entry.getAttribute('data-entry');
-                    const text = entry.querySelector('.text-area').value;
-                    
-                    let estimatedHeight = 20;
-                    
-                    if (text) {
-                        const splitText = pdf.splitTextToSize(text, maxContentWidth - 20);
-                        estimatedHeight += splitText.length * 5 + 10;
-                    } else {
-                        estimatedHeight += 15;
-                    }
-                    
-                    if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
-                        estimatedHeight += 60;
-                    }
-                    
-                    checkPageBreak(estimatedHeight);
-                    
-                    pdf.setFontSize(12);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(`Punkt ${i + 1}:`, margin, yPos);
-                    yPos += 10;
-                    
-                    pdf.setFontSize(10);
-                    pdf.setFont(undefined, 'normal');
-                    if (text) {
-                        const splitText = pdf.splitTextToSize(text, maxContentWidth - 20);
-                        pdf.text(splitText, margin, yPos);
-                        yPos += splitText.length * 5 + 5;
-                    } else {
-                        pdf.text('(Keine Notizen)', margin, yPos);
-                        yPos += 10;
-                    }
-                    
-                    if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
-                        const images = imageData[entryNumber];
-                        const maxRowWidth = maxContentWidth - 20;
-                        const imageSpacing = 5;
-                        
-                        let currentRowImages = [];
-                        let currentRowWidth = 0;
-                        
-                        for (let j = 0; j < images.length; j++) {
-                            const image = images[j];
-                            
-                            try {
-                                const tempImg = new Image();
-                                tempImg.src = image.src;
-                                
-                                await new Promise((resolve) => {
-                                    if (tempImg.complete) {
-                                        resolve();
-                                    } else {
-                                        tempImg.onload = resolve;
-                                        tempImg.onerror = resolve;
-                                    }
-                                });
-                                
-                                const originalWidth = tempImg.naturalWidth || tempImg.width;
-                                const originalHeight = tempImg.naturalHeight || tempImg.height;
-                                
-                                const maxImgWidth = 80;
-                                const maxImgHeight = 60;
-                                
-                                let imgWidth = maxImgWidth;
-                                let imgHeight = maxImgHeight;
-                                
-                                if (originalWidth && originalHeight) {
-                                    const aspectRatio = originalWidth / originalHeight;
-                                    
-                                    if (aspectRatio > 1) {
-                                        imgWidth = maxImgWidth;
-                                        imgHeight = maxImgWidth / aspectRatio;
-                                        if (imgHeight > maxImgHeight) {
-                                            imgHeight = maxImgHeight;
-                                            imgWidth = maxImgHeight * aspectRatio;
-                                        }
-                                    } else {
-                                        imgHeight = maxImgHeight;
-                                        imgWidth = maxImgHeight * aspectRatio;
-                                        if (imgWidth > maxImgWidth) {
-                                            imgWidth = maxImgWidth;
-                                            imgHeight = maxImgWidth / aspectRatio;
-                                        }
-                                    }
-                                }
-                                
-                                const neededWidth = currentRowWidth + (currentRowImages.length > 0 ? imageSpacing : 0) + imgWidth;
-                                
-                                if (neededWidth > maxRowWidth && currentRowImages.length > 0) {
-                                    const maxRowHeight = Math.max(...currentRowImages.map(img => img.height));
-                                    if (checkPageBreak(maxRowHeight + 20)) {
-                                    }
-                                    
-                                    await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                                    yPos += maxRowHeight + 20;
-                                    
-                                    currentRowImages = [];
-                                    currentRowWidth = 0;
-                                }
-                                
-                                currentRowImages.push({
-                                    src: image.src,
-                                    name: image.name,
-                                    width: imgWidth,
-                                    height: imgHeight
-                                });
-                                currentRowWidth += imgWidth + (currentRowImages.length > 1 ? imageSpacing : 0);
-                                
-                            } catch (error) {
-                                console.log('Fehler beim Verarbeiten des Bildes:', error);
-                                currentRowImages.push({
-                                    error: true,
-                                    name: image.name,
-                                    width: 60,
-                                    height: 20
-                                });
-                            }
-                        }
-                        
-                        if (currentRowImages.length > 0) {
-                            const maxRowHeight = Math.max(...currentRowImages.map(img => img.height));
-                            checkPageBreak(maxRowHeight + 20);
-                            
-                            await renderImageRow(pdf, currentRowImages, yPos, imageSpacing);
-                            yPos += maxRowHeight + 20;
-                        }
-                    }
-                    
-                    yPos += 15;
-                }
-                
-                const date = visitDate || new Date().toISOString().split('T')[0];
-                const safeName = competitorValue ? 
-                    competitorValue.replace(/[^\w\s-]/g, '') : 
-                    (branchValue || 'Unbekannt').substring(0, 30).replace(/[^\w\s-]/g, '');
-                const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
-                const fileName = `${filePrefix}_${safeName}_${date}.pdf`;
-                
-                pdf.save(fileName);
-                
-                successEl.style.display = 'block';
-                scrollToElement(successEl);
-                
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate([100, 50, 100]);
-                }
-                
-                setTimeout(() => {
-                    successEl.style.display = 'none';
-                }, 4000);
-                
-            } catch (error) {
-                alert('Fehler beim Erstellen des PDFs: ' + error.message);
-                console.error('PDF Error:', error);
-            } finally {
-                loadingEl.style.display = 'none';
-            }
+        function backToForm() {
+            document.getElementById('reportView').style.display = 'none';
+            document.getElementById('auditForm').style.display = 'block';
         }
 
-        function generateHTMLReport() {
-            if (!validateSelection()) {
-                return;
-            }
+        function emailReport() {
+            const reportHTML = generateReportHTML();
+            const auditorName = document.getElementById('auditorName').value;
+            const location = document.getElementById('reportLocation').textContent;
+            const date = document.getElementById('reportDate').textContent;
             
-            const loadingEl = document.getElementById('loading');
-            const successEl = document.getElementById('successMessage');
+            const subject = `Audit-Bericht - ${auditorName} - ${date}`;
+            const body = `Bitte finden Sie den Audit-Bericht im Anhang.\n\nAuditor: ${auditorName}\n${location}\nDatum: ${date}`;
             
-            loadingEl.innerHTML = '📱 HTML-Bericht wird erstellt...';
-            loadingEl.style.display = 'block';
-            scrollToElement(loadingEl);
+            // Create mailto link
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
-            try {
-                const branchValue = document.getElementById('branchName').value;
-                const competitorValue = document.getElementById('competitorName').value;
-                const visitDate = document.getElementById('visitDate').value;
-                const visitorName = document.getElementById('visitorName').value;
-                const visitTime = document.getElementById('visitTime').value;
-                
-                const documentTitle = competitorValue ? 
-                    'Wettbewerber-Besuch: ' + competitorValue : 
-                    'Filialbesuch Dokumentation';
-                
-                // HTML-Content als Array sammeln und dann joinen
-                const htmlParts = [];
-                
-                htmlParts.push('<!DOCTYPE html>');
-                htmlParts.push('<html lang="de">');
-                htmlParts.push('<head>');
-                htmlParts.push('<meta charset="UTF-8">');
-                htmlParts.push('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-                htmlParts.push('<title>' + documentTitle + '</title>');
-                htmlParts.push('<style>');
-                htmlParts.push('* { margin: 0; padding: 0; box-sizing: border-box; }');
-                htmlParts.push('body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #2c3e50; background: #f8f9fa; padding: 20px; }');
-                htmlParts.push('.report-container { max-width: 800px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); overflow: hidden; }');
-                htmlParts.push('.report-header { background: linear-gradient(45deg, #2c3e50, #34495e); color: white; padding: 30px; text-align: center; }');
-                htmlParts.push('.budni-logo-report { width: 80px; height: 52px; margin: 0 auto 20px; }');
-                htmlParts.push('.report-header h1 { font-size: 2rem; margin-bottom: 10px; font-weight: 600; }');
-                htmlParts.push('.report-header p { opacity: 0.9; font-size: 1.1rem; }');
-                htmlParts.push('.report-meta { background: #f8f9fa; padding: 25px 30px; border-bottom: 3px solid #667eea; }');
-                htmlParts.push('.meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }');
-                htmlParts.push('.meta-item { display: flex; align-items: center; gap: 8px; font-weight: 500; }');
-                htmlParts.push('.meta-icon { font-size: 1.2rem; }');
-                htmlParts.push('.report-content { padding: 30px; }');
-                htmlParts.push('.entry-section { margin-bottom: 40px; padding: 25px; background: #ffffff; border: 2px solid #e1e8ed; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }');
-                htmlParts.push('.entry-header { background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px 20px; margin: -25px -25px 20px -25px; border-radius: 10px 10px 0 0; font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }');
-                htmlParts.push('.entry-text { font-size: 1rem; line-height: 1.7; margin-bottom: 20px; white-space: pre-wrap; }');
-                htmlParts.push('.entry-text.empty { color: #7f8c8d; font-style: italic; }');
-                htmlParts.push('.images-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }');
-                htmlParts.push('.image-item { position: relative; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; }');
-                htmlParts.push('.image-item img { width: 100%; height: 200px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.3s ease; }');
-                htmlParts.push('.image-item img:hover { transform: scale(1.05); }');
-                htmlParts.push('.image-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; padding: 10px; font-size: 0.85rem; text-align: center; }');
-                htmlParts.push('.image-number { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }');
-                htmlParts.push('.report-footer { background: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e1e8ed; color: #7f8c8d; font-size: 0.9rem; }');
-                htmlParts.push('</style>');
-                htmlParts.push('</head>');
-                htmlParts.push('<body>');
-                htmlParts.push('<div class="report-container">');
-                htmlParts.push('<div class="report-header">');
-                htmlParts.push('<h1>' + documentTitle + '</h1>');
-                htmlParts.push('<p>Professioneller Besuchsbericht</p>');
-                htmlParts.push('</div>');
-                htmlParts.push('<div class="report-meta">');
-                htmlParts.push('<div class="meta-grid">');
-                htmlParts.push('<div class="meta-item"><span class="meta-icon">📅</span><span>Datum: ' + visitDate + '</span></div>');
-                htmlParts.push('<div class="meta-item"><span class="meta-icon">⏰</span><span>Uhrzeit: ' + visitTime + '</span></div>');
-                
-                if (competitorValue) {
-                    htmlParts.push('<div class="meta-item"><span class="meta-icon">🏢</span><span>Wettbewerber: ' + competitorValue + '</span></div>');
-                } else {
-                    htmlParts.push('<div class="meta-item"><span class="meta-icon">🏪</span><span>Filiale: ' + branchValue + '</span></div>');
-                }
-                
-                htmlParts.push('<div class="meta-item"><span class="meta-icon">👤</span><span>Besucher: ' + visitorName + '</span></div>');
-                htmlParts.push('</div>');
-                htmlParts.push('</div>');
-                htmlParts.push('<div class="report-content">');
-
-                const entries = document.querySelectorAll('.entry-item');
-                
-                for (let i = 0; i < entries.length; i++) {
-                    const entry = entries[i];
-                    const entryNumber = entry.getAttribute('data-entry');
-                    const text = entry.querySelector('.text-area').value;
-                    
-                    htmlParts.push('<div class="entry-section">');
-                    htmlParts.push('<div class="entry-header">');
-                    htmlParts.push('<span>📝</span>');
-                    htmlParts.push('<span>Punkt ' + (i + 1) + '</span>');
-                    htmlParts.push('</div>');
-                    
-                    if (text) {
-                        htmlParts.push('<div class="entry-text">' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>');
-                    } else {
-                        htmlParts.push('<div class="entry-text empty">(Keine Notizen erfasst)</div>');
-                    }
-                    
-                    if (imageData[entryNumber] && imageData[entryNumber].length > 0) {
-                        htmlParts.push('<div class="images-grid">');
-                        
-                        for (let j = 0; j < imageData[entryNumber].length; j++) {
-                            const image = imageData[entryNumber][j];
-                            const safeName = image.name.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                            
-                            htmlParts.push('<div class="image-item">');
-                            htmlParts.push('<img src="' + image.src + '" alt="' + safeName + '">');
-                            htmlParts.push('<div class="image-number">' + (j + 1) + '</div>');
-                            htmlParts.push('<div class="image-caption">' + safeName + '</div>');
-                            htmlParts.push('</div>');
-                        }
-                        
-                        htmlParts.push('</div>');
-                    }
-                    
-                    htmlParts.push('</div>');
-                }
-                
-                htmlParts.push('</div>');
-                htmlParts.push('<div class="report-footer">');
-                htmlParts.push('<p>Erstellt mit budni Filialbesuch App ' + APP_VERSION + '</p>');
-                htmlParts.push('<div>Generiert am: ' + new Date().toLocaleString('de-DE') + '</div>');
-                htmlParts.push('</div>');
-                htmlParts.push('</div>');
-                htmlParts.push('</body>');
-                htmlParts.push('</html>');
-
-                const htmlContent = htmlParts.join('\n');
-                const blob = new Blob([htmlContent], { type: 'text/html; charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                const date = visitDate || new Date().toISOString().split('T')[0];
-                const safeName = competitorValue ? 
-                    competitorValue.replace(/[^\w\s-]/g, '') : 
-                    (branchValue || 'Unbekannt').substring(0, 30).replace(/[^\w\s-]/g, '');
-                const filePrefix = competitorValue ? 'Wettbewerber' : 'Filialbesuch';
-                a.download = filePrefix + '_' + safeName + '_' + date + '.html';
-                
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                
-                URL.revokeObjectURL(url);
-                
-                successEl.innerHTML = '✅ HTML-Bericht erfolgreich erstellt und heruntergeladen!';
-                successEl.style.display = 'block';
-                scrollToElement(successEl);
-                
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate([100, 50, 100]);
-                }
-                
-                setTimeout(() => {
-                    successEl.style.display = 'none';
-                    successEl.innerHTML = '✅ PDF erfolgreich erstellt und heruntergeladen!';
-                }, 4000);
-                
-            } catch (error) {
-                alert('Fehler beim Erstellen des HTML-Berichts: ' + error.message);
-                console.error('HTML Report Error:', error);
-            } finally {
-                loadingEl.innerHTML = '📄 PDF wird erstellt...';
-                loadingEl.style.display = 'none';
-            }
+            // For a complete solution, you would typically send this to a server
+            alert('E-Mail-Funktion würde hier implementiert. Der Bericht ist bereit zum Versenden.');
+            window.open(mailtoLink);
         }
 
-        function resetForm() {
-            if (confirm('Möchten Sie wirklich alle Eingaben zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
-                // Alle Textfelder zurücksetzen
-                document.getElementById('visitDate').valueAsDate = new Date();
-                document.getElementById('visitTime').value = new Date().toTimeString().slice(0,5);
-                document.getElementById('branchName').value = '';
-                document.getElementById('competitorName').value = '';
-                document.getElementById('visitorName').value = '';
-                
-                // Alle Einträge außer dem ersten löschen
-                const entries = document.querySelectorAll('.entry-item');
-                for (let i = entries.length - 1; i > 0; i--) {
-                    entries[i].remove();
-                }
-                
-                // Ersten Eintrag zurücksetzen
-                const firstEntry = document.querySelector('.entry-item');
-                firstEntry.querySelector('.text-area').value = '';
-                firstEntry.querySelector('.image-preview').innerHTML = '';
-                
-                // Bilderdaten zurücksetzen
-                imageData = {};
-                entryCounter = 1;
-                
-                // Styling zurücksetzen
-                document.getElementById('branchName').style.opacity = '1';
-                document.getElementById('competitorName').style.opacity = '1';
-                clearValidationErrors();
-                updateDeleteButtons();
-                
-                // Scroll zum Anfang
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-                // Feedback
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate([50, 50, 50]);
-                }
-            }
+        function downloadReport() {
+            // Create ZIP with HTML report and images
+            alert('Download-Funktion würde hier implementiert. Der Bericht würde als ZIP-Datei heruntergeladen.');
         }
+
+        function generateReportHTML() {
+            const reportView = document.getElementById('reportView');
+            return `
+                <!DOCTYPE html>
+                <html lang="de">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Audit-Bericht</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; }
+                        .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #4facfe; padding-bottom: 20px; }
+                        .report-section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+                        .report-images { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
+                        .report-image { border-radius: 4px; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 150px; max-height: 400px; }
+                        .report-image img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+                    </style>
+                </head>
+                <body>
+                    ${reportView.innerHTML}
+                </body>
+                </html>
+            `;
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date and time as defaults
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().slice(0, 5);
+            
+            document.getElementById('auditDate').value = today;
+            document.getElementById('auditTime').value = currentTime;
+        });
     </script>
 </body>
 </html>
