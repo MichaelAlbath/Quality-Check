@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Auditing App</title>
+    <title>Filialbesuch Feedback</title>
     <style>
         * {
             margin: 0;
@@ -189,6 +189,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
         }
 
         .thumbnail:hover {
@@ -400,12 +401,91 @@
                 -webkit-user-select: none;
             }
         }
+
+        /* Image Modal/Lightbox */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .image-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 95%;
+            max-height: 95%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .image-modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📋 Auditing App</h1>
+            <h1>🏪 Filialbesuch Feedback</h1>
             <p>Professionelle Geschäfts- und Wettbewerbsanalyse</p>
         </div>
 
@@ -413,7 +493,7 @@
             <!-- Audit Details Section -->
             <div class="location-section">
                 <div class="form-group">
-                    <label for="auditorName">👤 Name des Auditors:</label>
+                    <label for="auditorName">👤 Name des Besuchers:</label>
                     <input type="text" id="auditorName" placeholder="Ihr vollständiger Name">
                 </div>
                 
@@ -467,7 +547,7 @@
                     <div class="question-header">
                         <div class="question-header-left">
                             <span class="question-number">Thema 1</span>
-                            <button type="button" class="camera-icon" onclick="triggerFileInput(1)" title="Fotos hinzufügen">📷</button>
+                            <button type="button" class="camera-icon" onclick="triggerFileInput(1)" title="Fotos von Kamera oder Galerie hinzufügen">📷</button>
                         </div>
                         <button type="button" class="delete-question" onclick="deleteQuestion(1)" style="display: none;">✕ Löschen</button>
                     </div>
@@ -475,7 +555,7 @@
                         <label>📝 Ihre Beobachtung:</label>
                         <textarea placeholder="Beschreiben Sie hier Ihre Beobachtungen, Auffälligkeiten oder Verbesserungsvorschläge..."></textarea>
                     </div>
-                    <input type="file" class="file-input" accept="image/*" multiple capture="environment" onchange="handleFileUpload(1, this)">
+                    <input type="file" class="file-input" accept="image/*" multiple onchange="handleFileUpload(1, this)">
                     <div class="thumbnails"></div>
                 </div>
             </div>
@@ -485,7 +565,7 @@
                     ➕ Weiteres Thema hinzufügen
                 </button>
                 <button type="button" class="btn btn-success" onclick="generateReport()">
-                    📊 Bericht erstellen
+                    📊 Feedback erstellen
                 </button>
             </div>
         </div>
@@ -496,7 +576,7 @@
             </button>
             
             <div class="report-header">
-                <h1 class="report-title">Audit-Bericht</h1>
+                <h1 class="report-title">Besuchsfeedback</h1>
                 <div class="report-meta">
                     <p id="reportDate"></p>
                     <p id="reportLocation"></p>
@@ -513,6 +593,15 @@
                     💾 Als ZIP herunterladen
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <div class="modal-overlay" onclick="closeImageModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeImageModal()">✕</button>
+            <img id="modalImage" class="modal-image" src="" alt="Vergrößerte Ansicht">
         </div>
     </div>
 
@@ -541,7 +630,7 @@
                     <div class="question-header">
                         <div class="question-header-left">
                             <span class="question-number">Thema ${questionCounter}</span>
-                            <button type="button" class="camera-icon" onclick="triggerFileInput(${questionCounter})" title="Fotos hinzufügen">📷</button>
+                            <button type="button" class="camera-icon" onclick="triggerFileInput(${questionCounter})" title="Fotos von Kamera oder Galerie hinzufügen">📷</button>
                         </div>
                         <button type="button" class="delete-question" onclick="deleteQuestion(${questionCounter})">✕ Löschen</button>
                     </div>
@@ -549,7 +638,7 @@
                         <label>📝 Ihre Beobachtung:</label>
                         <textarea placeholder="Beschreiben Sie hier Ihre Beobachtungen, Auffälligkeiten oder Verbesserungsvorschläge..."></textarea>
                     </div>
-                    <input type="file" class="file-input" accept="image/*" multiple capture="environment" onchange="handleFileUpload(${questionCounter}, this)">
+                    <input type="file" class="file-input" accept="image/*" multiple onchange="handleFileUpload(${questionCounter}, this)">
                     <div class="thumbnails"></div>
                 </div>
             `;
@@ -655,7 +744,7 @@
                     const thumbnail = document.createElement('div');
                     thumbnail.className = 'thumbnail';
                     thumbnail.innerHTML = `
-                        <img src="${image.data}" alt="${image.name}">
+                        <img src="${image.data}" alt="${image.name}" onclick="openImageModal('${image.data}', '${image.name}')">
                         <button class="thumbnail-delete" onclick="deleteImage(${questionId}, ${index})">✕</button>
                     `;
                     thumbnailsContainer.appendChild(thumbnail);
@@ -669,6 +758,35 @@
                 updateThumbnails(questionId);
             }
         }
+
+        // Image Modal Functions
+        function openImageModal(imageSrc, imageName) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            modalImage.src = imageSrc;
+            modalImage.alt = imageName;
+            
+            modal.classList.add('show');
+            
+            // Prevent body scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+            
+            // Restore body scrolling
+            document.body.style.overflow = '';
+        }
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
 
         function generateReport() {
             // Collect form data
@@ -739,7 +857,7 @@
 
             document.getElementById('reportDate').textContent = `${formattedDate} um ${formattedTime}`;
             document.getElementById('reportLocation').innerHTML = `
-                <strong>Auditor:</strong> ${auditorName}<br>
+                <strong>Besucher:</strong> ${auditorName}<br>
                 <strong>Standort:</strong> ${location} (${locationType === 'own' ? 'Eigenes Geschäft' : 'Wettbewerb'})
             `;
 
@@ -766,7 +884,7 @@
                     auditData.images[questionId].forEach(image => {
                         const imageDiv = document.createElement('div');
                         imageDiv.className = 'report-image';
-                        imageDiv.innerHTML = `<img src="${image.data}" alt="${image.name}">`;
+                        imageDiv.innerHTML = `<img src="${image.data}" alt="${image.name}" onclick="openImageModal('${image.data}', '${image.name}')" style="cursor: pointer;">`;
                         imagesContainer.appendChild(imageDiv);
                     });
                     
@@ -788,20 +906,20 @@
             const location = document.getElementById('reportLocation').textContent;
             const date = document.getElementById('reportDate').textContent;
             
-            const subject = `Audit-Bericht - ${auditorName} - ${date}`;
-            const body = `Bitte finden Sie den Audit-Bericht im Anhang.\n\nAuditor: ${auditorName}\n${location}\nDatum: ${date}`;
+            const subject = `Besuchsfeedback - ${auditorName} - ${date}`;
+            const body = `Bitte finden Sie das Besuchsfeedback im Anhang.\n\nBesucher: ${auditorName}\n${location}\nDatum: ${date}`;
             
             // Create mailto link
             const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
             // For a complete solution, you would typically send this to a server
-            alert('E-Mail-Funktion würde hier implementiert. Der Bericht ist bereit zum Versenden.');
+            alert('E-Mail-Funktion würde hier implementiert. Das Feedback ist bereit zum Versenden.');
             window.open(mailtoLink);
         }
 
         function downloadReport() {
             // Create ZIP with HTML report and images
-            alert('Download-Funktion würde hier implementiert. Der Bericht würde als ZIP-Datei heruntergeladen.');
+            alert('Download-Funktion würde hier implementiert. Das Besuchsfeedback würde als ZIP-Datei heruntergeladen.');
         }
 
         function generateReportHTML() {
@@ -811,7 +929,7 @@
                 <html lang="de">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Audit-Bericht</title>
+                    <title>Besuchsfeedback</title>
                     <style>
                         body { font-family: Arial, sans-serif; margin: 40px; }
                         .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #4facfe; padding-bottom: 20px; }
