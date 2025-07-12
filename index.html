@@ -188,57 +188,99 @@
         }
 
         .thumbnails {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 6px;
+            margin-top: 15px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 5px;
+            background: #f8fafc;
+            border-radius: 8px;
         }
 
         .thumbnail {
             position: relative;
-            max-width: 150px;
-            min-height: 100px;
-            max-height: 200px;
-            border-radius: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
-            background: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: white;
             cursor: pointer;
+            aspect-ratio: 1;
         }
 
         .thumbnail:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
         }
 
         .thumbnail img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Abwechslungsreiche Größen für wenige Bilder */
+        .thumbnails[data-count="1"] {
+            grid-template-columns: 1fr;
+            max-width: 200px;
+        }
+
+        .thumbnails[data-count="2"] {
+            grid-template-columns: 1fr 1fr;
+            max-width: 200px;
+        }
+
+        .thumbnails[data-count="3"] {
+            grid-template-columns: 2fr 1fr 1fr;
+            max-width: 240px;
+        }
+
+        .thumbnails[data-count="4"] {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 200px;
+        }
+
+        /* Für viele Bilder: kompaktes Grid */
+        .thumbnails[data-count="5"], 
+        .thumbnails[data-count="6"],
+        .thumbnails[data-count="7"],
+        .thumbnails[data-count="8"] {
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 320px;
+        }
+
+        .thumbnails[data-count^="9"],
+        .thumbnails[data-count^="1"] {
+            grid-template-columns: repeat(5, 1fr);
+            max-width: 400px;
         }
 
         .thumbnail-delete {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #ff4757;
+            top: 2px;
+            right: 2px;
+            background: rgba(255, 71, 87, 0.9);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .thumbnail:hover .thumbnail-delete {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .thumbnail-delete:hover {
@@ -361,29 +403,78 @@
 
         .report-images {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow: hidden;
         }
 
         .report-image {
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             background: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 150px;
-            max-height: 400px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .report-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .report-image img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        /* Collage-Effekt: Verschiedene Größen */
+        .report-image:nth-child(4n+1) {
+            grid-row: span 2;
+        }
+
+        .report-image:nth-child(4n+1) img {
+            height: 248px;
+        }
+
+        .report-image:nth-child(7n+1) {
+            grid-column: span 2;
+        }
+
+        /* Alternative Collage-Stile */
+        .collage-style-2 {
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+            gap: 4px !important;
+        }
+
+        .collage-style-2 .report-image img {
+            height: 90px !important;
+        }
+
+        .collage-style-2 .report-image:nth-child(3n+1) {
+            grid-column: span 2;
+        }
+
+        .collage-style-2 .report-image:nth-child(3n+1) img {
+            height: 90px !important;
+        }
+
+        .collage-style-3 {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+        }
+
+        .collage-style-3 .report-image {
+            flex: 0 0 calc(25% - 5px);
+            max-width: calc(25% - 5px);
+        }
+
+        .collage-style-3 .report-image img {
+            height: 100px !important;
         }
 
         .back-to-form {
@@ -412,6 +503,20 @@
             
             .thumbnails {
                 justify-content: center;
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)) !important;
+                max-width: 100% !important;
+                gap: 4px;
+            }
+            
+            .thumbnail {
+                aspect-ratio: 1;
+            }
+            
+            .thumbnail-delete {
+                width: 16px;
+                height: 16px;
+                font-size: 9px;
+                opacity: 1; /* Always visible on mobile */
             }
             
             .actions {
@@ -425,7 +530,12 @@
             }
             
             .report-images {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)) !important;
+                gap: 4px !important;
+            }
+            
+            .report-image img {
+                height: 60px !important;
             }
         }
 
@@ -554,15 +664,14 @@
                     <input type="text" id="auditorName" placeholder="Ihr vollständiger Name (optional)">
                 </div>
                 
-                <div class="form-group">
-                    <label>📅 Datum und Uhrzeit:</label>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 200px;">
-                            <input type="date" id="auditDate">
-                        </div>
-                        <div style="flex: 1; min-width: 150px;">
-                            <input type="time" id="auditTime">
-                        </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="auditDate">📅 Datum:</label>
+                        <input type="date" id="auditDate">
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="auditTime">🕐 Uhrzeit:</label>
+                        <input type="time" id="auditTime">
                     </div>
                 </div>
                 
@@ -744,7 +853,7 @@
                         <option value="Sternschanze / Schulterblatt 135">Sternschanze / Schulterblatt 135</option>
                         <option value="Sternschanze / Schulterblatt 45">Sternschanze / Schulterblatt 45</option>
                         <option value="Tangstedt / Eichholzkoppel 1">Tangstedt / Eichholzkoppel 1</option>
-                        <option value="Timmendorfer STrand / Strandallee 81">Timmendorfer STrand / Strandallee 81</option>
+                        <option value="Timmendorfer Strand / Strandallee 81">Timmendorfer Strand / Strandallee 81</option>
                         <option value="Tonndorf / Ahrensburger Strasse 150-152">Tonndorf / Ahrensburger Strasse 150-152</option>
                         <option value="Tornesch / Ohlenhoff 4">Tornesch / Ohlenhoff 4</option>
                         <option value="Tostedt / Unter den Linden 5">Tostedt / Unter den Linden 5</option>
@@ -845,6 +954,8 @@
                 
                 <p><strong>📧 Server E-Mail</strong> <span class="export-status status-requires">Benötigt Backend</span><br>
                 Automatischer Versand über PHP/Node.js Server</p>
+                
+                <p><strong>🎨 Neue Bild-Collage:</strong> Kompakte Thumbnails & Grid-Darstellung - automatische Anpassung je nach Bildanzahl!</p>
             </div>
 
             <div class="actions">
@@ -857,10 +968,13 @@
                 <button type="button" class="btn" onclick="downloadAsZIP()">
                     💾 Als ZIP herunterladen
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="saveToCloud()">
+                <button type="button" class="btn btn-secondary" onclick="toggleCollageStyle()">
+                    🎨 Collage-Stil wechseln
+                </button>
+                <button type="button" class="btn" onclick="saveToCloud()">
                     ☁️ In Cloud speichern
                 </button>
-                <button type="button" class="btn" onclick="emailViaServer()">
+                <button type="button" class="btn btn-secondary" onclick="emailViaServer()">
                     📧 Per Server versenden
                 </button>
             </div>
@@ -878,6 +992,7 @@
 
     <script>
         let questionCounter = 1;
+        let currentCollageStyle = 1;
         let auditData = {
             questions: {},
             images: {}
@@ -1474,9 +1589,33 @@
                         body { font-family: Arial, sans-serif; margin: 40px; }
                         .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #3f51b5; padding-bottom: 20px; }
                         .report-section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-                        .report-images { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
-                        .report-image { border-radius: 4px; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 150px; max-height: 400px; }
-                        .report-image img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+                        .report-images { 
+                            display: grid; 
+                            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
+                            gap: 6px; 
+                            margin-top: 15px; 
+                            max-height: 250px; 
+                            overflow: hidden; 
+                        }
+                        .report-image { 
+                            border-radius: 6px; 
+                            overflow: hidden; 
+                            box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+                            position: relative;
+                        }
+                        .report-image img { 
+                            width: 100%; 
+                            height: 80px; 
+                            object-fit: cover; 
+                        }
+                        .report-image:nth-child(3n+1) { grid-row: span 2; }
+                        .report-image:nth-child(3n+1) img { height: 166px; }
+                        .report-image:nth-child(5n+1) { grid-column: span 2; }
+                        @media print {
+                            .report-images { max-height: 200px; }
+                            .report-image img { height: 60px; }
+                            .report-image:nth-child(3n+1) img { height: 126px; }
+                        }
                     </style>
                 </head>
                 <body>
