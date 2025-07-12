@@ -139,6 +139,31 @@
             border-radius: 20px;
             font-weight: 600;
             font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .question-number:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+        }
+
+        .question-number:active {
+            transform: translateY(0);
+        }
+
+        .question-number::after {
+            content: "✏️";
+            font-size: 10px;
+            opacity: 0;
+            margin-left: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        .question-number:hover::after {
+            opacity: 0.7;
         }
 
         .camera-icon {
@@ -317,9 +342,14 @@
             color: white;
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+        .btn-reset {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
         }
 
         .actions {
@@ -934,7 +964,7 @@
                 <div class="question-item" data-question="1">
                     <div class="question-header">
                         <div class="question-header-left">
-                            <span class="question-number">Thema 1</span>
+                            <button type="button" class="question-number" onclick="editTitle(1)" title="Klicken zum Bearbeiten des Themen-Titels">Thema 1</button>
                             <button type="button" class="camera-icon" onclick="triggerFileInput(1)" title="Fotos von Kamera oder Galerie hinzufügen">📷</button>
                         </div>
                         <button type="button" class="delete-question" onclick="deleteQuestion(1)" style="display: none;">✕ Löschen</button>
@@ -955,6 +985,9 @@
                 <button type="button" class="btn btn-success" onclick="generateReport()">
                     📊 Feedback erstellen
                 </button>
+                <button type="button" class="btn btn-reset" onclick="resetForm()">
+                    🔄 Neues Feedback
+                </button>
             </div>
         </div>
 
@@ -974,49 +1007,28 @@
             <div id="reportContent"></div>
 
             <div class="export-info">
-                <h4>📤 Export-Optionen zum Testen:</h4>
-                <p><strong>📄 PDF Export</strong> <span class="export-status status-ready">Sofort verfügbar</span><br>
-                Erstellt PDF mit Text (Bilder als Referenz)</p>
+                <h4>📤 Export-Optionen:</h4>
                 
-                <p><strong>📱 iOS/Safari Teilen</strong> <span class="export-status status-ready">Safari/iOS</span><br>
-                Nutzt native Share-Funktion für AirDrop, WhatsApp, Mail etc.</p>
+                <p><strong>📱 Teilen (iOS/Safari)</strong> <span class="export-status status-ready">Safari/iOS optimiert</span><br>
+                Nutzt native Share-Funktion für AirDrop, WhatsApp, Mail etc. - komprimierte HTML-Datei</p>
                 
-                <p><strong>🗜️ HTML komprimiert</strong> <span class="export-status status-ready">NEU!</span><br>
-                Optimierte HTML-Datei (~90% kleiner) - perfekt für E-Mail-Anhänge</p>
+                <p><strong>💾 Als ZIP herunterladen</strong> <span class="export-status status-ready">Vollständig</span><br>
+                Komprimierte HTML-Datei + Original-Bilder in separatem Ordner + Anleitung</p>
                 
-                <p><strong>💾 ZIP (Original+HTML)</strong> <span class="export-status status-ready">Vollständig</span><br>
-                Komprimierte HTML + Original-Bilder + Anleitung</p>
+                <p><strong>🎯 Features:</strong> Seitenverhältnis beibehalten, druckerfreundlich (A4-optimiert), mehrseitig!</p>
                 
-                <p><strong>☁️ Cloud Speichern</strong> <span class="export-status status-demo">Demo-Modus</span><br>
-                Vorbereitet für Dropbox/Google Drive/iCloud Integration</p>
-                
-                <p><strong>📧 Server E-Mail</strong> <span class="export-status status-requires">Benötigt Backend</span><br>
-                Automatischer Versand über PHP/Node.js Server</p>
-                
-                <p><strong>🎯 Bildkomprimierung:</strong> Seitenverhältnis beibehalten, größere Darstellung, druckerfreundlich (A4-optimiert)!</p>
+                <p><strong>🔧 Button-Status:</strong> Alle Export-Buttons resetten sich automatisch - mehrfache Verwendung möglich!</p>
             </div>
 
             <div class="actions">
-                <button type="button" class="btn" onclick="exportAsPDF()">
-                    📄 Als PDF exportieren
-                </button>
                 <button type="button" class="btn btn-secondary" onclick="shareReport()">
                     📱 Teilen (iOS/Safari)
                 </button>
-                <button type="button" class="btn" onclick="downloadCompressedHTML()">
-                    🗜️ HTML komprimiert
+                <button type="button" class="btn" onclick="downloadAsZIP()">
+                    💾 Als ZIP herunterladen
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="downloadAsZIP()">
-                    💾 Als ZIP (Original+HTML)
-                </button>
-                <button type="button" class="btn" onclick="toggleCollageStyle()">
-                    🎨 Collage-Stil wechseln
-                </button>
-                <button type="button" class="btn btn-secondary" onclick="saveToCloud()">
-                    ☁️ In Cloud speichern
-                </button>
-                <button type="button" class="btn" onclick="emailViaServer()">
-                    📧 Per Server versenden
+                <button type="button" class="btn btn-reset" onclick="resetForm()">
+                    🔄 Neues Feedback
                 </button>
             </div>
         </div>
@@ -1036,7 +1048,8 @@
         let currentCollageStyle = 1;
         let auditData = {
             questions: {},
-            images: {}
+            images: {},
+            customTitles: {}
         };
 
         function toggleLocationDetails() {
@@ -1048,6 +1061,20 @@
             competitorSection.style.display = locationType === 'competitor' ? 'block' : 'none';
         }
 
+        function editTitle(questionId) {
+            const currentTitle = auditData.customTitles[questionId] || `Thema ${questionId}`;
+            const newTitle = prompt('Themen-Titel bearbeiten:', currentTitle);
+            
+            if (newTitle !== null && newTitle.trim() !== '') {
+                auditData.customTitles[questionId] = newTitle.trim();
+                
+                // Update the display
+                const questionElement = document.querySelector(`[data-question="${questionId}"]`);
+                const titleElement = questionElement.querySelector('.question-number');
+                titleElement.textContent = newTitle.trim();
+            }
+        }
+
         function addQuestion() {
             questionCounter++;
             const container = document.getElementById('questionsContainer');
@@ -1056,7 +1083,7 @@
                 <div class="question-item" data-question="${questionCounter}">
                     <div class="question-header">
                         <div class="question-header-left">
-                            <span class="question-number">Thema ${questionCounter}</span>
+                            <button type="button" class="question-number" onclick="editTitle(${questionCounter})" title="Klicken zum Bearbeiten des Themen-Titels">Thema ${questionCounter}</button>
                             <button type="button" class="camera-icon" onclick="triggerFileInput(${questionCounter})" title="Fotos von Kamera oder Galerie hinzufügen">📷</button>
                         </div>
                         <button type="button" class="delete-question" onclick="deleteQuestion(${questionCounter})">✕ Löschen</button>
@@ -1086,6 +1113,7 @@
                 questionElement.remove();
                 delete auditData.questions[questionId];
                 delete auditData.images[questionId];
+                delete auditData.customTitles[questionId];
                 updateDeleteButtons();
             }
         }
@@ -1330,7 +1358,9 @@
                 section.className = 'report-section';
                 
                 const title = document.createElement('h3');
-                title.textContent = `Thema ${index + 1}`;
+                // Use custom title if available, otherwise fall back to default
+                const customTitle = auditData.customTitles[questionId];
+                title.textContent = customTitle || `Thema ${index + 1}`;
                 section.appendChild(title);
 
                 const content = document.createElement('div');
@@ -1365,6 +1395,80 @@
             document.getElementById('auditForm').style.display = 'block';
         }
 
+        function resetForm() {
+            // Bestätigung vor dem Reset
+            const confirmed = confirm('🔄 Neues Feedback starten?\n\nAlle eingegebenen Daten gehen verloren. Möchten Sie wirklich ein neues Feedback beginnen?');
+            
+            if (!confirmed) {
+                return;
+            }
+
+            // Alle Daten zurücksetzen
+            auditData = {
+                questions: {},
+                images: {},
+                customTitles: {}
+            };
+            questionCounter = 1;
+
+            // Alle Formularfelder leeren
+            document.getElementById('auditorName').value = '';
+            document.getElementById('locationType').value = '';
+            document.getElementById('ownBusiness').value = '';
+            document.getElementById('competitor').value = '';
+            
+            // Location sections ausblenden
+            document.getElementById('ownBusinessSection').style.display = 'none';
+            document.getElementById('competitorSection').style.display = 'none';
+
+            // Alle zusätzlichen Fragen entfernen (nur die erste behalten)
+            const questionsContainer = document.getElementById('questionsContainer');
+            const allQuestions = questionsContainer.querySelectorAll('.question-item');
+            
+            // Entferne alle außer der ersten Frage
+            for (let i = 1; i < allQuestions.length; i++) {
+                allQuestions[i].remove();
+            }
+
+            // Erste Frage zurücksetzen
+            const firstQuestion = questionsContainer.querySelector('.question-item[data-question="1"]');
+            if (firstQuestion) {
+                // Textarea leeren
+                const textarea = firstQuestion.querySelector('textarea');
+                textarea.value = '';
+                
+                // Titel zurücksetzen
+                const titleElement = firstQuestion.querySelector('.question-number');
+                titleElement.textContent = 'Thema 1';
+                
+                // Thumbnails leeren
+                const thumbnailsContainer = firstQuestion.querySelector('.thumbnails');
+                thumbnailsContainer.innerHTML = '';
+                
+                // File input zurücksetzen
+                const fileInput = firstQuestion.querySelector('.file-input');
+                fileInput.value = '';
+            }
+
+            // Delete-Buttons aktualisieren
+            updateDeleteButtons();
+
+            // Neue Datum/Zeit setzen
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.toTimeString().slice(0, 5);
+            
+            document.getElementById('auditDate').value = today;
+            document.getElementById('auditTime').value = currentTime;
+
+            // Zurück zum Formular wechseln (falls man im Report war)
+            document.getElementById('reportView').style.display = 'none';
+            document.getElementById('auditForm').style.display = 'block';
+
+            // Erfolgsmeldung
+            alert('✅ Neues Feedback gestartet!\n\nAlle Felder wurden zurückgesetzt und sind bereit für die nächste Erfassung.');
+        }
+
         // Export Functions - Multiple Approaches for Testing
 
         // 1. PDF Export using jsPDF
@@ -1396,8 +1500,11 @@
                         yPosition = 30;
                     }
                     
+                    const customTitle = auditData.customTitles[questionId];
+                    const titleText = customTitle || `Thema ${index + 1}`;
+                    
                     pdf.setFontSize(14);
-                    pdf.text(`Thema ${index + 1}`, 20, yPosition);
+                    pdf.text(titleText, 20, yPosition);
                     yPosition += 10;
                     
                     // Add text content
@@ -1437,19 +1544,17 @@
             }
         }
 
-        // 2. Native Share API (iOS/Safari optimized)
+        // 2. Native Share API (iOS/Safari optimized) - Enhanced
         async function shareReport() {
             if (!navigator.share) {
                 alert('Teilen-Funktion ist in diesem Browser nicht verfügbar. Bitte verwenden Sie Safari auf iOS/macOS.');
                 return;
             }
             
+            const button = getButtonElement();
+            const originalText = setButtonLoading(button, '⏳ Komprimiere Bilder...');
+            
             try {
-                // Show loading indicator
-                const originalText = event.target.textContent;
-                event.target.textContent = '⏳ Komprimiere Bilder...';
-                event.target.disabled = true;
-                
                 // Create compressed HTML content
                 const htmlContent = await generateCompressedReportHTML();
                 const blob = new Blob([htmlContent], { type: 'text/html' });
@@ -1462,17 +1567,13 @@
                 // Try to share
                 await shareFile(blob, 'text/html', filename);
                 
-                // Reset button
-                event.target.textContent = originalText;
-                event.target.disabled = false;
-                
             } catch (error) {
                 console.error('Share Error:', error);
-                // Reset button
-                event.target.textContent = originalText;
-                event.target.disabled = false;
                 // Fallback to mailto
                 emailReport();
+            } finally {
+                // Always reset button state
+                resetButton(button, originalText);
             }
         }
 
@@ -1484,7 +1585,7 @@
                     try {
                         await navigator.share({
                             title: 'Budni Besuchsfeedback',
-                            text: 'Besuchsfeedback aus der Budni App',
+                            text: 'Filialbesuch Feedback',
                             files: [file]
                         });
                         return;
@@ -1498,14 +1599,12 @@
             downloadBlob(blob, filename);
         }
 
-        // 3. ZIP Download with compressed HTML + original quality images
+        // 3. ZIP Download with compressed HTML + original quality images - Enhanced
         async function downloadAsZIP() {
+            const button = getButtonElement();
+            const originalText = setButtonLoading(button, '⏳ Erstelle ZIP...');
+            
             try {
-                // Show loading indicator
-                const originalText = event.target.textContent;
-                event.target.textContent = '⏳ Erstelle ZIP...';
-                event.target.disabled = true;
-                
                 const zip = new JSZip();
                 
                 // Add compressed HTML report
@@ -1570,20 +1669,16 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 
                 downloadBlob(zipBlob, filename);
                 
-                // Reset button
-                event.target.textContent = originalText;
-                event.target.disabled = false;
-                
                 // Show success message with file size
                 const fileSizeMB = (zipBlob.size / 1024 / 1024).toFixed(2);
                 alert(`✅ ZIP-Datei erstellt (${fileSizeMB} MB)\n\n📄 HTML: Seitenverhältnis beibehalten, druckerfreundlich\n🖼️ Bilder: Original-Qualität im separaten Ordner\n📝 Anleitung: Erklärt den Inhalt`);
                 
             } catch (error) {
                 console.error('ZIP Error:', error);
-                // Reset button
-                event.target.textContent = originalText;
-                event.target.disabled = false;
                 alert('ZIP-Export ist nicht verfügbar. Bitte verwenden Sie eine andere Export-Option.');
+            } finally {
+                // Always reset button state
+                resetButton(button, originalText);
             }
         }
 
@@ -1616,21 +1711,38 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
         }
 
         function saveToDropbox() {
-            // Generate Dropbox share link
-            alert('Dropbox-Integration würde hier implementiert. Aktuell: Komprimierte HTML-Version wird heruntergeladen.');
+            const button = getButtonElement();
+            const originalText = setButtonLoading(button, '⏳ Bereite Dropbox vor...');
             
-            // Download compressed HTML for manual upload
-            downloadCompressedHTML();
+            try {
+                // Generate Dropbox share link
+                alert('Dropbox-Integration würde hier implementiert. Aktuell: Komprimierte HTML-Version wird heruntergeladen.');
+                
+                // Download compressed HTML for manual upload
+                downloadCompressedHTML();
+            } finally {
+                resetButton(button, originalText);
+            }
         }
 
         function saveToGoogleDrive() {
-            alert('Google Drive-Integration würde hier implementiert. Aktuell: ZIP-Download mit komprimierter HTML und Original-Bildern.');
-            downloadAsZIP();
+            const button = getButtonElement();
+            const originalText = setButtonLoading(button, '⏳ Bereite Google Drive vor...');
+            
+            try {
+                alert('Google Drive-Integration würde hier implementiert. Aktuell: ZIP-Download mit komprimierter HTML und Original-Bildern.');
+                downloadAsZIP();
+            } finally {
+                resetButton(button, originalText);
+            }
         }
 
         async function saveToICloud() {
             // Safari specific - try to trigger iCloud save
             if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+                const button = getButtonElement();
+                const originalText = setButtonLoading(button, '⏳ Bereite iCloud vor...');
+                
                 try {
                     const htmlContent = await generateCompressedReportHTML();
                     const blob = new Blob([htmlContent], { type: 'text/html' });
@@ -1640,6 +1752,8 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 } catch (error) {
                     console.error('iCloud save error:', error);
                     alert('iCloud-Speicherung fehlgeschlagen. Bitte anderen Export verwenden.');
+                } finally {
+                    resetButton(button, originalText);
                 }
             } else {
                 alert('iCloud-Speicherung ist nur in Safari verfügbar.');
@@ -1883,11 +1997,12 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                             cursor: pointer;
                             transition: transform 0.2s ease;
                             background: #f0f0f0;
-                            min-height: 150px;
                             display: flex;
                             align-items: center;
                             justify-content: center;
                             border: 1px solid #e2e8f0;
+                            min-height: 120px;
+                            max-height: none;
                         }
                         
                         .report-image:hover { 
@@ -1897,7 +2012,7 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                         
                         .report-image img { 
                             max-width: 100%; 
-                            max-height: 220px; 
+                            max-height: 300px; 
                             width: auto;
                             height: auto;
                             object-fit: contain; 
@@ -2147,9 +2262,12 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
             
             // Add content sections
             Object.keys(auditData.questions).forEach((questionId, index) => {
+                const customTitle = auditData.customTitles[questionId];
+                const titleText = customTitle || `Thema ${index + 1}`;
+                
                 htmlContent += `
                     <div class="report-section">
-                        <h3>Thema ${index + 1}</h3>
+                        <h3>${titleText}</h3>
                 `;
                 
                 if (auditData.questions[questionId]) {
@@ -2165,7 +2283,7 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                     compressedImages[questionId].forEach((image, imgIndex) => {
                         htmlContent += `
                             <div class="report-image">
-                                <img src="${image.data}" alt="Bild ${imgIndex + 1} zu Thema ${index + 1}" onclick="window.open(this.src, '_blank')" title="Klicken für Vollansicht">
+                                <img src="${image.data}" alt="Bild ${imgIndex + 1} zu ${titleText}" onclick="window.open(this.src, '_blank')" title="Klicken für Vollansicht">
                             </div>
                         `;
                     });
@@ -2306,6 +2424,23 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 </body>
                 </html>
             `;
+        }
+
+        // Helper functions for button state management
+        function getButtonElement() {
+            return event ? event.target : document.activeElement;
+        }
+
+        function setButtonLoading(button, text) {
+            const originalText = button.innerHTML;
+            button.innerHTML = text;
+            button.disabled = true;
+            return originalText;
+        }
+
+        function resetButton(button, originalText) {
+            button.innerHTML = originalText;
+            button.disabled = false;
         }
 
         // Initialize app
