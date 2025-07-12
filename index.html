@@ -532,6 +532,41 @@
             .report-images {
                 grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)) !important;
                 gap: 4px !important;
+                max-width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            
+            /* Mobile: Vereinfachte Layouts für kleine Bildschirme */
+            .report-images[data-image-count="1"] {
+                grid-template-columns: 1fr !important;
+                max-width: 200px !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            .report-images[data-image-count="2"] {
+                grid-template-columns: 1fr 1fr !important;
+                max-width: 300px !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            
+            .report-images[data-image-count="3"],
+            .report-images[data-image-count="4"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                max-width: 300px !important;
+            }
+            
+            /* 5+ Bilder: Kompaktes Grid auf Mobile */
+            .report-images[data-image-count="5"],
+            .report-images[data-image-count="6"],
+            .report-images[data-image-count="7"],
+            .report-images[data-image-count="8"],
+            .report-images[data-image-count^="9"],
+            .report-images[data-image-count^="1"] {
+                grid-template-columns: repeat(3, 1fr) !important;
+                max-width: 100% !important;
             }
             
             .report-image img {
@@ -1307,6 +1342,10 @@
                     const imagesContainer = document.createElement('div');
                     imagesContainer.className = 'report-images';
                     
+                    // Setze data-image-count für konsistentes Layout
+                    const imageCount = auditData.images[questionId].length;
+                    imagesContainer.setAttribute('data-image-count', imageCount.toString());
+                    
                     auditData.images[questionId].forEach(image => {
                         const imageDiv = document.createElement('div');
                         imageDiv.className = 'report-image';
@@ -1797,6 +1836,46 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                             margin-top: 20px; 
                         }
                         
+                        /* Intelligente Layouts basierend auf Bildanzahl */
+                        .report-images[data-image-count="1"] {
+                            grid-template-columns: 1fr;
+                            max-width: 300px;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                        
+                        .report-images[data-image-count="2"] {
+                            grid-template-columns: 1fr 1fr;
+                            max-width: 500px;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                        
+                        .report-images[data-image-count="3"] {
+                            grid-template-columns: 2fr 1fr 1fr;
+                            max-width: 600px;
+                        }
+                        
+                        .report-images[data-image-count="4"] {
+                            grid-template-columns: repeat(2, 1fr);
+                            max-width: 500px;
+                        }
+                        
+                        /* Für 5+ Bilder: Standard Grid */
+                        .report-images[data-image-count="5"],
+                        .report-images[data-image-count="6"],
+                        .report-images[data-image-count="7"],
+                        .report-images[data-image-count="8"] {
+                            grid-template-columns: repeat(3, 1fr);
+                            max-width: 700px;
+                        }
+                        
+                        .report-images[data-image-count^="9"],
+                        .report-images[data-image-count^="1"] {
+                            grid-template-columns: repeat(4, 1fr);
+                            max-width: 900px;
+                        }
+                        
                         .report-image { 
                             border-radius: 8px; 
                             overflow: hidden; 
@@ -1840,14 +1919,47 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                             body { margin: 15px; }
                             .page-container { padding: 15px; }
                             .report-images { 
-                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-                                gap: 10px; 
+                                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important; 
+                                gap: 8px !important;
+                                max-width: 100% !important;
+                                margin-left: 0 !important;
+                                margin-right: 0 !important;
                             }
+                            
+                            /* Mobile: Vereinfachte Layouts */
+                            .report-images[data-image-count="1"] {
+                                grid-template-columns: 1fr !important;
+                                max-width: 200px !important;
+                                margin-left: auto !important;
+                                margin-right: auto !important;
+                            }
+                            
+                            .report-images[data-image-count="2"] {
+                                grid-template-columns: 1fr 1fr !important;
+                                max-width: 280px !important;
+                                margin-left: auto !important;
+                                margin-right: auto !important;
+                            }
+                            
+                            .report-images[data-image-count="3"],
+                            .report-images[data-image-count="4"] {
+                                grid-template-columns: repeat(2, 1fr) !important;
+                            }
+                            
+                            .report-images[data-image-count="5"],
+                            .report-images[data-image-count="6"],
+                            .report-images[data-image-count="7"],
+                            .report-images[data-image-count="8"],
+                            .report-images[data-image-count^="9"],
+                            .report-images[data-image-count^="1"] {
+                                grid-template-columns: repeat(3, 1fr) !important;
+                            }
+                            
                             .report-image { 
-                                min-height: 120px; 
+                                min-height: 100px; 
                             }
                             .report-image img { 
-                                max-height: 160px; 
+                                max-height: 130px; 
                             }
                         }
                         
@@ -1924,6 +2036,46 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                                 break-inside: avoid;
                                 page-break-inside: avoid;
                                 margin-top: 12pt;
+                            }
+                            
+                            /* Druck-Layouts basierend auf Bildanzahl */
+                            .report-images[data-image-count="1"] {
+                                grid-template-columns: 1fr;
+                                max-width: 80mm;
+                                margin-left: auto;
+                                margin-right: auto;
+                            }
+                            
+                            .report-images[data-image-count="2"] {
+                                grid-template-columns: 1fr 1fr;
+                                max-width: 140mm;
+                                margin-left: auto;
+                                margin-right: auto;
+                            }
+                            
+                            .report-images[data-image-count="3"] {
+                                grid-template-columns: repeat(3, 1fr);
+                                max-width: 160mm;
+                            }
+                            
+                            .report-images[data-image-count="4"] {
+                                grid-template-columns: repeat(2, 1fr);
+                                max-width: 140mm;
+                            }
+                            
+                            /* Für mehr Bilder: kompakteres Layout beim Drucken */
+                            .report-images[data-image-count="5"],
+                            .report-images[data-image-count="6"],
+                            .report-images[data-image-count="7"],
+                            .report-images[data-image-count="8"] {
+                                grid-template-columns: repeat(3, 1fr);
+                                max-width: 160mm;
+                            }
+                            
+                            .report-images[data-image-count^="9"],
+                            .report-images[data-image-count^="1"] {
+                                grid-template-columns: repeat(4, 1fr);
+                                max-width: 180mm;
                             }
                             
                             .report-image { 
@@ -2007,7 +2159,9 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 }
                 
                 if (compressedImages[questionId] && compressedImages[questionId].length > 0) {
-                    htmlContent += '<div class="report-images">';
+                    const imageCount = compressedImages[questionId].length;
+                    
+                    htmlContent += `<div class="report-images" data-image-count="${imageCount}">`;
                     compressedImages[questionId].forEach((image, imgIndex) => {
                         htmlContent += `
                             <div class="report-image">
