@@ -189,10 +189,12 @@
 
         .thumbnails {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 6px;
             margin-top: 15px;
-            padding: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 5px;
             background: #f8fafc;
             border-radius: 8px;
         }
@@ -205,24 +207,55 @@
             transition: all 0.3s ease;
             background: white;
             cursor: pointer;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            aspect-ratio: 1;
         }
 
         .thumbnail:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 10;
         }
 
         .thumbnail img {
-            max-width: 100%;
-            max-height: 120px;
-            width: auto;
-            height: auto;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Abwechslungsreiche Größen für wenige Bilder */
+        .thumbnails[data-count="1"] {
+            grid-template-columns: 1fr;
+            max-width: 200px;
+        }
+
+        .thumbnails[data-count="2"] {
+            grid-template-columns: 1fr 1fr;
+            max-width: 200px;
+        }
+
+        .thumbnails[data-count="3"] {
+            grid-template-columns: 2fr 1fr 1fr;
+            max-width: 240px;
+        }
+
+        .thumbnails[data-count="4"] {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 200px;
+        }
+
+        /* Für viele Bilder: kompaktes Grid */
+        .thumbnails[data-count="5"], 
+        .thumbnails[data-count="6"],
+        .thumbnails[data-count="7"],
+        .thumbnails[data-count="8"] {
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 320px;
+        }
+
+        .thumbnails[data-count^="9"],
+        .thumbnails[data-count^="1"] {
+            grid-template-columns: repeat(5, 1fr);
+            max-width: 400px;
         }
 
         .thumbnail-delete {
@@ -469,16 +502,14 @@
             }
             
             .thumbnails {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
+                justify-content: center;
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)) !important;
+                max-width: 100% !important;
+                gap: 4px;
             }
             
             .thumbnail {
-                min-height: 60px;
-            }
-            
-            .thumbnail img {
-                max-height: 100px;
+                aspect-ratio: 1;
             }
             
             .thumbnail-delete {
@@ -499,22 +530,12 @@
             }
             
             .report-images {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)) !important;
+                gap: 4px !important;
             }
             
             .report-image img {
-                max-height: 140px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .thumbnails {
-                grid-template-columns: 1fr;
-            }
-            
-            .report-images {
-                grid-template-columns: 1fr;
+                height: 60px !important;
             }
         }
 
@@ -937,7 +958,7 @@
                 <p><strong>📧 Server E-Mail</strong> <span class="export-status status-requires">Benötigt Backend</span><br>
                 Automatischer Versand über PHP/Node.js Server</p>
                 
-                <p><strong>🖼️ Bildlayout:</strong> Immer 3 Bilder nebeneinander, vollständige Darstellung ohne Beschnitt!</p>
+                <p><strong>🎯 Bildkomprimierung:</strong> Seitenverhältnis beibehalten, größere Darstellung, druckerfreundlich (A4-optimiert)!</p>
             </div>
 
             <div class="actions">
@@ -953,10 +974,13 @@
                 <button type="button" class="btn btn-secondary" onclick="downloadAsZIP()">
                     💾 Als ZIP (Original+HTML)
                 </button>
-                <button type="button" class="btn" onclick="saveToCloud()">
+                <button type="button" class="btn" onclick="toggleCollageStyle()">
+                    🎨 Collage-Stil wechseln
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="saveToCloud()">
                     ☁️ In Cloud speichern
                 </button>
-                <button type="button" class="btn btn-secondary" onclick="emailViaServer()">
+                <button type="button" class="btn" onclick="emailViaServer()">
                     📧 Per Server versenden
                 </button>
             </div>
@@ -974,6 +998,7 @@
 
     <script>
         let questionCounter = 1;
+        let currentCollageStyle = 1;
         let auditData = {
             questions: {},
             images: {}
@@ -1687,6 +1712,7 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
             const auditorName = document.getElementById('auditorName').value.trim() || 'Anonym';
             const date = document.getElementById('reportDate').textContent;
             const location = document.getElementById('reportLocation').innerHTML;
+            const currentDate = new Date().toLocaleDateString('de-DE');
             
             let htmlContent = `
                 <!DOCTYPE html>
@@ -1695,54 +1721,82 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                     <meta charset="UTF-8">
                     <title>Besuchsfeedback</title>
                     <style>
+                        /* Grundlegendes Layout */
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                        }
+                        
                         body { 
                             font-family: Arial, sans-serif; 
-                            margin: 40px; 
-                            line-height: 1.6; 
+                            margin: 20px; 
+                            line-height: 1.5; 
                             color: #333;
+                            background: #fff;
                         }
+                        
+                        .page-container {
+                            max-width: 210mm;
+                            margin: 0 auto;
+                            background: white;
+                            padding: 20px;
+                        }
+                        
                         .report-header { 
                             text-align: center; 
-                            margin-bottom: 40px; 
-                            border-bottom: 2px solid #3f51b5; 
+                            margin-bottom: 30px; 
+                            border-bottom: 3px solid #3f51b5; 
                             padding-bottom: 20px; 
                         }
+                        
                         .report-title { 
-                            font-size: 28px; 
+                            font-size: 24px; 
                             font-weight: bold; 
                             color: #1e293b; 
                             margin-bottom: 10px; 
                         }
+                        
                         .report-meta { 
                             color: #64748b; 
                             font-size: 14px; 
+                            line-height: 1.4;
                         }
+                        
                         .report-section { 
-                            margin-bottom: 30px; 
+                            margin-bottom: 35px; 
                             padding: 20px; 
                             border: 1px solid #ddd; 
                             border-radius: 8px; 
                             background: #f8fafc; 
                             break-inside: avoid;
+                            page-break-inside: avoid;
                         }
+                        
                         .report-section h3 { 
                             font-size: 18px; 
                             font-weight: 600; 
                             color: #1e293b; 
                             margin-bottom: 15px; 
+                            border-bottom: 1px solid #e2e8f0;
+                            padding-bottom: 8px;
                         }
+                        
                         .report-content { 
                             font-size: 14px; 
                             color: #334155; 
-                            margin-bottom: 15px; 
+                            margin-bottom: 20px; 
                             white-space: pre-wrap; 
+                            min-height: 20px;
                         }
+                        
                         .report-images { 
                             display: grid; 
-                            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-                            gap: 12px; 
+                            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+                            gap: 15px; 
                             margin-top: 20px; 
                         }
+                        
                         .report-image { 
                             border-radius: 8px; 
                             overflow: hidden; 
@@ -1750,37 +1804,44 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                             cursor: pointer;
                             transition: transform 0.2s ease;
                             background: #f0f0f0;
-                            min-height: 140px;
+                            min-height: 150px;
                             display: flex;
                             align-items: center;
                             justify-content: center;
+                            border: 1px solid #e2e8f0;
                         }
+                        
                         .report-image:hover { 
                             transform: scale(1.02); 
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
                         }
+                        
                         .report-image img { 
                             max-width: 100%; 
-                            max-height: 200px; 
+                            max-height: 220px; 
                             width: auto;
                             height: auto;
                             object-fit: contain; 
                             display: block;
                         }
+                        
                         .file-info { 
-                            margin-top: 20px; 
-                            padding: 10px; 
+                            margin-top: 30px; 
+                            padding: 15px; 
                             background: #e3f2fd; 
-                            border-radius: 6px; 
+                            border-radius: 8px; 
                             font-size: 12px; 
                             color: #1565c0; 
+                            border-left: 4px solid #2196f3;
                         }
                         
                         /* Mobile Responsive */
                         @media (max-width: 768px) {
-                            body { margin: 20px; }
+                            body { margin: 15px; }
+                            .page-container { padding: 15px; }
                             .report-images { 
-                                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-                                gap: 8px; 
+                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+                                gap: 10px; 
                             }
                             .report-image { 
                                 min-height: 120px; 
@@ -1790,82 +1851,146 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                             }
                         }
                         
-                        /* Print Styles - Druckerfreundlich */
+                        /* DRUCK-OPTIMIERUNG für mehrseitige Dokumente */
                         @media print {
-                            body { 
-                                margin: 20px; 
-                                font-size: 12px;
-                                color: #000;
+                            @page {
+                                size: A4;
+                                margin: 20mm 15mm 25mm 15mm;
                             }
+                            
+                            body { 
+                                margin: 0; 
+                                font-size: 11pt;
+                                color: #000;
+                                line-height: 1.4;
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                            
+                            .page-container {
+                                max-width: none;
+                                margin: 0;
+                                padding: 0;
+                            }
+                            
                             .report-header {
                                 border-bottom: 2px solid #000;
-                                margin-bottom: 30px;
+                                margin-bottom: 25mm;
+                                page-break-after: avoid;
                             }
+                            
                             .report-title {
-                                font-size: 22px;
+                                font-size: 20pt;
                                 color: #000;
+                                margin-bottom: 8pt;
                             }
+                            
                             .report-meta {
                                 color: #333;
+                                font-size: 10pt;
                             }
+                            
                             .report-section { 
-                                margin-bottom: 25px; 
-                                padding: 15px; 
-                                border: 1px solid #333; 
+                                margin-bottom: 20mm; 
+                                padding: 12pt; 
+                                border: 1pt solid #333; 
                                 background: #fff; 
                                 break-inside: avoid;
                                 page-break-inside: avoid;
+                                page-break-after: auto;
+                                orphans: 3;
+                                widows: 3;
                             }
+                            
                             .report-section h3 {
                                 color: #000;
-                                font-size: 16px;
+                                font-size: 14pt;
+                                margin-bottom: 10pt;
+                                border-bottom: 1pt solid #666;
+                                padding-bottom: 4pt;
+                                page-break-after: avoid;
                             }
+                            
                             .report-content {
                                 color: #000;
-                                font-size: 11px;
+                                font-size: 10pt;
+                                margin-bottom: 12pt;
+                                page-break-inside: avoid;
                             }
+                            
                             .report-images { 
-                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-                                gap: 8px; 
+                                grid-template-columns: repeat(auto-fit, minmax(60mm, 1fr)); 
+                                gap: 8pt; 
                                 break-inside: avoid;
+                                page-break-inside: avoid;
+                                margin-top: 12pt;
                             }
+                            
                             .report-image { 
-                                min-height: 120px;
-                                border: 1px solid #ccc;
+                                min-height: 40mm;
+                                border: 1pt solid #666;
                                 box-shadow: none;
                                 background: #fff;
+                                page-break-inside: avoid;
                             }
+                            
                             .report-image:hover {
                                 transform: none;
+                                box-shadow: none;
                             }
+                            
                             .report-image img { 
-                                max-height: 150px;
+                                max-height: 50mm;
                                 object-fit: contain;
                             }
+                            
                             .file-info {
-                                display: none; /* Verstecke Info-Box beim Drucken */
+                                display: none; /* Info-Box beim Drucken ausblenden */
                             }
                             
                             /* Seitenumbrüche optimieren */
-                            .report-section {
+                            h1, h2, h3, h4, h5, h6 {
+                                page-break-after: avoid;
                                 orphans: 3;
                                 widows: 3;
                             }
-                            h3 {
-                                orphans: 3;
-                                widows: 3;
+                            
+                            /* Verhindere Seitenumbrüche in kritischen Bereichen */
+                            .report-header,
+                            .report-section {
+                                page-break-inside: avoid;
+                            }
+                            
+                            /* Für lange Abschnitte: erlaubte Umbrüche nach bestimmten Elementen */
+                            .report-content + .report-images {
+                                page-break-before: auto;
+                            }
+                        }
+                        
+                        /* Bessere Druckunterstützung für große Reports */
+                        @media print {
+                            .report-section:nth-child(odd) {
+                                page-break-before: auto;
+                            }
+                            
+                            /* Verhindere verwaiste Zeilen */
+                            p, div {
+                                orphans: 2;
+                                widows: 2;
                             }
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="report-header">
-                        <h1 class="report-title">Budni Besuchsfeedback</h1>
-                        <div class="report-meta">
-                            <p>${date}</p>
-                            <div>${location}</div>
+                    <div class="page-container">
+                        <div class="report-header">
+                            <h1 class="report-title">Budni Besuchsfeedback</h1>
+                            <div class="report-meta">
+                                <p><strong>${date}</strong></p>
+                                <div>${location}</div>
+                                <p style="margin-top: 8px; font-size: 12px;">Erstellt am: ${currentDate}</p>
+                            </div>
                         </div>
-                    </div>
             `;
             
             // Add content sections
@@ -1877,14 +2002,16 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 
                 if (auditData.questions[questionId]) {
                     htmlContent += `<div class="report-content">${auditData.questions[questionId]}</div>`;
+                } else {
+                    htmlContent += `<div class="report-content"><em>Nur Bildmaterial</em></div>`;
                 }
                 
                 if (compressedImages[questionId] && compressedImages[questionId].length > 0) {
                     htmlContent += '<div class="report-images">';
-                    compressedImages[questionId].forEach(image => {
+                    compressedImages[questionId].forEach((image, imgIndex) => {
                         htmlContent += `
                             <div class="report-image">
-                                <img src="${image.data}" alt="${image.name}" onclick="window.open(this.src, '_blank')" title="Klicken für Vollansicht">
+                                <img src="${image.data}" alt="Bild ${imgIndex + 1} zu Thema ${index + 1}" onclick="window.open(this.src, '_blank')" title="Klicken für Vollansicht">
                             </div>
                         `;
                     });
@@ -1896,15 +2023,16 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
             
             // Calculate estimated file size
             const estimatedSize = Math.round(htmlContent.length / 1024);
-            htmlContent += `
-                <div class="file-info">
-                    📄 Komprimierte Version für optimale Dateigröße (~${estimatedSize} KB)<br>
-                    🖼️ Bilder: Seitenverhältnis beibehalten, 400px komprimiert (60% Qualität)<br>
-                    🖨️ Druckerfreundlich: Optimiert für A4-Ausdruck mit Seitenumbruch-Kontrolle
-                </div>
-            `;
+            const pageCount = Math.max(1, Math.ceil(Object.keys(auditData.questions).length / 3));
             
             htmlContent += `
+                <div class="file-info">
+                    📄 <strong>Druckoptimierter Bericht</strong> (~${estimatedSize} KB)<br>
+                    🖼️ Bilder: Seitenverhältnis beibehalten, 400px komprimiert (60% Qualität)<br>
+                    🖨️ <strong>Mehrseitig druckbar:</strong> A4-Format, optimierte Seitenumbrüche (~${pageCount} Seiten)<br>
+                    📋 Verwendung: Datei im Browser öffnen → Drucken (Strg+P) → A4 auswählen
+                </div>
+                    </div>
                 </body>
                 </html>
             `;
@@ -1943,7 +2071,7 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                         }
                         .report-images { 
                             display: grid; 
-                            grid-template-columns: repeat(3, 1fr); 
+                            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
                             gap: 12px; 
                             margin-top: 20px; 
                         }
@@ -1973,17 +2101,11 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                         @media (max-width: 768px) {
                             body { margin: 20px; }
                             .report-images { 
-                                grid-template-columns: repeat(2, 1fr); 
+                                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
                                 gap: 8px; 
                             }
                             .report-image { min-height: 120px; }
                             .report-image img { max-height: 160px; }
-                        }
-                        
-                        @media (max-width: 480px) {
-                            .report-images { 
-                                grid-template-columns: 1fr; 
-                            }
                         }
                         
                         /* Print - Druckerfreundlich */
@@ -2005,7 +2127,7 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                                 page-break-inside: avoid;
                             }
                             .report-images { 
-                                grid-template-columns: repeat(3, 1fr); 
+                                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
                                 gap: 8px; 
                                 break-inside: avoid;
                             }
