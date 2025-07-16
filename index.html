@@ -552,12 +552,6 @@
             background: linear-gradient(90deg, transparent, #e1e8ed, transparent);
         }
 
-        .add-rating-section {
-            text-align: center;
-            margin: 30px 0;
-            padding: 20px 0;
-        }
-
         @media (max-width: 768px) {
             .rating-item {
                 padding: 15px;
@@ -1418,13 +1412,6 @@
                         <div class="rating-value" id="rating-displayzustand">Noch nicht bewertet</div>
                     </div>
                 </div>
-
-                <!-- Add Rating Button -->
-                <div class="add-rating-section">
-                    <button type="button" class="btn btn-secondary" onclick="addRating()">
-                        ⭐ Weitere Bewertung hinzufügen
-                    </button>
-                </div>
             </div>
 
             <div class="actions">
@@ -1491,7 +1478,6 @@
 
     <script>
         let questionCounter = 1;
-        let ratingCounter = 12; // Start after predefined ratings
         let currentCollageStyle = 1;
         let auditData = {
             questions: {},
@@ -1512,134 +1498,16 @@
 
         function editTitle(questionId) {
             const currentTitle = auditData.customTitles[questionId] || `Thema ${questionId}`;
+            const newTitle = prompt('Themen-Titel bearbeiten:', currentTitle);
             
-            // Rating categories for selection
-            const ratingCategories = [
-                'Außenbereich',
-                'Aktionszone',
-                'Dekorative Kosmetik', 
-                'Regalbild',
-                'Mopro',
-                'Marketingmittel',
-                'Sauberkeit',
-                'Ordnung Kasse',
-                'Pausenraum',
-                'Lager',
-                'Packtische',
-                'Displayzustand'
-            ];
-
-            // Create selection dialog
-            let selectionHTML = `
-                <div style="font-family: Arial, sans-serif; line-height: 1.5;">
-                    <h3 style="margin: 0 0 15px 0; color: #3f51b5;">Themen-Titel wählen</h3>
-                    <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Wählen Sie eine Kategorie oder geben Sie einen eigenen Namen ein:</p>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <strong>📋 Vordefinierte Kategorien:</strong><br>
-                        ${ratingCategories.map((category, index) => 
-                            `<div style="margin: 5px 0;">
-                                <input type="radio" id="cat_${index}" name="themeCategory" value="${category}" style="margin-right: 8px;">
-                                <label for="cat_${index}" style="cursor: pointer;">${category}</label>
-                            </div>`
-                        ).join('')}
-                        
-                        <div style="margin: 10px 0 5px 0;">
-                            <input type="radio" id="cat_custom" name="themeCategory" value="custom" style="margin-right: 8px;" checked>
-                            <label for="cat_custom" style="cursor: pointer; font-weight: 600;">✏️ Benutzerdefiniert:</label>
-                        </div>
-                        <input type="text" id="customTitle" value="${currentTitle}" style="width: 100%; padding: 8px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 14px; margin-top: 5px;">
-                    </div>
-                    
-                    <div style="text-align: right; margin-top: 20px;">
-                        <button onclick="document.getElementById('titleDialog').style.display='none'" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-right: 10px; cursor: pointer;">Abbrechen</button>
-                        <button onclick="applyTitleSelection(${questionId})" style="background: #3f51b5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Übernehmen</button>
-                    </div>
-                </div>
-            `;
-
-            // Create and show dialog
-            let dialog = document.getElementById('titleDialog');
-            if (!dialog) {
-                dialog = document.createElement('div');
-                dialog.id = 'titleDialog';
-                dialog.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 10000;
-                    backdrop-filter: blur(3px);
-                `;
-                document.body.appendChild(dialog);
-            }
-
-            dialog.innerHTML = `
-                <div style="background: white; border-radius: 15px; padding: 25px; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
-                    ${selectionHTML}
-                </div>
-            `;
-            
-            dialog.style.display = 'flex';
-
-            // Add event listeners for radio buttons
-            ratingCategories.forEach((category, index) => {
-                const radio = document.getElementById(`cat_${index}`);
-                if (radio) {
-                    radio.addEventListener('change', function() {
-                        if (this.checked) {
-                            // Set title and apply immediately
-                            auditData.customTitles[questionId] = category;
-                            
-                            // Update the display
-                            const questionElement = document.querySelector(`[data-question="${questionId}"]`);
-                            const titleElement = questionElement.querySelector('.question-number');
-                            titleElement.textContent = category;
-                            
-                            // Close dialog immediately
-                            dialog.style.display = 'none';
-                        }
-                    });
-                }
-            });
-
-            // Custom radio button behavior
-            const customRadio = document.getElementById('cat_custom');
-            const customInput = document.getElementById('customTitle');
-            if (customInput) {
-                customInput.addEventListener('focus', function() {
-                    if (customRadio) customRadio.checked = true;
-                });
-            }
-
-            // Close dialog on outside click
-            dialog.addEventListener('click', function(e) {
-                if (e.target === dialog) {
-                    dialog.style.display = 'none';
-                }
-            });
-        }
-
-        function applyTitleSelection(questionId) {
-            const customTitle = document.getElementById('customTitle');
-            const newTitle = customTitle ? customTitle.value.trim() : '';
-            
-            if (newTitle !== '') {
-                auditData.customTitles[questionId] = newTitle;
+            if (newTitle !== null && newTitle.trim() !== '') {
+                auditData.customTitles[questionId] = newTitle.trim();
                 
                 // Update the display
                 const questionElement = document.querySelector(`[data-question="${questionId}"]`);
                 const titleElement = questionElement.querySelector('.question-number');
-                titleElement.textContent = newTitle;
+                titleElement.textContent = newTitle.trim();
             }
-            
-            // Close dialog
-            document.getElementById('titleDialog').style.display = 'none';
         }
 
         function editRatingTitle(ratingId) {
@@ -1658,166 +1526,17 @@
                 'displayzustand': 'Displayzustand'
             };
             
-            const currentTitle = auditData.customRatingTitles[ratingId] || defaultTitles[ratingId] || `Neue Bewertung`;
+            const currentTitle = auditData.customRatingTitles[ratingId] || defaultTitles[ratingId];
+            const newTitle = prompt('Bewertungs-Titel bearbeiten:', currentTitle);
             
-            // For custom ratings, show selection dialog like for themes
-            if (ratingId.startsWith('custom-')) {
-                showRatingTitleDialog(ratingId, currentTitle);
-            } else {
-                // For predefined ratings, simple prompt
-                const newTitle = prompt('Bewertungs-Titel bearbeiten:', currentTitle);
-                
-                if (newTitle !== null && newTitle.trim() !== '') {
-                    auditData.customRatingTitles[ratingId] = newTitle.trim();
-                    
-                    // Update the display
-                    const ratingElement = document.querySelector(`[data-rating="${ratingId}"]`);
-                    const titleElement = ratingElement.querySelector('.rating-label');
-                    titleElement.textContent = newTitle.trim();
-                }
-            }
-        }
-
-        function showRatingTitleDialog(ratingId, currentTitle) {
-            const ratingCategories = [
-                'Außenbereich',
-                'Aktionszone', 
-                'Dekorative Kosmetik',
-                'Regalbild',
-                'Mopro',
-                'Marketingmittel',
-                'Sauberkeit',
-                'Ordnung Kasse',
-                'Pausenraum',
-                'Lager',
-                'Packtische',
-                'Displayzustand',
-                'Personal & Service',
-                'Warenpräsentation',
-                'Kundenbetreuung',
-                'Preisauszeichnung'
-            ];
-
-            let selectionHTML = `
-                <div style="font-family: Arial, sans-serif; line-height: 1.5;">
-                    <h3 style="margin: 0 0 15px 0; color: #3f51b5;">Bewertungs-Titel wählen</h3>
-                    <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">Wählen Sie eine Kategorie oder geben Sie einen eigenen Namen ein:</p>
-                    
-                    <div style="margin-bottom: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #e1e8ed; border-radius: 6px; padding: 10px;">
-                        <strong>⭐ Bewertungskategorien:</strong><br>
-                        ${ratingCategories.map((category, index) => 
-                            `<div style="margin: 5px 0;">
-                                <input type="radio" id="rcat_${index}" name="ratingCategory" value="${category}" style="margin-right: 8px;">
-                                <label for="rcat_${index}" style="cursor: pointer;">${category}</label>
-                            </div>`
-                        ).join('')}
-                        
-                        <div style="margin: 10px 0 5px 0;">
-                            <input type="radio" id="rcat_custom" name="ratingCategory" value="custom" style="margin-right: 8px;" checked>
-                            <label for="rcat_custom" style="cursor: pointer; font-weight: 600;">✏️ Benutzerdefiniert:</label>
-                        </div>
-                    </div>
-                    <input type="text" id="customRatingTitle" value="${currentTitle}" style="width: 100%; padding: 8px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 14px; margin-top: 5px;">
-                    
-                    <div style="text-align: right; margin-top: 20px;">
-                        <button onclick="document.getElementById('ratingTitleDialog').style.display='none'" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-right: 10px; cursor: pointer;">Abbrechen</button>
-                        <button onclick="applyRatingTitleSelection('${ratingId}')" style="background: #3f51b5; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Übernehmen</button>
-                    </div>
-                </div>
-            `;
-
-            let dialog = document.getElementById('ratingTitleDialog');
-            if (!dialog) {
-                dialog = document.createElement('div');
-                dialog.id = 'ratingTitleDialog';
-                dialog.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 10000;
-                    backdrop-filter: blur(3px);
-                `;
-                document.body.appendChild(dialog);
-            }
-
-            dialog.innerHTML = `
-                <div style="background: white; border-radius: 15px; padding: 25px; max-width: 450px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
-                    ${selectionHTML}
-                </div>
-            `;
-            
-            dialog.style.display = 'flex';
-
-            // Add event listeners
-            ratingCategories.forEach((category, index) => {
-                const radio = document.getElementById(`rcat_${index}`);
-                if (radio) {
-                    radio.addEventListener('change', function() {
-                        if (this.checked) {
-                            // Set title and apply immediately
-                            auditData.customRatingTitles[ratingId] = category;
-                            
-                            // Update the display
-                            const ratingElement = document.querySelector(`[data-rating="${ratingId}"]`);
-                            const titleElement = ratingElement.querySelector('.rating-label');
-                            titleElement.textContent = category;
-                            
-                            // Update description for custom ratings
-                            if (ratingId.startsWith('custom-')) {
-                                const descElement = ratingElement.querySelector('.rating-description');
-                                if (descElement) {
-                                    descElement.textContent = 'Benutzerdefinierte Bewertung';
-                                }
-                            }
-                            
-                            // Close dialog immediately
-                            dialog.style.display = 'none';
-                        }
-                    });
-                }
-            });
-
-            const customRadio = document.getElementById('rcat_custom');
-            const customInput = document.getElementById('customRatingTitle');
-            if (customInput) {
-                customInput.addEventListener('focus', function() {
-                    if (customRadio) customRadio.checked = true;
-                });
-            }
-
-            dialog.addEventListener('click', function(e) {
-                if (e.target === dialog) {
-                    dialog.style.display = 'none';
-                }
-            });
-        }
-
-        function applyRatingTitleSelection(ratingId) {
-            const customTitle = document.getElementById('customRatingTitle');
-            const newTitle = customTitle ? customTitle.value.trim() : '';
-            
-            if (newTitle !== '') {
-                auditData.customRatingTitles[ratingId] = newTitle;
+            if (newTitle !== null && newTitle.trim() !== '') {
+                auditData.customRatingTitles[ratingId] = newTitle.trim();
                 
                 // Update the display
                 const ratingElement = document.querySelector(`[data-rating="${ratingId}"]`);
                 const titleElement = ratingElement.querySelector('.rating-label');
-                titleElement.textContent = newTitle;
-                
-                // Also update description to something generic for custom ratings
-                const descElement = ratingElement.querySelector('.rating-description');
-                if (descElement && ratingId.startsWith('custom-')) {
-                    descElement.textContent = 'Benutzerdefinierte Bewertung';
-                }
+                titleElement.textContent = newTitle.trim();
             }
-            
-            document.getElementById('ratingTitleDialog').style.display = 'none';
         }
 
         // Rating System Functions
@@ -1858,40 +1577,6 @@
                 delete auditData.ratings[ratingId];
                 delete auditData.customRatingTitles[ratingId];
             }
-        }
-
-        function addRating() {
-            ratingCounter++;
-            const ratingId = `custom-${ratingCounter}`;
-            const container = document.getElementById('ratingsContainer');
-            
-            const ratingHTML = `
-                <div class="rating-item" data-rating="${ratingId}">
-                    <div class="rating-header">
-                        <div>
-                            <div class="rating-label" onclick="editRatingTitle('${ratingId}')" title="Klicken zum Bearbeiten">Neue Bewertung ${ratingCounter}</div>
-                            <div class="rating-description">Klicken zum Bearbeiten</div>
-                        </div>
-                        <button type="button" class="rating-delete" onclick="deleteRating('${ratingId}')">✕ Entfernen</button>
-                    </div>
-                    <div class="star-rating" data-rating-id="${ratingId}">
-                        <span class="star" data-value="1" onclick="setRating('${ratingId}', 1)">☆</span>
-                        <span class="star" data-value="2" onclick="setRating('${ratingId}', 2)">☆</span>
-                        <span class="star" data-value="3" onclick="setRating('${ratingId}', 3)">☆</span>
-                        <span class="star" data-value="4" onclick="setRating('${ratingId}', 4)">☆</span>
-                        <span class="star" data-value="5" onclick="setRating('${ratingId}', 5)">☆</span>
-                    </div>
-                    <div class="rating-value" id="rating-${ratingId}">Noch nicht bewertet</div>
-                </div>
-            `;
-            
-            // Insert before the add button
-            const addRatingSection = document.querySelector('.add-rating-section');
-            addRatingSection.insertAdjacentHTML('beforebegin', ratingHTML);
-            
-            // Scroll to new rating
-            const newRating = container.lastElementChild.previousElementSibling;
-            newRating.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function addQuestion() {
@@ -2287,54 +1972,6 @@
                 ratingsHTML += '</div>';
                 ratingsContent.innerHTML = ratingsHTML;
                 ratingsSection.appendChild(ratingsContent);
-
-                // Add overall score with tachos
-                const totalRatings = Object.keys(auditData.ratings).length;
-                const sumRatings = Object.values(auditData.ratings).reduce((sum, rating) => sum + rating, 0);
-                const averageRating = (sumRatings / totalRatings).toFixed(1);
-                const percentageScore = ((averageRating / 5) * 100).toFixed(0);
-
-                const scoreColor = averageRating >= 4 ? '#28a745' : averageRating >= 3 ? '#ffc107' : '#dc3545';
-                const scoreText = averageRating >= 4 ? 'Sehr gut' : averageRating >= 3 ? 'Befriedigend' : 'Verbesserungsbedarf';
-
-                // Tacho SVGs
-                const createTacho = (value, maxValue, color, label, unit) => {
-                    const percentage = (value / maxValue) * 100;
-                    const strokeDasharray = `${percentage * 2.51} 251.2`; // Circumference of circle with radius 40
-                    
-                    return `
-                        <div style="text-align: center; background: white; padding: 20px; border-radius: 12px; border: 2px solid ${color}; min-width: 140px;">
-                            <svg width="100" height="60" viewBox="0 0 100 60" style="margin-bottom: 10px;">
-                                <!-- Background arc -->
-                                <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="#e2e8f0" stroke-width="8" fill="none" stroke-linecap="round"/>
-                                <!-- Progress arc -->
-                                <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="${color}" stroke-width="8" fill="none" stroke-linecap="round"
-                                      style="stroke-dasharray: ${strokeDasharray}; stroke-dashoffset: 0; transition: all 1s ease-in-out;"/>
-                                <!-- Center value -->
-                                <text x="50" y="45" text-anchor="middle" style="font-size: 16px; font-weight: bold; fill: ${color};">${value}${unit}</text>
-                            </svg>
-                            <div style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">${label}</div>
-                            <div style="font-size: 11px; color: #666;">${totalRatings} Bereiche</div>
-                        </div>
-                    `;
-                };
-
-                const overallScoreHTML = `
-                    <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 15px; border: 3px solid ${scoreColor};">
-                        <h4 style="margin: 0 0 20px 0; color: #1e293b; font-size: 20px; text-align: center;">📊 Gesamtbewertung</h4>
-                        <div style="display: flex; justify-content: center; align-items: center; gap: 25px; flex-wrap: wrap;">
-                            ${createTacho(averageRating, 5, scoreColor, 'Durchschnitt', '/5')}
-                            ${createTacho(percentageScore, 100, scoreColor, 'Gesamtscore', '%')}
-                            <div style="text-align: center; background: white; padding: 20px; border-radius: 12px; border: 2px solid ${scoreColor}; min-width: 140px;">
-                                <div style="font-size: 32px; margin-bottom: 10px;">${averageRating >= 4 ? '🏆' : averageRating >= 3 ? '👍' : '⚠️'}</div>
-                                <div style="font-size: 16px; font-weight: 600; color: ${scoreColor}; margin-bottom: 4px;">${scoreText}</div>
-                                <div style="font-size: 11px; color: #666;">Bewertung</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                ratingsContent.insertAdjacentHTML('beforeend', overallScoreHTML);
                 reportContent.appendChild(ratingsSection);
             }
         }
@@ -2361,7 +1998,6 @@
                 customRatingTitles: {}
             };
             questionCounter = 1;
-            ratingCounter = 12;
 
             // Alle Formularfelder leeren
             document.getElementById('auditorName').value = '';
@@ -2408,15 +2044,7 @@
             // Rating-Bereiche zurücksetzen
             const allRatingItems = document.querySelectorAll('.rating-item');
             allRatingItems.forEach(item => {
-                const ratingId = item.getAttribute('data-rating');
-                
-                // Entferne Custom-Ratings
-                if (ratingId && ratingId.startsWith('custom-')) {
-                    item.remove();
-                    return;
-                }
-                
-                // Sterne zurücksetzen für Standard-Ratings
+                // Sterne zurücksetzen
                 const stars = item.querySelectorAll('.star');
                 stars.forEach(star => {
                     star.classList.remove('active');
@@ -2654,30 +2282,6 @@
                             yPosition += 5;
                         }
                     });
-
-                    // Add overall score tachos to PDF
-                    const totalRatings = Object.keys(auditData.ratings).length;
-                    const sumRatings = Object.values(auditData.ratings).reduce((sum, rating) => sum + rating, 0);
-                    const averageRating = (sumRatings / totalRatings).toFixed(1);
-                    const percentageScore = ((averageRating / 5) * 100).toFixed(0);
-                    const scoreText = averageRating >= 4 ? 'Sehr gut' : averageRating >= 3 ? 'Befriedigend' : 'Verbesserungsbedarf';
-                    const scoreIcon = averageRating >= 4 ? '[+++]' : averageRating >= 3 ? '[+ +]' : '[+ -]';
-
-                    if (yPosition > 230) {
-                        pdf.addPage();
-                        yPosition = 30;
-                    }
-
-                    yPosition += 15;
-                    pdf.setFontSize(14);
-                    pdf.text('📊 GESAMTBEWERTUNG', 20, yPosition);
-                    yPosition += 15;
-                    
-                    pdf.setFontSize(11);
-                    pdf.text(`${scoreIcon} ${averageRating}/5 Sterne (${percentageScore}%) - ${scoreText}`, 25, yPosition);
-                    yPosition += 10;
-                    pdf.setFontSize(9);
-                    pdf.text(`Basierend auf ${totalRatings} bewerteten Bereichen`, 25, yPosition);
                 }
                 
                 // Download PDF
@@ -3515,49 +3119,6 @@ Erstellt: ${new Date().toLocaleString('de-DE')}
                 });
 
                 htmlContent += `
-                            </div>
-                        </div>
-                `;
-
-                // Add overall score with tachos to HTML export
-                const totalRatings = Object.keys(auditData.ratings).length;
-                const sumRatings = Object.values(auditData.ratings).reduce((sum, rating) => sum + rating, 0);
-                const averageRating = (sumRatings / totalRatings).toFixed(1);
-                const percentageScore = ((averageRating / 5) * 100).toFixed(0);
-
-                const scoreColor = averageRating >= 4 ? '#28a745' : averageRating >= 3 ? '#ffc107' : '#dc3545';
-                const scoreText = averageRating >= 4 ? 'Sehr gut' : averageRating >= 3 ? 'Befriedigend' : 'Verbesserungsbedarf';
-
-                // Tacho creation function for HTML
-                const createTachoHTML = (value, maxValue, color, label, unit) => {
-                    const percentage = (value / maxValue) * 100;
-                    const strokeDasharray = `${percentage * 2.51} 251.2`;
-                    
-                    return `
-                        <div style="text-align: center; background: white; padding: 20px; border-radius: 12px; border: 2px solid ${color}; min-width: 140px;">
-                            <svg width="100" height="60" viewBox="0 0 100 60" style="margin-bottom: 10px;">
-                                <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="#e2e8f0" stroke-width="8" fill="none" stroke-linecap="round"/>
-                                <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="${color}" stroke-width="8" fill="none" stroke-linecap="round"
-                                      style="stroke-dasharray: ${strokeDasharray}; stroke-dashoffset: 0; transition: all 1s ease-in-out;"/>
-                                <text x="50" y="45" text-anchor="middle" style="font-size: 16px; font-weight: bold; fill: ${color};">${value}${unit}</text>
-                            </svg>
-                            <div style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 4px;">${label}</div>
-                            <div style="font-size: 11px; color: #666;">${totalRatings} Bereiche</div>
-                        </div>
-                    `;
-                };
-
-                htmlContent += `
-                        <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 15px; border: 3px solid ${scoreColor};">
-                            <h4 style="margin: 0 0 20px 0; color: #1e293b; font-size: 20px; text-align: center;">📊 Gesamtbewertung</h4>
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 25px; flex-wrap: wrap;">
-                                ${createTachoHTML(averageRating, 5, scoreColor, 'Durchschnitt', '/5')}
-                                ${createTachoHTML(percentageScore, 100, scoreColor, 'Gesamtscore', '%')}
-                                <div style="text-align: center; background: white; padding: 20px; border-radius: 12px; border: 2px solid ${scoreColor}; min-width: 140px;">
-                                    <div style="font-size: 32px; margin-bottom: 10px;">${averageRating >= 4 ? '🏆' : averageRating >= 3 ? '👍' : '⚠️'}</div>
-                                    <div style="font-size: 16px; font-weight: 600; color: ${scoreColor}; margin-bottom: 4px;">${scoreText}</div>
-                                    <div style="font-size: 11px; color: #666;">Bewertung</div>
-                                </div>
                             </div>
                         </div>
                     </div>
